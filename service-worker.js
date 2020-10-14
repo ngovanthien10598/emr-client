@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/emr-client/precache-manifest.d583d4678c09cdb882a58746471f9900.js"
+  "/emr-client/precache-manifest.7ae8ba2e9e766eeb1c0a3995ca325fd7.js"
 );
 
 self.addEventListener('message', (event) => {
