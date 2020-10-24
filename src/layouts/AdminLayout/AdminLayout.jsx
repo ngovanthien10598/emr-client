@@ -37,6 +37,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Cookie from 'js-cookie';
 import { logout } from 'store/actions/user.action';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
+import CustomHeader from 'components/Header';
 
 const { Header, Sider, Content } = Layout;
 const { Item, SubMenu, Divider } = Menu;
@@ -48,7 +49,7 @@ const AdminLayout = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const path = match.path;
-  const user = useSelector((state) => state.userState.user);
+  
 
   function handleLogout() {
     Modal.confirm({
@@ -64,12 +65,7 @@ const AdminLayout = (props) => {
 
   return (
     <Layout>
-      <Header className="header flex items-center">
-        <Link to="/" className="text-2xl text-white">EMR</Link>
-        <div className="ml-auto"></div>
-        <Button type="default" ghost icon={<UserOutlined />} className="border-none">{user?.first_name} {user?.last_name}</Button>
-        <Button type="default" ghost icon={<LogoutOutlined />} className="border-none" onClick={handleLogout}>Đăng xuất</Button>
-      </Header>
+      <CustomHeader />
       <Layout>
         <Sider width={200} className="site-layout-background">
           <Menu
