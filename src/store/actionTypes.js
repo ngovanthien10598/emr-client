@@ -1,2 +1,9 @@
-export const SET_USER = "SET_USER";
-export const REMOVE_USER = "REMOVE_USER";
+export const LOGIN_PENDING = "LOGIN_PENDING";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_FAILURE = "LOGIN_FAILURE";
+
+export const GET_PROFILE_PENDING = "GET_PROFILE_PENDING";
+export const GET_PROFILE_SUCCESS = "GET_PROFILE_SUCCESS";
+export const GET_PROFILE_FAILURE = "GET_PROFILE_FAILURE";
+
+export const LOGOUT = "LOGOUT";

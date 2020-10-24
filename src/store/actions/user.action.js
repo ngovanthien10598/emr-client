@@ -1,17 +1,41 @@
 import * as actionTypes from '../actionTypes';
-import Cookie from 'js-cookie'
+import { getProfile } from 'services/user/user.service';
 
-export function setUser(user) {
+function getProfilePending() {
   return {
-    type: actionTypes.SET_USER,
+    type: actionTypes.GET_PROFILE_PENDING
+  }
+}
+
+function getProfileSuccess(user) {
+  return {
+    type: actionTypes.GET_PROFILE_SUCCESS,
     payload: user
   }
 }
 
-export function logout() {
-  Cookie.remove('EMR_access');
-  Cookie.remove('EMR_refresh');
+function getProfileFailure() {
   return {
-    type: actionTypes.REMOVE_USER
+    type: actionTypes.GET_PROFILE_FAILURE
+  }
+}
+
+export function getProfileAction() {
+  return async dispatch => {
+    try {
+      dispatch(getProfilePending());
+      const profileRes = await getProfile();
+      const user = profileRes.data;
+      dispatch(getProfileSuccess(user));
+    } catch(error) {
+      console.log(error);
+      dispatch(getProfileFailure());
+    }
+  }
+}
+
+export function removeUserAction() {
+  return {
+    type: actionTypes.LOGOUT
   }
 }

@@ -1,6 +1,4 @@
-import AdminLayout from 'layouts/AdminLayout/AdminLayout';
-import React, { ReactNode } from 'react';
-
+import React from 'react';
 
 const AdminDashboard = () => {
   return (

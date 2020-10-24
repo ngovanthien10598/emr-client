@@ -1,9 +1,8 @@
-import React, { ReactNode } from 'react';
-import { Link, Redirect, useHistory, Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
-import { Layout, Menu, Breadcrumb, Button, Modal } from 'antd';
+import React from 'react';
+import { Link, Redirect, Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
+import { Layout, Menu } from 'antd';
 import {
   UserOutlined,
-  LogoutOutlined,
   DashboardOutlined,
   MedicineBoxOutlined,
   BugOutlined,
@@ -14,9 +13,7 @@ import {
   CalendarOutlined,
   ContainerOutlined,
   SettingOutlined,
-  NotificationOutlined,
-  ExclamationCircleOutlined
-} from '@ant-design/icons';
+  NotificationOutlined} from '@ant-design/icons';
 import AdminDashboard from 'pages/admin/dashboard';
 import DrugCategoryPage from 'pages/common/drug/drug-category';
 import DrugUnitPage from 'pages/common/drug/drug-unit';
@@ -33,35 +30,16 @@ import WorkingHourPage from 'pages/common/working-hour/working-hour';
 import RoomPage from 'pages/common/room/room';
 import AdminAccountPage from 'pages/admin/account';
 import AdminSettingPage from 'pages/admin/setting';
-import { useDispatch, useSelector } from 'react-redux';
-import Cookie from 'js-cookie';
-import { logout } from 'store/actions/user.action';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 
-const { Header, Sider, Content } = Layout;
-const { Item, SubMenu, Divider } = Menu;
-const { confirm } = Modal;
+const { Sider, Content } = Layout;
+const { SubMenu } = Menu;
 
-const AdminLayout = (props) => {
+const AdminLayout = () => {
   const match = useRouteMatch();
   const location = useLocation();
-  const history = useHistory();
-  const dispatch = useDispatch();
   const path = match.path;
-  
-
-  function handleLogout() {
-    Modal.confirm({
-      title: "Đăng xuất",
-      icon: <ExclamationCircleOutlined />,
-      content: "Bạn có chắc muốn đăng xuất không?",
-      async onOk() {
-        await dispatch(logout());
-        history.replace('/login');
-      }
-    })
-  }
 
   return (
     <Layout>

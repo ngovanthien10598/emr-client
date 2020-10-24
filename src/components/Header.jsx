@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
 import { Button, Layout, Modal } from 'antd';
 import {
   UserOutlined,
@@ -7,14 +6,13 @@ import {
   ExclamationCircleOutlined
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from 'store/actions/user.action';
+import { logoutAction } from 'store/actions/auth.action';
 
 const { Header } = Layout;
 
 const CustomHeader = () => {
 
   const dispatch = useDispatch();
-  const history = useHistory();
   const user = useSelector((state) => state.userState.user);
 
   function handleLogout() {
@@ -22,9 +20,8 @@ const CustomHeader = () => {
       title: "Đăng xuất",
       icon: <ExclamationCircleOutlined />,
       content: "Bạn có chắc muốn đăng xuất không?",
-      async onOk() {
-        await dispatch(logout());
-        history.replace('/login');
+      onOk() {
+        dispatch(logoutAction());
       }
     })
   }

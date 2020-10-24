@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
 import { message } from 'antd';
 import Cookie from 'js-cookie';
 import * as AuthService from 'services/auth/auth.service';

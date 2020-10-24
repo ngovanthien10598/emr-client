@@ -1,55 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Form, Input, Button } from 'antd';
 import Icon from '@ant-design/icons';
 import LoginIcon from 'components/Icons/LoginIcon';
-import * as AuthService from 'services/auth/auth.service';
-import Cookie from 'js-cookie';
-import * as UserService from 'services/auth/user.service';
-import { useDispatch } from 'react-redux';
-import { setUser } from 'store/actions/user.action';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginAction } from 'store/actions/auth.action';
+import { getRedirectPath } from 'utils/routing';
 
-const LoginForm = (props) => {
+const LoginForm = () => {
   const history = useHistory();
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const authState = useSelector(state => state.authState);
+  const userState = useSelector(state => state.userState);
+  const user = userState.user;
 
-  async function handleSubmit(values) {
-    try {
-      setLoading(true);
-      const loginRes = await AuthService.login(values.email, values.password);
-      const loginData = loginRes.data;
-
-      const accessToken = loginData.access_token;
-      const refreshToken = loginData.refresh_token;
-      console.log(loginData);
-      Cookie.set('EMR_token', accessToken, { expires: 3 / 24 }); // 3 hours
-      Cookie.set('EMR_refresh', refreshToken, { expires: 7 }); // 7 days
-
-      const profileRes = await UserService.getProfile();
-      const profile = profileRes.data;
-      dispatch(setUser(profile));
-
-      switch (profile.role.id) {
-        case 1:
-          history.replace('/admin');
-          break;
-        case 2:
-          history.replace('/physician');
-          break;
-        case 3:
-          history.replace('/receiptionist');
-          break;
-        default:
-          return history.replace('/user');
-      }
-
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+  function handleSubmit(values) {
+    dispatch(loginAction(values.email, values.password));
   }
+
+  useEffect(() => {
+    if (user && user.role) {
+      const redirectPath = getRedirectPath(user.role);
+      console.log(redirectPath);
+      history.replace(redirectPath);
+    }
+  }, [user]);
 
   return (
     <Form
@@ -79,7 +54,7 @@ const LoginForm = (props) => {
       <Link className="block mt-2 mb-6" to="/forgot-password">Quên mật khẩu</Link>
 
       <Form.Item>
-        <Button loading={loading} block type="primary" size="large" htmlType="submit">Đăng nhập</Button>
+        <Button loading={authState.loginLoading || userState.getProfileLoading} block type="primary" size="large" htmlType="submit">Đăng nhập</Button>
       </Form.Item>
     </Form>
   )
