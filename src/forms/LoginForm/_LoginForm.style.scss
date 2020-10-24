@@ -1,0 +1,15 @@
+.login-form {
+  min-width: 400px;
+  background-color: #fff;
+  padding: 45px;
+  border-radius: 10px;
+  // border: 1px solid #ccc;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 100px rgba(0,0,0,.08);
+
+  &__header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--antd-wave-shadow-color);
+  }
+}
