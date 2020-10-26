@@ -15,7 +15,6 @@ const withPrivateRoute = (Child, roles) => {
     function isValidRole(user) {
       const userRole = user?.role.name;
       const isValid = roles.includes(userRole);
-      console.log(isValid);
       return isValid;
     }
 

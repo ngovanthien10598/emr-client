@@ -30,7 +30,7 @@ const CustomHeader = () => {
     <Header className="header flex items-center">
       <div className="text-2xl text-white">EMR</div>
       <div className="ml-auto"></div>
-      <Button type="default" ghost icon={<UserOutlined />} className="border-none">{user?.first_name} {user?.last_name}</Button>
+      <div className="text-white">{user?.first_name} {user?.last_name} <span className="ml-3">|</span></div>
       <Button type="default" ghost icon={<LogoutOutlined />} className="border-none" onClick={handleLogout}>Đăng xuất</Button>
     </Header>
   )
