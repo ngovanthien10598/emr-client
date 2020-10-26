@@ -1,5 +1,4 @@
-# Kết quả tìm hiểu hệ thống quản lý bệnh án điện tử
-
+# Kết quả tìm hiểu hệ thống quản lý bệnh án điện tử 🩺
 ## Chức năng chính của hệ thống (tham khảo từ [75Health](https://www.75health.com/demo.jsp))
 * Khám chữa bệnh
 * Quản lý thuốc
