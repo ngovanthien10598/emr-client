@@ -84,7 +84,6 @@ const DrugCategoryPage = () => {
       console.log(error);
     } finally {
       setModalLoading(false);
-      drugCategoryForm.resetFields();
     }
   }
 

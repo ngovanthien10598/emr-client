@@ -84,7 +84,6 @@ const DiseaseCategoryPage = () => {
       console.log(error);
     } finally {
       setModalLoading(false);
-      diseaseCategoryForm.resetFields();
     }
   }
 

@@ -103,7 +103,6 @@ const DrugPage = () => {
       console.log(error);
     } finally {
       setModalLoading(false);
-      drugForm.resetFields();
     }
   }
 

@@ -84,7 +84,6 @@ const DrugInstructionPage = () => {
       console.log(error);
     } finally {
       setModalLoading(false);
-      drugInstructionForm.resetFields();
     }
   }
 

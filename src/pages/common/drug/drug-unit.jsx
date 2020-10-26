@@ -84,7 +84,6 @@ const DrugUnitPage = () => {
       console.log(error);
     } finally {
       setModalLoading(false);
-      drugUnitForm.resetFields();
     }
   }
 
