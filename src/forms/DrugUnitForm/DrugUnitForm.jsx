@@ -9,7 +9,7 @@ const DrugUnitForm = props => {
       layout="vertical"
       form={form}
       onFinish={onFinish}>
-      <Form.Item label="Tên" name="name" initialValue={defaultUnit?.name}>
+      <Form.Item label="Đơn vị tính" name="name" initialValue={defaultUnit?.name}>
         <Input autoFocus />
       </Form.Item>
     </Form>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const { API_URL } = require("constant/apiUrl");
+import { API_URL } from "constant/apiUrl";
 
 const endpointPrefix = `${API_URL}/admin/manage-drug-unit`;
 

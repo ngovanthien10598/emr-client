@@ -22,7 +22,7 @@ const DrugUnitPage = () => {
       render: (text, record, index) => index + 1
     },
     {
-      title: 'Tên',
+      title: 'Đơn vị tính',
       key: 'name',
       dataIndex: 'name'
     },
@@ -120,7 +120,11 @@ const DrugUnitPage = () => {
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
       </Row>
-      <Table rowKey="id" columns={tableColumns} dataSource={drugUnits} loading={fetchingDrugUnits} />
+      <Table
+        rowKey="id"
+        columns={tableColumns}
+        dataSource={drugUnits}
+        loading={fetchingDrugUnits} />
       <Modal
         visible={modalVisible}
         title={action === formActions.CREATE ? 'Thêm đơn vị tính' : 'Cập nhật đơn vị tính'}
