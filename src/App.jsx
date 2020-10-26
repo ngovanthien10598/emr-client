@@ -7,6 +7,7 @@ import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 import setupInterceptor from 'utils/interceptor';
 import { useDispatch } from 'react-redux';
 import { getProfileAction } from 'store/actions/user.action';
+import { refreshToken } from 'services/auth/auth.service';
 
 // import "normalize.css/normalize.css";
 // import "@blueprintjs/core/lib/css/blueprint.css";
@@ -31,8 +32,23 @@ function App() {
     }
   }
 
+  async function checkRefresh() {
+    try {
+      const token = Cookie.get('EMR_token');
+      const refresh = Cookie.get('EMR_refresh');
+      if (!token && refresh) {
+        const newTokenReponse = await refreshToken(refresh);
+        const newToken = newTokenReponse.data;
+        Cookie.set('EMR_token', newToken.access_token, { expires: 3/24 });
+      }
+      fetchProfile();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
-    fetchProfile();
+    checkRefresh();
   });
   
   return (

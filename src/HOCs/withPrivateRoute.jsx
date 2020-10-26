@@ -10,6 +10,7 @@ const withPrivateRoute = (Child, roles) => {
 
     const dispatch = useDispatch();
     const token = Cookie.get('EMR_token');
+    const refresh = Cookie.get('EMR_refresh');
     const user = useSelector((state) => state.userState.user);
 
     function isValidRole(user) {

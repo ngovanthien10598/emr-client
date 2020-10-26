@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import DrugUnitForm from 'forms/DrugUnitForm/DrugUnitForm';
+import DrugForm from 'forms/DrugForm/DrugForm';
 import { getDrugsAPI, addDrugAPI, updateDrugAPI, deleteDrugAPI } from 'services/admin/drug.service';
 import { formActions } from 'constant/formActions';
+import NumberFormat from 'react-number-format';
 
 const DrugPage = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [drugs, setDrugs] = useState([]);
+  const [drugs, setDrugs] = useState();
   const [fetchingDrugs, setFetchingDrugs] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [action, setAction] = useState(formActions.CREATE);
@@ -30,6 +31,12 @@ const DrugPage = () => {
       title: 'Tên thuốc',
       key: 'name',
       dataIndex: 'name'
+    },
+    {
+      title: 'Giá',
+      key: 'price',
+      dataIndex: 'price',
+      render: (text, record, index) => (<NumberFormat thousandSeparator=" " suffix=" VNĐ" value={text} displayType="text" />)
     },
     {
       title: 'Hành động',
@@ -62,7 +69,7 @@ const DrugPage = () => {
     try {
       setFetchingDrugs(true);
       const response = await getDrugsAPI();
-      setDrugs(response.data);
+      setDrugs(response.data.results);
     } catch (error) {
       console.log(error);
     } finally {
@@ -74,12 +81,19 @@ const DrugPage = () => {
     try {
       setModalLoading(true);
       const values = await drugForm.validateFields();
+      const data = {
+        code: values.code,
+        name: values.name,
+        price: values.price,
+        drug_category: values.drug_category,
+        drug_unit: values.drug_unit
+      }
       if (action === formActions.CREATE) {
-        await addDrugAPI(values.name);
+        await addDrugAPI(data);
       }
 
       if (action === formActions.UPDATE) {
-        await updateDrugAPI(selectedDrug.id, values.name);
+        await updateDrugAPI(selectedDrug.id, data);
       }
 
       getDrugs();
@@ -138,7 +152,7 @@ const DrugPage = () => {
         destroyOnClose={true}
         afterClose={afterClose}
         onOk={handleFormSubmit}>
-        <DrugUnitForm onFinish={handleFormSubmit} form={drugForm} defaultDrug={selectedDrug} />
+        <DrugForm onFinish={handleFormSubmit} form={drugForm} defaultDrug={selectedDrug} />
       </Modal>
     </>
   )
