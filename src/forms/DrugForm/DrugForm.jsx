@@ -117,7 +117,7 @@ const DrugForm = props => {
         </Form.Item>
 
         <Form.Item label="Giá" name="price" initialValue={drugDetail?.price}>
-          <Input type="number" />
+          <Input type="number" suffix="VNĐ" />
         </Form.Item>
 
         <Form.Item label="Loại thuốc" name="drug_category" initialValue={drugDetail?.drug_category.id}>

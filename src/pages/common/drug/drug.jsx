@@ -134,7 +134,7 @@ const DrugPage = () => {
   return (
     <>
       <Row justify="space-between">
-        <Col><h1 className="text-xl">Đơn vị tính</h1></Col>
+        <Col><h1 className="text-xl">Quản lý thuốc</h1></Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
@@ -146,7 +146,7 @@ const DrugPage = () => {
         loading={fetchingDrugs} />
       <Modal
         visible={modalVisible}
-        title={action === formActions.CREATE ? 'Thêm đơn vị tính' : 'Cập nhật đơn vị tính'}
+        title={action === formActions.CREATE ? 'Thêm thuốc' : 'Cập nhật thuốc'}
         onCancel={handleCloseModal}
         confirmLoading={modalLoading}
         destroyOnClose={true}

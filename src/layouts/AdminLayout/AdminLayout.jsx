@@ -65,7 +65,7 @@ const AdminLayout = () => {
                 <Link to="/admin/drug">Thuốc</Link>
               </Menu.Item>
               <Menu.Item key="/admin/drug/instruction">
-                <Link to="/admin/drug/instruction">Sử dụng</Link>
+                <Link to="/admin/drug/instruction">Hướng dẫn sử dụng</Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu key="disease" icon={<BugOutlined />} title="Quản lý bệnh">

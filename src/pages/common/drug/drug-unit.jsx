@@ -115,7 +115,7 @@ const DrugUnitPage = () => {
   return (
     <>
       <Row justify="space-between">
-        <Col><h1 className="text-xl">Đơn vị tính</h1></Col>
+        <Col><h1 className="text-xl">Quản lý đơn vị tính</h1></Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
