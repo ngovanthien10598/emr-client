@@ -19,7 +19,7 @@ export function addDrugAPI({ code, name, drug_category, price, drug_unit }) {
     code,
     name,
     drug_category,
-    price,
+    price: Number(price),
     drug_unit
   });
 }
@@ -30,7 +30,7 @@ export function updateDrugAPI(id, { code, name, drug_category, price, drug_unit 
     code,
     name,
     drug_category,
-    price,
+    price: Number(price),
     drug_unit
   });
 }
