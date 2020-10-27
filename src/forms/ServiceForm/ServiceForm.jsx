@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Spin } from 'antd';
+import { Form, Input, Spin } from 'antd';
 import { getServiceDetailsAPI } from 'services/admin/medical-service.service';
 
 const ServiceForm = props => {
@@ -40,7 +40,7 @@ const ServiceForm = props => {
         price: serviceDetail.price,
       });
     }
-  }, [serviceDetail, defaultService]);
+  }, [serviceDetail, defaultService, form]);
 
   return (
     <Spin spinning={detailLoading}>

@@ -100,7 +100,7 @@ const DrugForm = props => {
         drug_unit: drugDetail.drug_unit.id
       });
     }
-  }, [drugDetail, defaultDrug]);
+  }, [drugDetail, defaultDrug, form]);
 
   return (
     <Spin spinning={detailLoading}>

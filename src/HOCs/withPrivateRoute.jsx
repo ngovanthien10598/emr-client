@@ -10,7 +10,6 @@ const withPrivateRoute = (Child, roles) => {
 
     const dispatch = useDispatch();
     const token = Cookie.get('EMR_token');
-    const refresh = Cookie.get('EMR_refresh');
     const user = useSelector((state) => state.userState.user);
 
     function isValidRole(user) {
@@ -25,7 +24,7 @@ const withPrivateRoute = (Child, roles) => {
           dispatch(logoutAction());
         }
       }
-    }, [user]);
+    }, [user, dispatch]);
 
     try {
       if (!token || token.length === 0 || !jwtDecode(token)) {

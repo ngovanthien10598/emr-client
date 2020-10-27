@@ -47,6 +47,8 @@ export default function setupInterceptor() {
           content: "Xóa thành công"
         });
         break;
+      default:
+        // Do nothing
     }
     return res;
   }), async (error) => {

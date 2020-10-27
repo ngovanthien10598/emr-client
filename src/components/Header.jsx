@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, Layout, Modal } from 'antd';
 import {
-  UserOutlined,
   LogoutOutlined,
   ExclamationCircleOutlined
 } from '@ant-design/icons';

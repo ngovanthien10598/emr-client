@@ -72,7 +72,7 @@ const DiseaseForm = props => {
         disease_category: diseaseDetail.disease_category.id,
       });
     }
-  }, [diseaseDetail, defaultDisease]);
+  }, [diseaseDetail, defaultDisease, form]);
 
   return (
     <Spin spinning={detailLoading}>

@@ -24,7 +24,7 @@ const LoginForm = () => {
       console.log(redirectPath);
       history.replace(redirectPath);
     }
-  }, [user]);
+  }, [user, history]);
 
   return (
     <Form
