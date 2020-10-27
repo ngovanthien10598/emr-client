@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
-import { PlusOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { PlusOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import UserForm from 'forms/UserForm/UserForm';
 import { getUsersAPI, addUserAPI, updateUserAPI, deleteUserAPI } from 'services/admin/user.service';
 import { formActions } from 'constant/formActions';
 import NumberFormat from 'react-number-format';
+import { ROLES } from 'constant/roles';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const AdminAccountPage = () => {
 
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+  const urlSearchParams = new URLSearchParams(search);
+  const currentPageOnURL = Number(urlSearchParams.get('page'));
+  const [page, setPage] = useState(currentPageOnURL || 1);
   const [modalVisible, setModalVisible] = useState(false);
   const [users, setUsers] = useState();
   const [fetchingUsers, setFetchingUsers] = useState(false);
@@ -55,14 +62,28 @@ const AdminAccountPage = () => {
     {
       title: 'Vai trò',
       key: 'role',
-      render: (text, record) => <span>{record.role.name}</span>
+      render: (text, record) => <span>{ROLES[record.role.id].display}</span>
     },
     {
-      title: 'Hành động', key: 'action', render: (text, { id, is_active }) => {
-        return is_active ?
-          <Button danger type="link" icon={<LockOutlined />}>Khóa</Button>
-          :
-          <Button type="link" icon={<UnlockOutlined />}>Mở khóa</Button>
+      title: 'Hành động', key: 'action', render: (text, record) => {
+        return (
+          <Space size={10}>
+            {
+              record.is_active ?
+                <Button danger type="link" icon={<LockOutlined />}>Khóa</Button>
+                :
+                <Button type="link" icon={<UnlockOutlined />}>Mở khóa</Button>
+            }
+            <Button icon={<EditOutlined />} onClick={() => handleEditClick(record)}></Button>
+            <Popconfirm
+              onConfirm={() => handleDelete(record)} title="Bạn có chắc muốn xóa không?"
+              okText="Xóa"
+              okType="danger"
+              cancelText="Hủy bỏ">
+              <Button icon={<DeleteOutlined />}></Button>
+            </Popconfirm>
+          </Space>
+        )
       }
     }
   ]
@@ -76,10 +97,10 @@ const AdminAccountPage = () => {
     setModalVisible(false);
   }
 
-  async function getUsers() {
+  async function getUsers(page) {
     try {
       setFetchingUsers(true);
-      const response = await getUsersAPI();
+      const response = await getUsersAPI({ page: page });
       setUsers(response.data);
     } catch (error) {
       console.log(error);
@@ -92,22 +113,15 @@ const AdminAccountPage = () => {
     try {
       setModalLoading(true);
       const values = await userForm.validateFields();
-      const data = {
-        code: values.code,
-        name: values.name,
-        price: values.price,
-        user_category: values.user_category,
-        user_unit: values.user_unit
-      }
       if (action === formActions.CREATE) {
-        await addUserAPI(data);
+        await addUserAPI(values);
       }
 
       if (action === formActions.UPDATE) {
-        await updateUserAPI(selectedUser.id, data);
+        await updateUserAPI(selectedUser.id, values);
       }
 
-      getUsers();
+      getUsers(page);
 
       setModalVisible(false);
     } catch (error) {
@@ -126,7 +140,7 @@ const AdminAccountPage = () => {
   async function handleDelete(user) {
     try {
       await deleteUserAPI(user.id);
-      getUsers();
+      getUsers(page);
     } catch (error) {
       console.log(error);
     }
@@ -137,8 +151,17 @@ const AdminAccountPage = () => {
     setSelectedUser(null);
   }
 
+  function handlePaginationChange(page) {
+    getUsers(page);
+    setPage(page);
+    history.push({
+      pathname: pathname,
+      search: `page=${page}`
+    })
+  }
+
   useEffect(() => {
-    getUsers();
+    getUsers(page);
   }, []);
 
   return (
@@ -153,10 +176,17 @@ const AdminAccountPage = () => {
         rowKey="id"
         columns={tableColumns}
         dataSource={users?.results}
+        pagination={{
+          defaultCurrent: page,
+          current: page,
+          pageSize: 10,
+          total: users?.count,
+          onChange: handlePaginationChange
+        }}
         loading={fetchingUsers} />
       <Modal
         visible={modalVisible}
-        title={action === formActions.CREATE ? 'Thêm thuốc' : 'Cập nhật thuốc'}
+        title={action === formActions.CREATE ? 'Thêm tài khoản' : 'Cập nhật tài khoản'}
         onCancel={handleCloseModal}
         confirmLoading={modalLoading}
         destroyOnClose={true}

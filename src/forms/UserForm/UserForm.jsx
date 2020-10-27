@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Spin } from 'antd';
+import { Form, Input, Select, Space, Spin, Row, Col, DatePicker, Radio } from 'antd';
 import { getUserDetailsAPI } from 'services/admin/user.service';
+import { ROLES, ROLES_LIST } from 'constant/roles';
+import moment from 'moment';
 
 const UserForm = props => {
   const { form, onFinish, defaultUser } = props;
-
-  const [categories, setCategories] = useState([]);
-  const [units, setUnits] = useState([]);
   const [userDetail, setUserDetail] = useState(null);
-  const [catLoading, setCatLoading] = useState(false);
-  const [unitLoading, setUnitLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
 
   async function getUserDetail(id) {
@@ -18,24 +15,6 @@ const UserForm = props => {
       const detailResponse = await getUserDetailsAPI(id);
       const userDetail = detailResponse.data;
       setUserDetail(userDetail);
-      setCategories(prevCats => {
-        const index = prevCats.findIndex(cat => cat.id === defaultUser.user_category);
-        if (index > -1) {
-          prevCats[index] = userDetail.user_category;
-          return prevCats;
-        } else {
-          return [...[userDetail.user_category], ...prevCats];
-        }
-      });
-      setUnits(prevUnits => {
-        const index = prevUnits.findIndex(u => u.id === defaultUser.user_unit);
-        if (index > -1) {
-          prevUnits[index] = userDetail.user_unit;
-          return prevUnits;
-        } else {
-          return [...[userDetail.user_unit], ...prevUnits];
-        }
-      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -58,11 +37,13 @@ const UserForm = props => {
   useEffect(() => {
     if (userDetail) {
       form.setFieldsValue({
-        code: userDetail.code,
-        name: userDetail.name,
-        price: userDetail.price,
-        user_category: userDetail.user_category.id,
-        user_unit: userDetail.user_unit.id
+        email: userDetail.email,
+        first_name: userDetail.first_name,
+        last_name: userDetail.last_name,
+        phone: userDetail.phone,
+        DOB: moment(userDetail.DOB),
+        gender: userDetail.gender,
+        role_id: userDetail.role.id
       });
     }
   }, [userDetail, defaultUser, form]);
@@ -72,34 +53,98 @@ const UserForm = props => {
       <Form
         layout="vertical"
         form={form}
+        autoComplete="off"
         onFinish={onFinish}>
-        <Form.Item label="Mã thuốc" name="code" initialValue={userDetail?.code}>
-          <Input />
+        <Form.Item label="Email" name="email" initialValue={userDetail?.email} rules={[
+          {
+            required: true,
+            message: "Vui lòng điền vào trường này"
+          }
+        ]}>
+          <Input type="email" readOnly={userDetail?.id} />
         </Form.Item>
 
-        <Form.Item label="Tên thuốc" name="name" initialValue={userDetail?.name}>
-          <Input />
+        <Form.Item label="Mật khẩu" name="password" rules={[
+          {
+            required: true,
+            message: "Vui lòng điền vào trường này"
+          }
+        ]}>
+          <Input.Password />
         </Form.Item>
 
-        <Form.Item label="Giá" name="price" initialValue={userDetail?.price}>
-          <Input type="number" suffix="VNĐ" />
+        <Row>
+          <Col flex={1}>
+            <Form.Item label="Họ" name="first_name" rules={[
+              {
+                required: true,
+                message: "Vui lòng điền vào trường này"
+              }
+            ]}>
+              <Input />
+            </Form.Item>
+          </Col>
+          <div style={{ width: 20 }}></div>
+          <Col flex={1}>
+            <Form.Item label="Tên" name="last_name" rules={[
+              {
+                required: true,
+                message: "Vui lòng điền vào trường này"
+              }
+            ]}>
+              <Input />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Form.Item label="Điện thoại" name="phone" initialValue={userDetail?.phone} rules={[
+          {
+            required: true,
+            message: "Vui lòng điền vào trường này"
+          }
+        ]}>
+          <Input type="tel" />
         </Form.Item>
 
-        <Form.Item label="Loại thuốc" name="user_category" initialValue={userDetail?.user_category.id}>
-          <Select loading={catLoading}>
+        <Row>
+          <Col>
+            <Form.Item label="Ngày sinh" name="DOB" rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn ngày sinh"
+              }
+            ]}>
+              <DatePicker placeholder="Chọn ngày" />
+            </Form.Item>
+          </Col>
+          <div style={{ width: 20 }}></div>
+          <Col flex={1}>
+            <Form.Item label="Giới tính" name="gender" rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn một giá trị"
+              }
+            ]}>
+              <Radio.Group>
+                <Radio value="Nam">Nam</Radio>
+                <Radio value="Nữ">Nữ</Radio>
+                <Radio value="Khác">Khác</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+        </Row>
+
+
+        <Form.Item label="Vai trò" name="role_id" initialValue={userDetail?.role_id} rules={[
+          {
+            required: true,
+            message: "Vui lòng chọn vai trò"
+          }
+        ]}>
+          <Select>
             {
-              categories.map(cat => (
-                <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
-              ))
-            }
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Đơn vị tính" name="user_unit" initialValue={userDetail?.user_unit.id}>
-          <Select loading={unitLoading}>
-            {
-              units.map(cat => (
-                <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
+              ROLES_LIST.map(role_id => (
+                <Select.Option key={role_id} value={role_id}>{ROLES[role_id].display}</Select.Option>
               ))
             }
           </Select>
