@@ -40,24 +40,9 @@ const AdminAccountPage = () => {
       dataIndex: 'last_name'
     },
     {
-      title: 'Giới tính',
-      key: 'gender',
-      dataIndex: 'gender'
-    },
-    {
-      title: 'Ngày sinh',
-      key: 'DOB',
-      dataIndex: 'DOB'
-    },
-    {
       title: 'Email',
       key: 'email',
       dataIndex: 'email'
-    },
-    {
-      title: 'Điện thoại',
-      key: 'phone',
-      dataIndex: 'phone',
     },
     {
       title: 'Vai trò',

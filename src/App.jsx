@@ -4,6 +4,8 @@ import LoginPage from 'pages/login';
 import Cookie from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import AdminLayout from 'layouts/AdminLayout/AdminLayout';
+import PhysicianLayout from 'layouts/PhysicianLayout/PhysicianLayout';
+import ReceiptionistLayout from 'layouts/ReceiptionistLayout/ReceiptionistLayout';
 import setupInterceptor from 'utils/interceptor';
 import { useDispatch } from 'react-redux';
 import { getProfileAction } from 'store/actions/user.action';
@@ -14,6 +16,7 @@ import { refreshToken } from 'services/auth/auth.service';
 // import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import 'antd/dist/antd.css';
 import 'styles/main.scss';
+
 
 function App() {
 
@@ -60,6 +63,8 @@ function App() {
           </Route>
 
           <Route path="/admin" component={AdminLayout} />
+          <Route path="/physician" component={PhysicianLayout} />
+          <Route path="/receiptionist" component={ReceiptionistLayout} />
 
           <Redirect to="/login" />
         </Switch>
