@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
 import { PlusOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import UserForm from 'forms/UserForm/UserForm';
-import { getUsersAPI, addUserAPI, updateUserAPI, deleteUserAPI } from 'services/admin/user.service';
+import { getUsersAPI, addUserAPI, updateUserAPI, deleteUserAPI, blockUserAPI, unblockUserAPI } from 'services/admin/user.service';
 import { formActions } from 'constant/formActions';
 import NumberFormat from 'react-number-format';
 import { ROLES } from 'constant/roles';
@@ -78,7 +78,7 @@ const AdminAccountPage = () => {
             </Popconfirm>
             {
               <Popconfirm
-                onConfirm={() => { }}
+                onConfirm={() => handleBlockUnblock(record)}
                 title={`Bạn có chắc muốn ${record.is_active ? 'khóa' : 'mở khóa'} tài khoản này không?`}
                 okText={record.is_active ? "Khóa" : "Mở khóa"}
                 okType={record.is_active ? "danger" : "primary"}
@@ -143,8 +143,18 @@ const AdminAccountPage = () => {
     }
   }
 
-  function handleLockUnlock(user) {
-
+  async function handleBlockUnblock(user) {
+    try {
+      setFetchingUsers(true);
+      if (user.is_active) {
+        await blockUserAPI(user.id);
+      } else {
+        await unblockUserAPI(user.id);
+      }
+      getUsers();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function handleViewClick(user) {

@@ -58,3 +58,13 @@ export function deleteUserAPI(id) {
   const url = `${endpointPrefix}/${id}/`;
   return axios.delete(url);
 }
+
+export function blockUserAPI(userId) {
+  const url = `${endpointPrefix}/${userId}/block/`;
+  return axios.get(url);
+}
+
+export function unblockUserAPI(userId) {
+  const url = `${endpointPrefix}/${userId}/unblock/`;
+  return axios.get(url);
+}
