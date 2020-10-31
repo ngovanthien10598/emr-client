@@ -16,6 +16,7 @@ import { refreshToken } from 'services/auth/auth.service';
 // import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import 'antd/dist/antd.css';
 import 'styles/main.scss';
+import VerifyPage from 'pages/verify-email';
 
 
 function App() {
@@ -58,9 +59,8 @@ function App() {
     <div className="app">
       <Router>
         <Switch>
-          <Route path="/login">
-            <LoginPage />
-          </Route>
+          <Route path="/login" component={LoginPage} />
+          <Route path="/verify-email" component={VerifyPage} />
 
           <Route path="/admin" component={AdminLayout} />
           <Route path="/physician" component={PhysicianLayout} />

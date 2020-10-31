@@ -28,3 +28,9 @@ export function refreshToken(refreshToken) {
     refresh_token: refreshToken
   });
 }
+
+
+export function verifyEmailAPI(token) {
+  const url = `${endpointPrefix}/verify-email/${token}/`;
+  return axios.get(url);
+}

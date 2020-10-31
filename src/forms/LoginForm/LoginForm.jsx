@@ -28,18 +28,14 @@ const LoginForm = () => {
 
   return (
     <Form
-      className="login-form"
+      className="auth"
       layout="vertical"
       autoComplete="off"
       onFinish={handleSubmit}>
 
-      <div className="text-center">
-
-        <div className="login-form__header">
-          <Icon component={LoginIcon} />
-          <h1 className="text-3xl">Đăng nhập</h1>
-        </div>
-
+      <div className="auth__header text-center">
+        <Icon component={LoginIcon} />
+        <h1 className="text-3xl">Đăng nhập</h1>
       </div>
 
       <Form.Item name="email">

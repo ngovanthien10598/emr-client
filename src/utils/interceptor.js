@@ -26,7 +26,6 @@ export default function setupInterceptor() {
   axios.interceptors.response.use(((res) => {
     switch (res.config.method) {
       case "post":
-        console.log(res.data);
         if (res.data.id) {
           // Check if new object created because login is also a post request
           message.success({
@@ -48,7 +47,7 @@ export default function setupInterceptor() {
         });
         break;
       default:
-        // Do nothing
+      // Do nothing
     }
     return res;
   }), async (error) => {
@@ -81,8 +80,12 @@ export default function setupInterceptor() {
         }
       }
     } else {
-      const errorMessage = error.response?.data.message || "Unexpected error occurred";
-      message.error(errorMessage);
+      // Do not show error alert on veirfy email page because it already have its own error messages
+      if (!originalRequest.url.includes('/api/auth/verify-email')) {
+        const errorMessage = error.response?.data.message || "Unexpected error occurred";
+        message.error(errorMessage);
+      }
+
     }
 
     return Promise.reject(error);
