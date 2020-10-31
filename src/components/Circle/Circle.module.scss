@@ -1,0 +1,10 @@
+.circle {
+  width: 7px;
+  height: 7px;
+  background-color: #ccc;
+  border-radius: 99px;
+
+  &--success {
+    background-color: #48BB78;
+  }
+}

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
-import { PlusOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import UserForm from 'forms/UserForm/UserForm';
 import { getUsersAPI, addUserAPI, updateUserAPI, deleteUserAPI } from 'services/admin/user.service';
 import { formActions } from 'constant/formActions';
 import NumberFormat from 'react-number-format';
 import { ROLES } from 'constant/roles';
 import { useHistory, useLocation } from 'react-router-dom';
+import Circle from 'components/Circle/Circle';
 
 const AdminAccountPage = () => {
 
@@ -30,19 +31,31 @@ const AdminAccountPage = () => {
       render: (text, record, index) => index + 1
     },
     {
-      title: 'Họ',
-      key: 'first_name',
-      dataIndex: 'first_name'
-    },
-    {
-      title: 'Tên',
-      key: 'last_name',
-      dataIndex: 'last_name'
+      title: 'Họ và tên',
+      key: 'fullname',
+      render: (text, record) => record.first_name + " " + record.last_name
     },
     {
       title: 'Email',
       key: 'email',
-      dataIndex: 'email'
+      dataIndex: 'email',
+      render: (text, record) => (
+        <Space>
+          <Circle color={record.is_verified_email ? 'success' : ''} />
+          <span>{record.email}</span>
+        </Space>
+      )
+    },
+    {
+      title: 'Điện thoại',
+      key: 'phone',
+      dataIndex: 'phone',
+      render: (text, record) => (
+        <Space>
+          <Circle color={record.is_verified_phone ? 'success' : ''} />
+          <span>{record.phone}</span>
+        </Space>
+      )
     },
     {
       title: 'Vai trò',
@@ -53,20 +66,31 @@ const AdminAccountPage = () => {
       title: 'Hành động', key: 'action', render: (text, record) => {
         return (
           <Space size={10}>
-            {
-              record.is_active ?
-                <Button danger type="link" icon={<LockOutlined />}>Khóa</Button>
-                :
-                <Button type="link" icon={<UnlockOutlined />}>Mở khóa</Button>
-            }
+            <Button icon={<EyeOutlined />} onClick={() => handleViewClick(record)}></Button>
             <Button icon={<EditOutlined />} onClick={() => handleEditClick(record)}></Button>
             <Popconfirm
-              onConfirm={() => handleDelete(record)} title="Bạn có chắc muốn xóa không?"
+              onConfirm={() => handleDelete(record)}
+              title="Bạn có chắc muốn xóa không?"
               okText="Xóa"
               okType="danger"
               cancelText="Hủy bỏ">
               <Button icon={<DeleteOutlined />}></Button>
             </Popconfirm>
+            {
+              <Popconfirm
+                onConfirm={() => { }}
+                title={`Bạn có chắc muốn ${record.is_active ? 'khóa' : 'mở khóa'} tài khoản này không?`}
+                okText={record.is_active ? "Khóa" : "Mở khóa"}
+                okType={record.is_active ? "danger" : "primary"}
+                cancelText="Hủy bỏ">
+                {
+                  record.is_active ?
+                    <Button danger type="link" icon={<LockOutlined />}>Khóa</Button>
+                    :
+                    <Button type="link" icon={<UnlockOutlined />}>Mở khóa</Button>
+                }
+              </Popconfirm>
+            }
           </Space>
         )
       }
@@ -103,6 +127,9 @@ const AdminAccountPage = () => {
       }
 
       if (action === formActions.UPDATE) {
+        if (values.password.length === 0) {
+          delete values.password;
+        }
         await updateUserAPI(selectedUser.id, values);
       }
 
@@ -114,6 +141,14 @@ const AdminAccountPage = () => {
     } finally {
       setModalLoading(false);
     }
+  }
+
+  function handleLockUnlock(user) {
+
+  }
+
+  function handleViewClick(user) {
+
   }
 
   function handleEditClick(user) {

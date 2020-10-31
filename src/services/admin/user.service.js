@@ -28,8 +28,33 @@ export function addUserAPI({ email, password, first_name, last_name, phone, DOB,
   });
 }
 
-export function updateUserAPI() {
+export function updateUserAPI(id, { email, password, first_name, last_name, phone, DOB, gender, role_id }) {
+  const url = `${endpointPrefix}/${id}/`;
+  if (password) {
+    return axios.put(url, {
+      email,
+      password,
+      first_name,
+      last_name,
+      phone,
+      DOB: DOB.format('yyyy-MM-DD'),
+      gender,
+      role_id
+    })
+  }
 
+  return axios.put(url, {
+    email,
+    first_name,
+    last_name,
+    phone,
+    DOB: DOB.format('yyyy-MM-DD'),
+    gender,
+    role_id
+  })
 }
 
-export function deleteUserAPI() {}
+export function deleteUserAPI(id) {
+  const url = `${endpointPrefix}/${id}/`;
+  return axios.delete(url);
+}

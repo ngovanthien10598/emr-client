@@ -61,12 +61,12 @@ const UserForm = props => {
             message: "Vui lòng điền vào trường này"
           }
         ]}>
-          <Input type="email" readOnly={userDetail?.id} />
+          <Input type="email" />
         </Form.Item>
 
         <Form.Item label="Mật khẩu" name="password" rules={[
           {
-            required: true,
+            required: !userDetail?.id,
             message: "Vui lòng điền vào trường này"
           }
         ]}>
