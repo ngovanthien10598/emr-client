@@ -123,7 +123,8 @@ const DrugInstructionPage = () => {
         rowKey="id"
         columns={tableColumns}
         dataSource={drugInstructions}
-        loading={fetchingDrugInstructions} />
+        loading={fetchingDrugInstructions}
+        pagination={false} />
       <Modal
         visible={modalVisible}
         title={action === formActions.CREATE ? 'Thêm hướng dẫn sử dụng' : 'Cập nhật hướng dẫn sử dụng'}

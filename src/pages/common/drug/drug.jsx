@@ -142,7 +142,8 @@ const DrugPage = () => {
         rowKey="id"
         columns={tableColumns}
         dataSource={drugs}
-        loading={fetchingDrugs} />
+        loading={fetchingDrugs}
+        pagination={false} />
       <Modal
         visible={modalVisible}
         title={action === formActions.CREATE ? 'Thêm thuốc' : 'Cập nhật thuốc'}

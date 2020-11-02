@@ -123,7 +123,8 @@ const DrugUnitPage = () => {
         rowKey="id"
         columns={tableColumns}
         dataSource={drugUnits}
-        loading={fetchingDrugUnits} />
+        loading={fetchingDrugUnits}
+        pagination={false} />
       <Modal
         visible={modalVisible}
         title={action === formActions.CREATE ? 'Thêm đơn vị tính' : 'Cập nhật đơn vị tính'}

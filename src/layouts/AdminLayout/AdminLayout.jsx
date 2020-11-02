@@ -26,7 +26,7 @@ import VisitPage from 'pages/common/visit/visit';
 import PatientPage from 'pages/common/patient/patient';
 import AppointmentPage from 'pages/common/appointment/apointment';
 import ServicePage from 'pages/common/service/service';
-import WorkingHourPage from 'pages/common/working-hour/working-hour';
+import WorkingHourPage from 'pages/admin/working-hour';
 import RoomPage from 'pages/common/room/room';
 import AdminAccountPage from 'pages/admin/account';
 import AdminSettingPage from 'pages/admin/setting';

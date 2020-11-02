@@ -26,7 +26,6 @@ import VisitPage from 'pages/common/visit/visit';
 import PatientPage from 'pages/common/patient/patient';
 import AppointmentPage from 'pages/common/appointment/apointment';
 import ServicePage from 'pages/common/service/service';
-import WorkingHourPage from 'pages/common/working-hour/working-hour';
 import RoomPage from 'pages/common/room/room';
 import AdminAccountPage from 'pages/admin/account';
 import AdminSettingPage from 'pages/admin/setting';
@@ -93,9 +92,6 @@ const AdminLayout = () => {
               <Link to="/admin/service">Dịch vụ</Link>
             </Menu.Item>
 
-            <Menu.Item key="/admin/working-hour" icon={<ClockCircleOutlined />}>
-              <Link to="/admin/working-hour">Giờ làm việc</Link>
-            </Menu.Item>
             <Menu.Item key="/admin/room" icon={<AppstoreOutlined />}>
               <Link to="/admin/room">Phòng</Link>
             </Menu.Item>
@@ -168,11 +164,6 @@ const AdminLayout = () => {
               {/* Service */}
               <Route path={`${path}/service`}>
                 <ServicePage />
-              </Route>
-
-              {/* Service */}
-              <Route path={`${path}/working-hour`}>
-                <WorkingHourPage />
               </Route>
 
               {/* Room */}

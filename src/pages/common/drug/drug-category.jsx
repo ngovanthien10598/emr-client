@@ -123,7 +123,7 @@ const DrugCategoryPage = () => {
         rowKey="id"
         columns={tableColumns}
         dataSource={categories}
-        
+        pagination={false}
         loading={fetchingCategories} />
       <Modal
         visible={modalVisible}

@@ -1,8 +1,11 @@
 import React from 'react';
+import { Row, Col } from 'antd';
 
 const VisitPage = () => {
   return (
-    <div>Visit page</div>
+    <>
+      <h1 className="text-3xl">Khám chữa bệnh</h1>
+    </>
   )
 }
 
