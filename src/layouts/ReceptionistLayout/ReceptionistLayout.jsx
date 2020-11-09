@@ -4,33 +4,13 @@ import { Layout, Menu } from 'antd';
 import {
   UserOutlined,
   DashboardOutlined,
-  MedicineBoxOutlined,
-  BugOutlined,
-  DollarOutlined,
-  IdcardOutlined,
-  ClockCircleOutlined,
-  AppstoreOutlined,
   CalendarOutlined,
-  ContainerOutlined,
-  SettingOutlined,
-  NotificationOutlined} from '@ant-design/icons';
-import AdminDashboard from 'pages/admin/dashboard';
-import DrugCategoryPage from 'pages/common/drug/drug-category';
-import DrugUnitPage from 'pages/common/drug/drug-unit';
-import DrugPage from 'pages/common/drug/drug';
-import DrugInstructionPage from 'pages/common/drug/drug-instruction';
-import DiseaseCategory from 'pages/common/disease/disease-category';
-import DiseasePage from 'pages/common/disease/disease';
-import NotificationPage from 'pages/common/notification/notification';
-import VisitPage from 'pages/common/visit/visit';
-import PatientPage from 'pages/common/patient/patient';
+} from '@ant-design/icons';
 import AppointmentPage from 'pages/common/appointment/apointment';
-import ServicePage from 'pages/common/service/service';
-import RoomPage from 'pages/common/room/room';
-import AdminAccountPage from 'pages/admin/account';
-import AdminSettingPage from 'pages/admin/setting';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
+import ReceivePage from 'pages/receptionist/receive';
+import ProfilePage from 'pages/common/profile/profile';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -50,57 +30,15 @@ const ReceptionistLayout = () => {
             style={{ height: '100%', borderRight: 0 }}
             selectedKeys={[location.pathname]}
           >
-            <Menu.Item key="/receptionist/dashboard" icon={<DashboardOutlined />}>
-              <Link to="/receptionist/dashboard">Bảng điều khiển</Link>
+            <Menu.Item key="/receptionist/receive" icon={<DashboardOutlined />}>
+              <Link to="/receptionist/receive">Tiếp đón</Link>
             </Menu.Item>
-            <SubMenu key="drug" icon={<MedicineBoxOutlined />} title="Quản lý thuốc">
-              <Menu.Item key="/admin/drug/category">
-                <Link to="/admin/drug/category">Loại thuốc</Link>
-              </Menu.Item>
-              <Menu.Item key="/admin/drug/unit">
-                <Link to="/admin/drug/unit">Đơn vị tính</Link>
-              </Menu.Item>
-              <Menu.Item key="/admin/drug">
-                <Link to="/admin/drug">Thuốc</Link>
-              </Menu.Item>
-              <Menu.Item key="/admin/drug/instruction">
-                <Link to="/admin/drug/instruction">Hướng dẫn sử dụng</Link>
-              </Menu.Item>
-            </SubMenu>
-            <SubMenu key="disease" icon={<BugOutlined />} title="Quản lý bệnh">
-              <Menu.Item key="/admin/disease/category">
-                <Link to="/admin/disease/category">Loại bệnh</Link>
-              </Menu.Item>
-              <Menu.Item key="/admin/disease">
-                <Link to="/admin/disease">Bệnh</Link>
-              </Menu.Item>
-            </SubMenu>
-
-            <Menu.Item key="/admin/notification" icon={<NotificationOutlined />}>
-              <Link to="/admin/notification">Thông báo</Link>
-            </Menu.Item>
-            <Menu.Item key="/admin/visit" icon={<ContainerOutlined />}>
-              <Link to="/admin/visit">Khám chữa bệnh</Link>
-            </Menu.Item>
-            <Menu.Item key="/admin/patient" icon={<IdcardOutlined />}>
-              <Link to="/admin/patient">Bệnh nhân</Link>
-            </Menu.Item>
-            <Menu.Item key="/admin/appointment" icon={<CalendarOutlined />}>
-              <Link to="/admin/appointment">Lịch hẹn</Link>
-            </Menu.Item>
-            <Menu.Item key="/admin/service" icon={<DollarOutlined />}>
-              <Link to="/admin/service">Dịch vụ</Link>
+            <Menu.Item key="/receptionist/appointment" icon={<CalendarOutlined />}>
+              <Link to="/receptionist/appointment">Lịch hẹn</Link>
             </Menu.Item>
 
-            <Menu.Item key="/admin/room" icon={<AppstoreOutlined />}>
-              <Link to="/admin/room">Phòng</Link>
-            </Menu.Item>
-
-            <Menu.Item key="/admin/account" icon={<UserOutlined />}>
-              <Link to="/admin/account">Tài khoản</Link>
-            </Menu.Item>
-            <Menu.Item key="/admin/setting" icon={<SettingOutlined />}>
-              <Link to="/admin/setting">Cài đặt</Link>
+            <Menu.Item key="/receptionist/profile" icon={<UserOutlined />}>
+              <Link to="/receptionist/profile">Hồ sơ</Link>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -115,45 +53,8 @@ const ReceptionistLayout = () => {
           >
             <Switch>
               {/* Dashboard */}
-              <Route path={`/receiptionist/dashboard`}>
-                <AdminDashboard />
-              </Route>
-
-              {/* Drug */}
-              <Route path={`${path}/drug/category`}>
-                <DrugCategoryPage />
-              </Route>
-              <Route path={`${path}/drug/unit`}>
-                <DrugUnitPage />
-              </Route>
-              <Route path={`${path}/drug`} exact>
-                <DrugPage />
-              </Route>
-              <Route path={`${path}/drug/instruction`}>
-                <DrugInstructionPage />
-              </Route>
-
-              {/* Disease */}
-              <Route path={`${path}/disease/category`}>
-                <DiseaseCategory />
-              </Route>
-              <Route path={`${path}/disease`}>
-                <DiseasePage />
-              </Route>
-
-              {/* Notification */}
-              <Route path={`${path}/notification`}>
-                <NotificationPage />
-              </Route>
-
-              {/* Visit */}
-              <Route path={`${path}/visit`}>
-                <VisitPage />
-              </Route>
-
-              {/* Patient */}
-              <Route path={`${path}/patient`}>
-                <PatientPage />
+              <Route path={`${path}/receive`}>
+                <ReceivePage />
               </Route>
 
               {/* Appointment */}
@@ -161,28 +62,12 @@ const ReceptionistLayout = () => {
                 <AppointmentPage />
               </Route>
 
-              {/* Service */}
-              <Route path={`${path}/service`}>
-                <ServicePage />
-              </Route>
-
-              {/* Room */}
-              <Route path={`${path}/room`}>
-                <RoomPage />
-              </Route>
-
-              {/* Room */}
-              <Route path={`${path}/account`}>
-                <AdminAccountPage />
-              </Route>
-
-              {/* Room */}
-              <Route path={`${path}/setting`}>
-                <AdminSettingPage />
+              <Route path={`${path}/profile`}>
+                <ProfilePage />
               </Route>
 
               {/* Fallback */}
-              <Redirect to={`/receptionist/dashboard`} />
+              <Redirect to={`/receptionist/receive`} />
             </Switch>
           </Content>
         </Layout>
