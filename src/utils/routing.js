@@ -7,7 +7,7 @@ export function getRedirectPath(role) {
     case 2:
       return "/physician";
     case 3:
-      return "/receitionist";
+      return "/receptionist";
     case 4:
       return "/patient";
     default:

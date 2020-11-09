@@ -50,57 +50,57 @@ const PhysicianLayout = () => {
             style={{ height: '100%', borderRight: 0 }}
             selectedKeys={[location.pathname]}
           >
-            <Menu.Item key="/admin/dashboard" icon={<DashboardOutlined />}>
-              <Link to="/admin/dashboard">Bảng điều khiển</Link>
+            <Menu.Item key="/physician/dashboard" icon={<DashboardOutlined />}>
+              <Link to="/physician/dashboard">Bảng điều khiển</Link>
             </Menu.Item>
             <SubMenu key="drug" icon={<MedicineBoxOutlined />} title="Quản lý thuốc">
-              <Menu.Item key="/admin/drug/category">
-                <Link to="/admin/drug/category">Loại thuốc</Link>
+              <Menu.Item key="/physician/drug/category">
+                <Link to="/physician/drug/category">Loại thuốc</Link>
               </Menu.Item>
-              <Menu.Item key="/admin/drug/unit">
-                <Link to="/admin/drug/unit">Đơn vị tính</Link>
+              <Menu.Item key="/physician/drug/unit">
+                <Link to="/physician/drug/unit">Đơn vị tính</Link>
               </Menu.Item>
-              <Menu.Item key="/admin/drug">
-                <Link to="/admin/drug">Thuốc</Link>
+              <Menu.Item key="/physician/drug">
+                <Link to="/physician/drug">Thuốc</Link>
               </Menu.Item>
-              <Menu.Item key="/admin/drug/instruction">
-                <Link to="/admin/drug/instruction">Hướng dẫn sử dụng</Link>
+              <Menu.Item key="/physician/drug/instruction">
+                <Link to="/physician/drug/instruction">Hướng dẫn sử dụng</Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu key="disease" icon={<BugOutlined />} title="Quản lý bệnh">
-              <Menu.Item key="/admin/disease/category">
-                <Link to="/admin/disease/category">Loại bệnh</Link>
+              <Menu.Item key="/physician/disease/category">
+                <Link to="/physician/disease/category">Loại bệnh</Link>
               </Menu.Item>
-              <Menu.Item key="/admin/disease">
-                <Link to="/admin/disease">Bệnh</Link>
+              <Menu.Item key="/physician/disease">
+                <Link to="/physician/disease">Bệnh</Link>
               </Menu.Item>
             </SubMenu>
 
-            <Menu.Item key="/admin/notification" icon={<NotificationOutlined />}>
-              <Link to="/admin/notification">Thông báo</Link>
+            <Menu.Item key="/physician/notification" icon={<NotificationOutlined />}>
+              <Link to="/physician/notification">Thông báo</Link>
             </Menu.Item>
-            <Menu.Item key="/admin/visit" icon={<ContainerOutlined />}>
-              <Link to="/admin/visit">Khám chữa bệnh</Link>
+            <Menu.Item key="/physician/visit" icon={<ContainerOutlined />}>
+              <Link to="/physician/visit">Khám chữa bệnh</Link>
             </Menu.Item>
-            <Menu.Item key="/admin/patient" icon={<IdcardOutlined />}>
-              <Link to="/admin/patient">Bệnh nhân</Link>
+            <Menu.Item key="/physician/patient" icon={<IdcardOutlined />}>
+              <Link to="/physician/patient">Bệnh nhân</Link>
             </Menu.Item>
-            <Menu.Item key="/admin/appointment" icon={<CalendarOutlined />}>
-              <Link to="/admin/appointment">Lịch hẹn</Link>
+            <Menu.Item key="/physician/appointment" icon={<CalendarOutlined />}>
+              <Link to="/physician/appointment">Lịch hẹn</Link>
             </Menu.Item>
-            <Menu.Item key="/admin/service" icon={<DollarOutlined />}>
-              <Link to="/admin/service">Dịch vụ</Link>
-            </Menu.Item>
-
-            <Menu.Item key="/admin/room" icon={<AppstoreOutlined />}>
-              <Link to="/admin/room">Phòng</Link>
+            <Menu.Item key="/physician/service" icon={<DollarOutlined />}>
+              <Link to="/physician/service">Dịch vụ</Link>
             </Menu.Item>
 
-            <Menu.Item key="/admin/account" icon={<UserOutlined />}>
-              <Link to="/admin/account">Tài khoản</Link>
+            <Menu.Item key="/physician/room" icon={<AppstoreOutlined />}>
+              <Link to="/physician/room">Phòng</Link>
             </Menu.Item>
-            <Menu.Item key="/admin/setting" icon={<SettingOutlined />}>
-              <Link to="/admin/setting">Cài đặt</Link>
+
+            <Menu.Item key="/physician/account" icon={<UserOutlined />}>
+              <Link to="/physician/account">Tài khoản</Link>
+            </Menu.Item>
+            <Menu.Item key="/physician/setting" icon={<SettingOutlined />}>
+              <Link to="/physician/setting">Cài đặt</Link>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -182,7 +182,7 @@ const PhysicianLayout = () => {
               </Route>
 
               {/* Fallback */}
-              <Redirect to={`/admin/dashboard`} />
+              <Redirect to={`/physician/dashboard`} />
             </Switch>
           </Content>
         </Layout>
@@ -191,4 +191,4 @@ const PhysicianLayout = () => {
   )
 }
 
-export default withPrivateRoute(PhysicianLayout, ['admin']);
+export default withPrivateRoute(PhysicianLayout, ['physician']);

@@ -5,7 +5,7 @@ import Cookie from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 import PhysicianLayout from 'layouts/PhysicianLayout/PhysicianLayout';
-import ReceiptionistLayout from 'layouts/ReceiptionistLayout/ReceiptionistLayout';
+import ReceptionistLayout from 'layouts/ReceptionistLayout/ReceptionistLayout';
 import setupInterceptor from 'utils/interceptor';
 import { useDispatch } from 'react-redux';
 import { getProfileAction } from 'store/actions/user.action';
@@ -64,7 +64,7 @@ function App() {
 
           <Route path="/admin" component={AdminLayout} />
           <Route path="/physician" component={PhysicianLayout} />
-          <Route path="/receiptionist" component={ReceiptionistLayout} />
+          <Route path="/receptionist" component={ReceptionistLayout} />
 
           <Redirect to="/login" />
         </Switch>

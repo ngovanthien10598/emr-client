@@ -35,7 +35,7 @@ import CustomHeader from 'components/Header';
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
-const AdminLayout = () => {
+const ReceptionistLayout = () => {
   const match = useRouteMatch();
   const location = useLocation();
   const path = match.path;
@@ -50,8 +50,8 @@ const AdminLayout = () => {
             style={{ height: '100%', borderRight: 0 }}
             selectedKeys={[location.pathname]}
           >
-            <Menu.Item key="/admin/dashboard" icon={<DashboardOutlined />}>
-              <Link to="/admin/dashboard">Bảng điều khiển</Link>
+            <Menu.Item key="/receptionist/dashboard" icon={<DashboardOutlined />}>
+              <Link to="/receptionist/dashboard">Bảng điều khiển</Link>
             </Menu.Item>
             <SubMenu key="drug" icon={<MedicineBoxOutlined />} title="Quản lý thuốc">
               <Menu.Item key="/admin/drug/category">
@@ -115,7 +115,7 @@ const AdminLayout = () => {
           >
             <Switch>
               {/* Dashboard */}
-              <Route path={`${path}/dashboard`}>
+              <Route path={`/receiptionist/dashboard`}>
                 <AdminDashboard />
               </Route>
 
@@ -182,7 +182,7 @@ const AdminLayout = () => {
               </Route>
 
               {/* Fallback */}
-              <Redirect to={`/admin/dashboard`} />
+              <Redirect to={`/receptionist/dashboard`} />
             </Switch>
           </Content>
         </Layout>
@@ -191,4 +191,4 @@ const AdminLayout = () => {
   )
 }
 
-export default withPrivateRoute(AdminLayout, ['admin']);
+export default withPrivateRoute(ReceptionistLayout, ['receptionist']);
