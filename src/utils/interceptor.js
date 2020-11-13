@@ -29,7 +29,7 @@ export default function setupInterceptor() {
         if (res.data.id) {
           // Check if new object created because login is also a post request
           message.success({
-            content: "Tạo thành công"
+            content: "Thao tác thành công"
           });
         }
 
