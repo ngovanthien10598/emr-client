@@ -2,26 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, List, Select, Tabs, Empty, Descriptions, Collapse, Form } from 'antd';
 import VisitItem from 'components/VistItem/VisitItem';
 import { getRoomAPI } from 'services/user/room.service';
+import { getRoomAPI as adminGetRoomAPI } from 'services/admin/room.service';
 import { getVisitDataAPI } from 'services/user/visit.service';
+import { getVisitDataAPI as adminGetVisitDataAPI } from 'services/admin/visit.service';
+import { getDrugCategoryAPI } from 'services/user/drug-category.service';
+import { getDrugCategoryAPI as adminGetDrugCategoryAPI } from 'services/admin/drug-category.service';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import VisitLivingFunctionForm from 'forms/Visit/VisitLivingFunctionForm';
+import VisitDiseaseForm from 'forms/Visit/VisitDiseaseForm';
+import VisitServiceForm from 'forms/Visit/VisitServiceForm';
 
 const { useForm } = Form;
 
-const VisitPage = () => {
+const VisitPage = props => {
+  const user = props.user;
 
   const [rooms, setRooms] = useState([]);
-  const [visitData, setVisitData] = useState(null);
   const [roomLoading, setRoomLoading] = useState(false);
+  const [visitData, setVisitData] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [drugData, setDrugData] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState("");
 
   const [waiting, setWaiting] = useState([]);
   const [visiting, setVisiting] = useState([]);
-  const userState = useSelector(state => state.userState);
-  const user = userState.user;
 
   const [livingFuncsForm] = useForm();
+  const [diseasesForm] = useForm();
+  const [serviceForm] = useForm();
 
   const visitList = visitData?.results.filter(visit => {
     const createdAt = new Date(visit.created_at);
@@ -35,7 +44,14 @@ const VisitPage = () => {
   async function getRooms() {
     try {
       setRoomLoading(true);
-      const roomResponse = await getRoomAPI();
+      let roomResponse;
+      if (user.role.name === "admin") {
+        roomResponse = await adminGetRoomAPI();
+        console.log("admin");
+      } else if (user.role.name === "physician" || user?.role?.name === "receptionist") {
+        console.log("user");
+        roomResponse = await getRoomAPI();
+      }
       setRooms(roomResponse.data);
 
       const prevSelected = localStorage.getItem("selectedRoom");
@@ -49,30 +65,53 @@ const VisitPage = () => {
 
   async function getVisitData() {
     try {
-      const visitDataResponse = await getVisitDataAPI();
+      let visitDataResponse;
+      if (user.role.name === "admin") {
+        visitDataResponse = await adminGetVisitDataAPI();
+      } else {
+        visitDataResponse = await getVisitDataAPI()
+      }
       const visitData = visitDataResponse.data;
       setVisitData(visitData);
     } catch (error) {
+      console.log(error);
+    }
+  }
 
+  async function getDrugCategories() {
+    try {
+      let drugCategoriesResponse;
+      if (user.role.name === "admin") {
+        drugCategoriesResponse = await adminGetDrugCategoryAPI();
+      } else {
+        drugCategoriesResponse = await getDrugCategoryAPI()
+      }
+      const drugCategoriesData = drugCategoriesResponse.data;
+      setCategories(drugCategoriesData);
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function getInitialData() {
     await Promise.all([
+      getVisitData(),
       getRooms(),
-      getVisitData()
+      getDrugCategories()
     ]);
   }
 
   useEffect(() => {
-    getInitialData();
+    if (user) {
+      getInitialData();
+    }
 
     const localVisitingStr = localStorage.getItem("visiting");
     const localVisitingObj = JSON.parse(localVisitingStr);
     if (localVisitingObj) {
       setVisiting(localVisitingObj);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (selectedRoom) {
@@ -91,7 +130,8 @@ const VisitPage = () => {
           last_name: patient.last_name,
           gender: patient.gender,
           role: patient.role.name,
-          avatar: patient.avatar
+          avatar: patient.avatar,
+          DOB: patient.DOB
         },
         physician: {
           id: user.id,
@@ -185,10 +225,18 @@ const VisitPage = () => {
                     </Descriptions.Item>
                   </Descriptions>
 
-                  <Collapse defaultActiveKey={["living-function"]}>
+                  <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs"]}>
                     <Collapse.Panel header="Chức năng sống" key="living-function">
                       <VisitLivingFunctionForm form={livingFuncsForm} />
                     </Collapse.Panel>
+
+                    <Collapse.Panel header="Bệnh" key="diseases">
+                      <VisitDiseaseForm form={diseasesForm} categories={categories} user={user} />
+                    </Collapse.Panel>
+                    <Collapse.Panel header="Chỉ định dịch vụ" key="services">
+                      <VisitServiceForm form={serviceForm} user={user} />
+                    </Collapse.Panel>
+                    <Collapse.Panel header="Kê đơn thuốc" key="drugs"></Collapse.Panel>
                   </Collapse>
                 </Tabs.TabPane>
               ))
@@ -201,4 +249,8 @@ const VisitPage = () => {
   )
 }
 
-export default VisitPage;
+const mapStateToProps = state => ({
+  user: state.userState.user
+})
+
+export default connect(mapStateToProps)(VisitPage);

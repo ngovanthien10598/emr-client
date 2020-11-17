@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { API_URL } from 'constant/apiUrl';
+import { getQueryString } from 'utils/string';
 
 const endpointPrefix = `${API_URL}/admin/manage-drug`;
 
-export function getDrugsAPI() {
+export function getDrugsAPI(params) {
   const url = `${endpointPrefix}/`;
+
+  if (params) {
+    return axios.get(`${url}?${getQueryString(params)}`);
+  }
   return axios.get(url);
 }
 

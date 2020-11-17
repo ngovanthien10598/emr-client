@@ -88,9 +88,9 @@ const VisitLivingFunctionForm = props => {
       <Row justify="start" gutter={15}>
         {
           row1.map(field => (
-            <Col flex="0 0 243px">
+            <Col flex="0 0 243px" key={field.name}>
               <Item name={field.name} key={field.name}>
-                <Input placeholder={field.text} suffix={field.unit} />
+                <Input type={field.name !== "pressure" ? "number" : "text"} placeholder={field.text} suffix={field.unit} />
               </Item>
             </Col>
           ))
@@ -99,9 +99,9 @@ const VisitLivingFunctionForm = props => {
       <Row justify="start" gutter={15}>
         {
           row2.map(field => (
-            <Col flex="0 0 243px">
+            <Col flex="0 0 243px" key={field.name}>
               <Item name={field.name} key={field.name}>
-                <Input placeholder={field.text} suffix={field.unit} />
+                <Input type="number" placeholder={field.text} suffix={field.unit} />
               </Item>
             </Col>
           ))

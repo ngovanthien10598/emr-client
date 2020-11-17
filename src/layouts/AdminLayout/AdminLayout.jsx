@@ -81,7 +81,7 @@ const AdminLayout = () => {
               <Link to="/admin/notification">Thông báo</Link>
             </Menu.Item>
             <Menu.Item key="/admin/visit" icon={<ContainerOutlined />}>
-              <Link to="/admin/visit">Khám chữa bệnh</Link>
+              <Link to="/admin/visit">Khám bệnh</Link>
             </Menu.Item>
             <Menu.Item key="/admin/patient" icon={<IdcardOutlined />}>
               <Link to="/admin/patient">Bệnh nhân</Link>

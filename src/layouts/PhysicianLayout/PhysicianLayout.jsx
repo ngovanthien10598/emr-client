@@ -80,7 +80,7 @@ const PhysicianLayout = () => {
               <Link to="/physician/notification">Thông báo</Link>
             </Menu.Item>
             <Menu.Item key="/physician/visit" icon={<ContainerOutlined />}>
-              <Link to="/physician/visit">Khám chữa bệnh</Link>
+              <Link to="/physician/visit">Khám bệnh</Link>
             </Menu.Item>
             <Menu.Item key="/physician/patient" icon={<IdcardOutlined />}>
               <Link to="/physician/patient">Bệnh nhân</Link>

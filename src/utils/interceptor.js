@@ -18,7 +18,7 @@ export default function setupInterceptor() {
         config.headers['Authorization'] = `Bearer ${token}`;
       }
     } catch (error) {
-      console.log(error);
+      console.log({ error });
     }
     return config;
   }, (error) => Promise.reject(error));
