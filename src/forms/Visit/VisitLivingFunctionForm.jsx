@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Row, Col } from 'antd';
+import { Form, Input, Row, Col, Button } from 'antd';
+import { SaveOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
 
 const VisitLivingFunctionForm = props => {
 
-  const { form, onFinish } = props;
-  const [bmi, setBmi] = useState(0.0);
+  const { form, currentValues} = props;
+  const [bmi, setBmi] = useState(currentValues?.bmi || 0.0);
 
   const row1 = [
     {
@@ -49,8 +50,6 @@ const VisitLivingFunctionForm = props => {
     const weightStr = form.getFieldValue('weight');
     const height = Number(heightStr);
     const weight = Number(weightStr);
-    console.log(height);
-    console.log(weight);
 
     if (!height || !weight || weight <= 0) {
       setBmi(0.00);
@@ -83,13 +82,18 @@ const VisitLivingFunctionForm = props => {
     }
   }
 
+  function onFinish(values) {
+    values.bmi = bmi;
+    props.onFinish(values);
+  }
+
   return (
-    <Form layout="vertical" form={form} onChange={getBMI}>
+    <Form layout="vertical" form={form} onChange={getBMI} onFinish={onFinish}>
       <Row justify="start" gutter={15}>
         {
           row1.map(field => (
             <Col flex="0 0 243px" key={field.name}>
-              <Item name={field.name} key={field.name}>
+              <Item name={field.name} key={field.name} rules={[{ required: true, message: "Vui lòng nhập trường này" }]} initialValue={currentValues[field.name]}>
                 <Input type={field.name !== "pressure" ? "number" : "text"} placeholder={field.text} suffix={field.unit} />
               </Item>
             </Col>
@@ -100,14 +104,19 @@ const VisitLivingFunctionForm = props => {
         {
           row2.map(field => (
             <Col flex="0 0 243px" key={field.name}>
-              <Item name={field.name} key={field.name}>
+              <Item name={field.name} key={field.name} rules={[{ required: true, message: "Vui lòng nhập trường này" }]} initialValue={currentValues[field.name]}>
                 <Input type="number" placeholder={field.text} suffix={field.unit} />
               </Item>
             </Col>
           ))
         }
       </Row>
-      <div><strong>BMI: </strong>{bmi.toFixed(2)} ({getBMIDesc()})</div>
+      <div className="mb-3">
+        <strong>BMI: </strong>{bmi.toFixed(2)} ({getBMIDesc()})
+      </div>
+      <div>
+        <Button icon={<SaveOutlined />} htmlType="submit">Lưu</Button>
+      </div>
     </Form>
   )
 }

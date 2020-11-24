@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Select, Row, Col } from 'antd';
-import { getDrugsAPI } from 'services/user/drug.service';
-import { getDrugsAPI as adminGetDrugsAPI } from 'services/admin/drug.service';
+import { Form, Select, Row, Col, Button } from 'antd';
+import { getDiseasesAPI } from 'services/user/disease.service';
+import { getDiseasesAPI as adminGetDiseasesAPI } from 'services/admin/disease.service';
 import TextArea from 'antd/lib/input/TextArea';
+import { SaveOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
-const { Item } = Form;
+const { Item, List } = Form;
 const { Option } = Select;
 
 const VisitDiseaseForm = props => {
-  const { form, categories, user } = props;
+  const { form, categories, user, currentValues } = props;
   const [localCategories, setLocalCategories] = useState(categories);
-  const [drugData, setDrugData] = useState(null);
-  const [drugLoading, setDrugLoading] = useState(false);
+  const [diseases, setDiseases] = useState(null);
+  const [diseaseLoading, setDiseaseLoading] = useState(false);
 
-  async function getDrugsDataByCategory(category) {
+  async function getDiseasesByCategory(category) {
     try {
-      setDrugLoading(true);
-      setDrugData(null);
-      let drugResponse;
+      setDiseaseLoading(true);
+      setDiseases(null);
+      let diseaseResponse;
       if (user.role === "admin") {
-        drugResponse = await adminGetDrugsAPI({ drug_category: category });
+        diseaseResponse = await adminGetDiseasesAPI(category);
       } else {
-        drugResponse = await getDrugsAPI({ drug_category: category });
+        diseaseResponse = await getDiseasesAPI(category);
       }
-      setDrugData(drugResponse.data);
+      setDiseases(diseaseResponse.data);
     } catch (error) {
       console.log(error);
     } finally {
-      setDrugLoading(false);
+      setDiseaseLoading(false);
     }
   }
 
@@ -49,42 +50,75 @@ const VisitDiseaseForm = props => {
 
   function handleCatChange(value) {
     if (value) {
-      getDrugsDataByCategory(value);
+      getDiseasesByCategory(value);
     }
   }
 
+  function onFinish(values) {
+    props.onFinish(values);
+  }
+
   return (
-    <Form form={form} layout="vertical">
-      <Item label="Triệu chứng">
-        <TextArea rows={2} />
-      </Item>
-      <Row gutter={15}>
-        <Col flex={1}>
-          <Item label="Bệnh">
-            <Select placeholder="Nhóm bệnh" showSearch onSearch={handleCatSearch} onChange={handleCatChange}>
-              {
-                localCategories.map(cat => (
-                  <Option key={cat.id} value={cat.id}>{cat.name}</Option>
-                ))
-              }
-            </Select>
-          </Item>
-        </Col>
-        <Col flex={5}>
-          <Item label=" ">
-            <Select placeholder="Bệnh" loading={drugLoading}>
-              {
-                drugData?.results.map(drug => (
-                  <Option key={drug.id} value={drug.id}>{drug.name}</Option>
-                ))
-              }
-            </Select>
-          </Item>
-        </Col>
-      </Row>
-      <Item label="Ghi chú">
-        <TextArea rows={2} />
-      </Item>
+    <Form form={form} name="dynamic_form" layout="vertical" onFinish={onFinish} initialValues={currentValues}>
+      <List name="emr_diseases">
+        {(fields, { add, remove }) => (
+          <>
+            {
+              fields.map((field, index) => (
+                <Row gutter={15} key={field.key} align="middle" className="mb-5">
+                  <Col>{index + 1}</Col>
+                  <Col flex="0 0 300px">
+                    <Item
+                      {...field}
+                      name={[field.name, 'diseaseCategory']}
+                      fieldKey={[field.fieldKey, 'diseaseCategory']}
+                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}
+                      style={{margin: 0}}>
+                      <Select
+                        showSearch onSearch={handleCatSearch}
+                        placeholder="Nhóm bệnh"
+                        onChange={handleCatChange}>
+                        {
+                          localCategories.map(cat => (
+                            <Option key={cat.id} value={cat.id}>{cat.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    </Item>
+                  </Col>
+                  <Col flex={5}>
+                    <Item
+                      {...field}
+                      name={[field.name, 'disease']}
+                      fieldKey={[field.fieldKey, 'disease']}
+                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}
+                      style={{margin: 0}}>
+                      <Select loading={diseaseLoading} placeholder="Bệnh">
+                        {
+                          diseases?.results.map(disease => (
+                            <Option key={disease.id} value={disease.name}>{disease.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    </Item>
+                  </Col>
+                  <Col>
+                    <MinusCircleOutlined onClick={() => remove(field.name)} />
+                  </Col>
+                </Row>
+              ))
+            }
+            <Item>
+              <Button type="dashed" block onClick={() => add()}>Thêm bệnh</Button>
+            </Item>
+          </>
+        )
+        }
+      </List>
+
+      <div>
+        <Button htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
+      </div>
     </Form>
   )
 }

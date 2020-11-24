@@ -1,36 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, List, Select, Tabs, Empty, Descriptions, Collapse, Form } from 'antd';
+import { Row, Col, List, Select, Tabs, Empty, Descriptions, Collapse, Form, Table, Button } from 'antd';
 import VisitItem from 'components/VistItem/VisitItem';
 import { getRoomAPI } from 'services/user/room.service';
 import { getRoomAPI as adminGetRoomAPI } from 'services/admin/room.service';
 import { getVisitDataAPI } from 'services/user/visit.service';
 import { getVisitDataAPI as adminGetVisitDataAPI } from 'services/admin/visit.service';
-import { getDrugCategoryAPI } from 'services/user/drug-category.service';
-import { getDrugCategoryAPI as adminGetDrugCategoryAPI } from 'services/admin/drug-category.service';
-import moment from 'moment';
-import { connect, useSelector } from 'react-redux';
-import VisitLivingFunctionForm from 'forms/Visit/VisitLivingFunctionForm';
-import VisitDiseaseForm from 'forms/Visit/VisitDiseaseForm';
-import VisitServiceForm from 'forms/Visit/VisitServiceForm';
+import { connect } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+import { removeDuplicates } from 'utils/array';
 
-const { useForm } = Form;
 
 const VisitPage = props => {
   const user = props.user;
+  const { pathname } = useLocation();
 
+  const history = useHistory();
   const [rooms, setRooms] = useState([]);
   const [roomLoading, setRoomLoading] = useState(false);
   const [visitData, setVisitData] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [drugData, setDrugData] = useState(null);
+  const [visitLoading, setVisitLoading] = useState(false);
+
   const [selectedRoom, setSelectedRoom] = useState("");
-
-  const [waiting, setWaiting] = useState([]);
   const [visiting, setVisiting] = useState([]);
-
-  const [livingFuncsForm] = useForm();
-  const [diseasesForm] = useForm();
-  const [serviceForm] = useForm();
 
   const visitList = visitData?.results.filter(visit => {
     const createdAt = new Date(visit.created_at);
@@ -40,6 +31,28 @@ const VisitPage = props => {
       createdAt.getFullYear() === today.getFullYear();
     return (isToday && visit.room.id === selectedRoom)
   });
+
+  const tableColumns = [
+    {
+      title: '#',
+      key: '#',
+      render: (_, __, index) => index + 1
+    },
+    {
+      title: 'Họ và tên',
+      key: 'fullname',
+      render: (_, record) => record.patient.first_name + " " + record.patient.last_name
+    },
+    {
+      title: 'Giới tính',
+      key: 'gender',
+      render: (_, record) => record.patient.gender
+    },
+    {
+      ken: 'action',
+      render: (_, record) => <Button onClick={() => handlePatientClick(record)}>Khám bệnh</Button>
+    }
+  ]
 
   async function getRooms() {
     try {
@@ -66,6 +79,7 @@ const VisitPage = props => {
   async function getVisitData() {
     try {
       let visitDataResponse;
+      setVisitLoading(true);
       if (user.role.name === "admin") {
         visitDataResponse = await adminGetVisitDataAPI();
       } else {
@@ -75,21 +89,8 @@ const VisitPage = props => {
       setVisitData(visitData);
     } catch (error) {
       console.log(error);
-    }
-  }
-
-  async function getDrugCategories() {
-    try {
-      let drugCategoriesResponse;
-      if (user.role.name === "admin") {
-        drugCategoriesResponse = await adminGetDrugCategoryAPI();
-      } else {
-        drugCategoriesResponse = await getDrugCategoryAPI()
-      }
-      const drugCategoriesData = drugCategoriesResponse.data;
-      setCategories(drugCategoriesData);
-    } catch (error) {
-      console.log(error);
+    } finally {
+      setVisitLoading(false);
     }
   }
 
@@ -97,7 +98,6 @@ const VisitPage = props => {
     await Promise.all([
       getVisitData(),
       getRooms(),
-      getDrugCategories()
     ]);
   }
 
@@ -142,29 +142,32 @@ const VisitPage = props => {
           avatar: user.avatar
         },
         room: visit.room.name,
+        livingFunctions: {
+          heartBeat: null,
+          temperature: null,
+          bloodPressure: null,
+          breathing: null,
+          height: null,
+          weight: null,
+          bmi: null
+        },
         emr_diseases: [],
         emr_services: [],
         emr_drugs: [],
         images: [],
         created_at: visit.created_at,
         symptom: "",
-
       }
       const newArr = [...prev, ...[emrObj]];
       const unique = removeDuplicates(newArr, "id");
       localStorage.setItem("visiting", JSON.stringify(unique));
       return unique;
     });
+    history.push(`${pathname}/examination?visit-id=${visit.id}`);
   }
 
   function handleChangeRoom(value) {
     setSelectedRoom(value);
-  }
-
-  function removeDuplicates(myArr, prop) {
-    return myArr.filter((obj, pos, arr) => {
-      return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
-    });
   }
 
   return (
@@ -181,68 +184,19 @@ const VisitPage = props => {
               }
             </Select>
           </div>
-          <div className="bg-white p-3 pb-0 rounded">
-            <h2 className="text-sm mb-0">Bệnh nhân đang chờ khám</h2>
-            {
-              !selectedRoom ?
-                <Empty description="Vui lòng chọn phòng" />
-                :
-                visitList?.length > 0 ?
-                  <List split={false} size="small">
-                    {
-                      visitList.map(visit => (
-                        <VisitItem
-                          key={visit.id}
-                          onPatientClick={handlePatientClick}
-                          visit={visit} />
-                      ))
-                    }
-                  </List>
-                  : <Empty description="Không có dữ liệu" />
-            }
 
-          </div>
 
         </Col>
-        <Col className="ml-3 flex-grow-1" style={{ maxWidth: 'calc(100% - 350px - 12px)' }}>
-          <h2 className="text-sm">Khám bệnh</h2>
-          <Tabs type="card">
-            {
-              visiting.map(v => (
-                <Tabs.TabPane key={v.id} tab={`${v.patient.first_name} ${v.patient.last_name}`}>
-                  <Descriptions title="Thông tin bệnh nhân">
-                    <Descriptions.Item span={1} label="Họ và tên">
-                      {v.patient.first_name} {v.patient.last_name} ({v.patient.gender})
-                    </Descriptions.Item>
-                    <Descriptions.Item span={1} label="Ngày sinh">
-                      {v.patient.DOB}
-                    </Descriptions.Item>
-                  </Descriptions>
-                  <Descriptions title={`Thông tin khám bệnh (Phòng khám: ${v.room})`}>
-                    <Descriptions.Item span={1} label="Ngày vào khám">{moment(v.created_at).format("DD/MM/YYYY HH:mm:ss")}</Descriptions.Item>
-                    <Descriptions.Item span={1} label="Bác sĩ khám bệnh">
-                      {v.physician.first_name} {v.physician.last_name}
-                    </Descriptions.Item>
-                  </Descriptions>
-
-                  <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs"]}>
-                    <Collapse.Panel header="Chức năng sống" key="living-function">
-                      <VisitLivingFunctionForm form={livingFuncsForm} />
-                    </Collapse.Panel>
-
-                    <Collapse.Panel header="Bệnh" key="diseases">
-                      <VisitDiseaseForm form={diseasesForm} categories={categories} user={user} />
-                    </Collapse.Panel>
-                    <Collapse.Panel header="Chỉ định dịch vụ" key="services">
-                      <VisitServiceForm form={serviceForm} user={user} />
-                    </Collapse.Panel>
-                    <Collapse.Panel header="Kê đơn thuốc" key="drugs"></Collapse.Panel>
-                  </Collapse>
-                </Tabs.TabPane>
-              ))
-            }
-
-          </Tabs>
+        <Col className="ml-3" flex={1}>
+          <h2 className="text-sm">Bệnh nhân đang chờ khám</h2>
+          {
+            !selectedRoom ?
+              <Empty description="Vui lòng chọn phòng" />
+              :
+              visitList?.length > 0 ?
+                <Table dataSource={visitList} columns={tableColumns} rowKey="id" loading={visitLoading} />
+                : <Empty description="Không có dữ liệu" />
+          }
         </Col>
       </Row>
     </>

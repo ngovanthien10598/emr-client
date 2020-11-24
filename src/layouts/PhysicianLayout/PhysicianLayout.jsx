@@ -31,6 +31,7 @@ import AdminAccountPage from 'pages/admin/account';
 import AdminSettingPage from 'pages/admin/setting';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
+import ExaminationPage from 'pages/common/examination/examination';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -147,8 +148,12 @@ const PhysicianLayout = () => {
               </Route>
 
               {/* Visit */}
-              <Route path={`${path}/visit`}>
+              <Route path={`${path}/visit`} exact>
                 <VisitPage />
+              </Route>
+
+              <Route path={`${path}/visit/examination`}>
+                <ExaminationPage />
               </Route>
 
               {/* Patient */}
