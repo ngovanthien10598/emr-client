@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, Descriptions, Collapse, Form, PageHeader, message } from 'antd';
+import { Tabs, Descriptions, Collapse, PageHeader, message, Divider, Button, Row, Col, Space } from 'antd';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import VisitLivingFunctionForm from 'forms/Visit/VisitLivingFunctionForm';
@@ -17,8 +17,6 @@ import { getDrugInstructionsAPI as adminGetDrugInstructionsAPI } from 'services/
 import { useHistory } from 'react-router-dom';
 import { removeDuplicates } from 'utils/array';
 
-const { useForm } = Form;
-
 const ExaminationPage = props => {
 
   const user = props.user;
@@ -30,13 +28,6 @@ const ExaminationPage = props => {
   const [drugInstructions, setDrugInstructions] = useState([]);
 
   const [visiting, setVisiting] = useState([]);
-
-  const [livingFuncsForm] = useForm();
-  const [diseasesForm] = useForm();
-  const [serviceForm] = useForm();
-  const [drugForm] = useForm();
-
-  
 
   async function getDiseaseCategories() {
     try {
@@ -121,26 +112,55 @@ const ExaminationPage = props => {
 
   function handleSaveLivingFunctions(visitId, values) {
     setVisiting(prevValue => {
-       const visit = prevValue.find(v => v.id === visitId);
-       visit.livingFunctions = values;
-       const newState = [...prevValue,...[visit]];
-       const finalList = removeDuplicates(newState, "id");
-       localStorage.setItem("visiting", JSON.stringify(finalList));
-       message.success({ content: "Lưu thành công" });
-       return finalList;
+      const visit = prevValue.find(v => v.id === visitId);
+      visit.livingFunctions = values;
+      const newState = [...prevValue, ...[visit]];
+      const finalList = removeDuplicates(newState, "id");
+      localStorage.setItem("visiting", JSON.stringify(finalList));
+      message.success({ content: "Lưu thành công" });
+      return finalList;
     })
   }
 
   function handleSaveDiseases(visitId, values) {
     setVisiting(prevValue => {
       const visit = prevValue.find(v => v.id === visitId);
-      visit.emr_diseases = values;
-      const newState = [...prevValue,...[visit]];
+      visit.emr_diseases = values.emr_diseases;
+      const newState = [...prevValue, ...[visit]];
       const finalList = removeDuplicates(newState, "id");
       localStorage.setItem("visiting", JSON.stringify(finalList));
       message.success({ content: "Lưu thành công" });
       return finalList;
-   })
+    })
+  }
+
+  function handleSaveServices(visitId, values) {
+    setVisiting(prevValue => {
+      const visit = prevValue.find(v => v.id === visitId);
+      visit.emr_services = values.emr_services;
+      const newState = [...prevValue, ...[visit]];
+      const finalList = removeDuplicates(newState, "id");
+      localStorage.setItem("visiting", JSON.stringify(finalList));
+      message.success({ content: "Lưu thành công" });
+      return finalList;
+    })
+  }
+
+  function handleSaveDrugs(visitId, values) {
+    setVisiting(prevValue => {
+      const visit = prevValue.find(v => v.id === visitId);
+      visit.emr_drugs = values.emr_drugs;
+      const newState = [...prevValue, ...[visit]];
+      const finalList = removeDuplicates(newState, "id");
+      localStorage.setItem("visiting", JSON.stringify(finalList));
+      message.success({ content: "Lưu thành công" });
+      return finalList;
+    })
+  }
+
+  function handleFinishExamination(visitId) {
+    const visit = visiting.find(v => v.id === visitId);
+    console.log(visit);
   }
 
   return (
@@ -158,6 +178,7 @@ const ExaminationPage = props => {
                   {v.patient.DOB}
                 </Descriptions.Item>
               </Descriptions>
+
               <Descriptions title={`Thông tin khám bệnh (Phòng khám: ${v.room})`}>
                 <Descriptions.Item span={1} label="Ngày vào khám">{moment(v.created_at).format("DD/MM/YYYY HH:mm:ss")}</Descriptions.Item>
                 <Descriptions.Item span={1} label="Bác sĩ khám bệnh">
@@ -168,26 +189,41 @@ const ExaminationPage = props => {
               <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs"]}>
                 <Collapse.Panel header="Chức năng sống" key="living-function">
                   <VisitLivingFunctionForm
-                    form={livingFuncsForm}
                     onFinish={(values) => handleSaveLivingFunctions(v.id, values)}
                     currentValues={v.livingFunctions} />
                 </Collapse.Panel>
 
                 <Collapse.Panel header="Bệnh" key="diseases">
                   <VisitDiseaseForm
-                    form={diseasesForm}
                     categories={diseaseCategories}
                     user={user}
                     onFinish={(values) => handleSaveDiseases(v.id, values)}
-                    currentValues={v.emr_diseases} />
+                    currentValues={v} />
                 </Collapse.Panel>
                 <Collapse.Panel header="Chỉ định dịch vụ" key="services">
-                  <VisitServiceForm form={serviceForm} user={user} services={services} />
+                  <VisitServiceForm
+                    user={user}
+                    services={services}
+                    onFinish={(values) => handleSaveServices(v.id, values)}
+                    currentValues={v} />
                 </Collapse.Panel>
                 <Collapse.Panel header="Kê đơn thuốc" key="drugs">
-                  <VisitDrugForm form={drugForm} user={user} categories={drugCategories} instructions={drugInstructions} />
+                  <VisitDrugForm
+                    user={user}
+                    categories={drugCategories}
+                    instructions={drugInstructions}
+                    onFinish={(values) => handleSaveDrugs(v.id, values)}
+                    currentValues={v} />
                 </Collapse.Panel>
               </Collapse>
+
+              <Divider />
+              <div className="text-right">
+                <Space>
+                  <Button danger size="large">Hủy đơn</Button>
+                  <Button type="primary" size="large" onClick={() => handleFinishExamination(v.id)}>Kết thúc khám</Button>
+                </Space>
+              </div>
             </Tabs.TabPane>
           ))
         }

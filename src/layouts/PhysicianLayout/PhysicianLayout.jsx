@@ -8,7 +8,6 @@ import {
   BugOutlined,
   DollarOutlined,
   IdcardOutlined,
-  ClockCircleOutlined,
   AppstoreOutlined,
   CalendarOutlined,
   ContainerOutlined,
@@ -51,31 +50,6 @@ const PhysicianLayout = () => {
             style={{ height: '100%', borderRight: 0 }}
             selectedKeys={[location.pathname]}
           >
-            <Menu.Item key="/physician/dashboard" icon={<DashboardOutlined />}>
-              <Link to="/physician/dashboard">Bảng điều khiển</Link>
-            </Menu.Item>
-            <SubMenu key="drug" icon={<MedicineBoxOutlined />} title="Quản lý thuốc">
-              <Menu.Item key="/physician/drug/category">
-                <Link to="/physician/drug/category">Loại thuốc</Link>
-              </Menu.Item>
-              <Menu.Item key="/physician/drug/unit">
-                <Link to="/physician/drug/unit">Đơn vị tính</Link>
-              </Menu.Item>
-              <Menu.Item key="/physician/drug">
-                <Link to="/physician/drug">Thuốc</Link>
-              </Menu.Item>
-              <Menu.Item key="/physician/drug/instruction">
-                <Link to="/physician/drug/instruction">Hướng dẫn sử dụng</Link>
-              </Menu.Item>
-            </SubMenu>
-            <SubMenu key="disease" icon={<BugOutlined />} title="Quản lý bệnh">
-              <Menu.Item key="/physician/disease/category">
-                <Link to="/physician/disease/category">Loại bệnh</Link>
-              </Menu.Item>
-              <Menu.Item key="/physician/disease">
-                <Link to="/physician/disease">Bệnh</Link>
-              </Menu.Item>
-            </SubMenu>
 
             <Menu.Item key="/physician/notification" icon={<NotificationOutlined />}>
               <Link to="/physician/notification">Thông báo</Link>
@@ -88,17 +62,6 @@ const PhysicianLayout = () => {
             </Menu.Item>
             <Menu.Item key="/physician/appointment" icon={<CalendarOutlined />}>
               <Link to="/physician/appointment">Lịch hẹn</Link>
-            </Menu.Item>
-            <Menu.Item key="/physician/service" icon={<DollarOutlined />}>
-              <Link to="/physician/service">Dịch vụ</Link>
-            </Menu.Item>
-
-            <Menu.Item key="/physician/room" icon={<AppstoreOutlined />}>
-              <Link to="/physician/room">Phòng</Link>
-            </Menu.Item>
-
-            <Menu.Item key="/physician/account" icon={<UserOutlined />}>
-              <Link to="/physician/account">Tài khoản</Link>
             </Menu.Item>
             <Menu.Item key="/physician/setting" icon={<SettingOutlined />}>
               <Link to="/physician/setting">Cài đặt</Link>

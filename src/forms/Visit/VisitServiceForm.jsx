@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Form, Row, Col, Select, Button } from 'antd';
-import { getServicesAPI } from 'services/user/medical-service.service';
-import { getServicesAPI as adminGetServicesAPI } from 'services/admin/medical-service.service';
 import NumberFormat from 'react-number-format';
 import { SaveOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
@@ -10,11 +8,10 @@ const { Option } = Select;
 
 const VisitServiceForm = props => {
 
-  const { form, user, services, currentValues } = props;
-
+  const { services, currentValues } = props;
 
   return (
-    <Form onFinish={props.onFinish}>
+    <Form onFinish={props.onFinish} initialValues={currentValues}>
       <List name="emr_services">
         {
           (fields, { add, remove }) => (
@@ -24,11 +21,11 @@ const VisitServiceForm = props => {
                   <Row gutter={15} key={field.key} align="middle" className="mb-5">
                     <Col>{index + 1}</Col>
                     <Col flex={1}>
-                      <Item {...field} name={[field.name, 'service']} fieldKey={[field.fieldKey, 'service']} style={{margin: 0}}>
+                      <Item {...field} name={[field.name, 'service']} fieldKey={[field.fieldKey, 'service']} style={{margin: 0}} rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
                         <Select placeholder="Chọn dịch vụ">
                           {
                             services.map(service => (
-                              <Option value={service.id} key={service.id}>
+                              <Option value={service.name} key={service.id}>
                                 {service.name} (<NumberFormat displayType="text" thousandSeparator=" " value={service.price} suffix=" VNĐ" />)
                               </Option>
                             ))
@@ -51,7 +48,7 @@ const VisitServiceForm = props => {
       </List>
 
       <div>
-        <Button icon={<SaveOutlined />}>Lưu</Button>
+        <Button htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
       </div>
     </Form>
   )

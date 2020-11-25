@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, List, Select, Tabs, Empty, Descriptions, Collapse, Form, Table, Button } from 'antd';
-import VisitItem from 'components/VistItem/VisitItem';
+import { Row, Col, Select, Empty, Table, Button } from 'antd';
 import { getRoomAPI } from 'services/user/room.service';
 import { getRoomAPI as adminGetRoomAPI } from 'services/admin/room.service';
 import { getVisitDataAPI } from 'services/user/visit.service';
@@ -142,19 +141,11 @@ const VisitPage = props => {
           avatar: user.avatar
         },
         room: visit.room.name,
-        livingFunctions: {
-          heartBeat: null,
-          temperature: null,
-          bloodPressure: null,
-          breathing: null,
-          height: null,
-          weight: null,
-          bmi: null
-        },
-        emr_diseases: [],
-        emr_services: [],
-        emr_drugs: [],
-        images: [],
+        livingFunctions: null,
+        emr_diseases: null,
+        emr_services: null,
+        emr_drugs: null,
+        images: null,
         created_at: visit.created_at,
         symptom: "",
       }

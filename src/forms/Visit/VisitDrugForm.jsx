@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Row, Col } from 'antd';
+import { Form, Input, Select, Row, Col, Button } from 'antd';
 import { getDrugsAPI as adminGetDrugsAPI } from 'services/admin/drug.service';
 import { getDrugsAPI } from 'services/user/drug.service';
+import { useForm } from 'antd/lib/form/Form';
+import { PlusOutlined, MinusCircleOutlined, SaveOutlined } from '@ant-design/icons';
 
-const { Item } = Form;
+const { Item, List } = Form;
 const { Option } = Select;
 
 const VisitDrugForm = props => {
-  const { form, user, categories, instructions } = props;
+  const { user, categories, instructions, currentValues } = props;
 
   const [drugs, setDrugs] = useState([]);
   const [drugLoading, setDrugLoading] = useState(false);
@@ -34,70 +36,121 @@ const VisitDrugForm = props => {
   }
 
   return (
-    <Form layout="vertical">
-      <Row gutter={5}>
-        <Col flex="0 0 220px">
-          <Item label="Nhóm thuốc">
-            <Select onChange={handleCategoryChange}>
-              {
-                categories.map(cat => (
-                  <Option key={cat.id} value={cat.id}>{cat.name}</Option>
-                ))
-              }
-            </Select>
-          </Item>
-        </Col>
-        <Col flex="0 0 220px">
-          <Item label="Thuốc">
-            <Select loading={drugLoading}>
-              {
-                drugs.map(drug => (
-                  <Option key={drug.id} value={drug.id}>{drug.code}. {drug.name}</Option>
-                ))
-              }
-            </Select>
-          </Item>
-        </Col>
-        <Col flex="0 0 120px">
-          <Item label="Cách dùng" style={{ minWidth: 200 }}>
-            <Select>
-              {
-                instructions.map(ins => (
-                  <Option key={ins.id} value={ins.id}>{ins.instruction}</Option>
-                ))
-              }
-            </Select>
-          </Item>
-        </Col>
-      {/* </Row> */}
-      {/* <Row gutter={15}> */}
-      <Col flex="0 0 100px">
-        <Item label="Số ngày">
-          <Input type="number" />
-        </Item>
-      </Col>
-      <Col flex="0 0 80px">
-        <Item label="Sáng">
-          <Input type="number" />
-        </Item>
-      </Col>
-      <Col flex="0 0 80px">
-        <Item label="Trưa">
-          <Input type="number" />
-        </Item>
-      </Col>
-      <Col flex="0 0 80px">
-        <Item label="Chiều">
-          <Input type="number" />
-        </Item>
-      </Col>
-      <Col flex="0 0 80px">
-        <Item label="Tối">
-          <Input type="number" />
-        </Item>
-      </Col>
-      </Row>
+    <Form layout="vertical" onFinish={props.onFinish} initialValues={currentValues}>
+      <List name="emr_drugs">
+        {(fields, { add, remove }) => (
+          <>
+            {
+              fields.map((field, index) => (
+                <Row gutter={15} key={field.key} align="middle">
+                  <Col>{index + 1}</Col>
+                  <Col flex="0 0 220px">
+                    <Item
+                      {...field}
+                      label="Nhóm thuốc"
+                      name={[field.name, 'drugCategory']}
+                      fieldKey={[field.fieldKey, 'drugCategory']}
+                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
+                      <Select onChange={handleCategoryChange}>
+                        {
+                          categories.map(cat => (
+                            <Option key={cat.id} value={cat.id}>{cat.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    </Item>
+                  </Col>
+                  <Col flex="1 0 220px">
+                    <Item
+                      {...field}
+                      label="Thuốc"
+                      name={[field.name, 'drug']}
+                      fieldKey={[field.fieldKey, 'drug']}
+                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
+                      <Select loading={drugLoading}>
+                        {
+                          drugs.map(drug => (
+                            <Option key={drug.id} value={drug.name}>{drug.code}. {drug.name}</Option>
+                          ))
+                        }
+                      </Select>
+                    </Item>
+                  </Col>
+                  <Col flex="0 0 120px">
+                    <Item
+                      {...field}
+                      name={[field.name, 'drugInstruction']}
+                      fieldKey={[field.fieldKey, 'drugInstruction']}
+                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}
+                      label="Cách dùng"
+                      style={{ minWidth: 200 }}>
+                      <Select>
+                        {
+                          instructions.map(ins => (
+                            <Option key={ins.id} value={ins.instruction}>{ins.instruction}</Option>
+                          ))
+                        }
+                      </Select>
+                    </Item>
+                  </Col>
+                  {/* </Row> */}
+                  {/* <Row gutter={15}> */}
+                  <Col flex="0 0 80px">
+                    <Item
+                      {...field}
+                      name={[field.name, 'numberOfDays']}
+                      fieldKey={[field.fieldKey, 'numberOfDays']}
+                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}
+                      label="Số ngày">
+                      <Input type="number" />
+                    </Item>
+                  </Col>
+                  <Col flex="0 0 80px">
+                    <Item label="Sáng" name={[field.name, 'morning']}>
+                      <Input type="number" />
+                    </Item>
+                  </Col>
+                  <Col flex="0 0 80px">
+                    <Item label="Trưa" name={[field.name, 'afternoon']}>
+                      <Input type="number" />
+                    </Item>
+                  </Col>
+                  <Col flex="0 0 80px">
+                    <Item label="Chiều" name={[field.name, 'evening']}>
+                      <Input type="number" />
+                    </Item>
+                  </Col>
+                  <Col flex="0 0 80px">
+                    <Item label="Tối" name={[field.name, 'night']}>
+                      <Input type="number" />
+                    </Item>
+                  </Col>
+                  <Col flex="0 0 80px">
+                    <Item
+                      {...field}
+                      label="Số lượng"
+                      name={[field.name, 'total']}
+                      fieldKey={[field.fieldKey, 'total']}>
+                      <Input type="number" />
+                    </Item>
+                  </Col>
+                  <Col>
+                    <MinusCircleOutlined onClick={() => remove(field.name)} />
+                  </Col>
+                </Row>
+              ))
 
+            }
+            <Item>
+              <Button type="dashed" block onClick={() => add()} icon={<PlusOutlined />}>Thêm đơn thuốc</Button>
+            </Item>
+          </>
+        )}
+      </List>
+
+      <div>
+        <Button htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
+      </div>
     </Form>
   )
 }

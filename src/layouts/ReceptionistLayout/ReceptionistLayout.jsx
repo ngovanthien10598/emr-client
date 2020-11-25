@@ -13,7 +13,6 @@ import ReceivePage from 'pages/receptionist/receive';
 import ProfilePage from 'pages/common/profile/profile';
 
 const { Sider, Content } = Layout;
-const { SubMenu } = Menu;
 
 const ReceptionistLayout = () => {
   const match = useRouteMatch();

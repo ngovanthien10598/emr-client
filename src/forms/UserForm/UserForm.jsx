@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Space, Spin, Row, Col, DatePicker, Radio } from 'antd';
+import { Form, Input, Select, Spin, Row, Col, DatePicker, Radio } from 'antd';
 import { getUserDetailsAPI } from 'services/admin/user.service';
 import { ROLES, ROLES_LIST } from 'constant/roles';
 import moment from 'moment';

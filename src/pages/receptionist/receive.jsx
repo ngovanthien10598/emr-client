@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Input, Table, Form, PageHeader, Button, Modal, Menu, Dropdown } from 'antd';
+import { Input, Table, Form, PageHeader, Button, Modal, Menu, Dropdown } from 'antd';
 import { listAllPatientsAPI } from 'services/user/patient.service';
 import { PlusOutlined } from '@ant-design/icons';
 import PatientForm from 'forms/PatientForm/PatientForm';

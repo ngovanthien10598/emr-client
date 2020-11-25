@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Form, Select, Row, Col, Button } from 'antd';
 import { getDiseasesAPI } from 'services/user/disease.service';
 import { getDiseasesAPI as adminGetDiseasesAPI } from 'services/admin/disease.service';
-import TextArea from 'antd/lib/input/TextArea';
 import { SaveOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
 const { Item, List } = Form;
