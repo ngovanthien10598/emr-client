@@ -5,10 +5,12 @@ import { API_URL } from 'constant/apiUrl';
 import Cookie from 'js-cookie';
 import { getBase64 } from 'utils/image';
 
+// APIs
+import { removeImageAPI } from 'services/user/emr.service';
+
 const VisitImagesForm = props => {
 
   const { emrId, fileList } = props;
-  console.log(fileList);
 
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
@@ -41,6 +43,14 @@ const VisitImagesForm = props => {
     setPreviewVisible(false);
   }
 
+  async function handleRemove(file) {
+    try {
+      await removeImageAPI(emrId, file.id);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <>
       <Upload
@@ -50,7 +60,8 @@ const VisitImagesForm = props => {
         action={`${API_URL}/user/emr/${emrId}/image/`}
         name="image"
         headers={{ Authorization: `Bearer ${token}` }}
-        onPreview={handlePreview}>
+        onPreview={handlePreview}
+        onRemove={handleRemove}>
         {uploadButton}
       </Upload>
       <Modal

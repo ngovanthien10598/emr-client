@@ -20,3 +20,8 @@ export function addEMRAPI(patientId, physicianId) {
     physician_id: physicianId
   })
 }
+
+export function removeImageAPI(emrId, emrImageId) {
+  const url = `${endpointPrefix}/${emrId}/image/${emrImageId}/`;
+  return axios.delete(url);
+}

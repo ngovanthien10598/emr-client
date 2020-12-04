@@ -177,6 +177,17 @@ const ExaminationPage = props => {
       setListEMR(prev => {
         return finalList;
       });
+    } else if (file && file.status === "removed") {
+      const emr = listEMR.find(v => v.id === visitId);
+      const newEmr = {...emr};
+      const imageIndex = newEmr.images.findIndex(img => img.id === file.id);
+      newEmr.images.splice(imageIndex, 1);
+      const newState = [...listEMR, ...[newEmr]]
+      const finalList = removeDuplicates(newState, "id");
+      localStorage.setItem("listEMR", JSON.stringify(finalList));
+      setListEMR(prev => {
+        return finalList;
+      });
     }
   }
 
