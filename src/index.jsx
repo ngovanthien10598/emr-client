@@ -5,10 +5,14 @@ import App from './App';
 import store from 'store/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+import { ConfigProvider } from 'antd';
+import viVN from 'antd/lib/locale/vi_VN';
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <ConfigProvider locale={viVN}>
+      <App />
+    </ConfigProvider>
   </Provider>,
   document.getElementById('root')
 );

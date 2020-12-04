@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Form, Input, Row, Col, Button } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 
-const { Item } = Form;
+const { Item, useForm } = Form;
 
 const VisitLivingFunctionForm = props => {
 
-  const { form, currentValues} = props;
+  const { currentValues} = props;
   const [bmi, setBmi] = useState(currentValues?.bmi || 0.0);
 
+  const [form] = useForm();
   const row1 = [
     {
       name: "heartbeat",

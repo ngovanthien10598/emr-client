@@ -12,6 +12,7 @@ import {
   CalendarOutlined,
   ContainerOutlined,
   SettingOutlined,
+  ProfileOutlined,
   NotificationOutlined} from '@ant-design/icons';
 import AdminDashboard from 'pages/admin/dashboard';
 import DrugCategoryPage from 'pages/common/drug/drug-category';
@@ -31,6 +32,8 @@ import AdminSettingPage from 'pages/admin/setting';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 import ExaminationPage from 'pages/common/examination/examination';
+import ProfilePage from 'pages/common/profile/profile';
+import PatientDetails from 'pages/common/patient/patient-details';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -63,8 +66,8 @@ const PhysicianLayout = () => {
             <Menu.Item key="/physician/appointment" icon={<CalendarOutlined />}>
               <Link to="/physician/appointment">Lịch hẹn</Link>
             </Menu.Item>
-            <Menu.Item key="/physician/setting" icon={<SettingOutlined />}>
-              <Link to="/physician/setting">Cài đặt</Link>
+            <Menu.Item key="/physician/profile" icon={<ProfileOutlined />}>
+              <Link to="/physician/profile">Hồ sơ</Link>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -78,32 +81,6 @@ const PhysicianLayout = () => {
             }}
           >
             <Switch>
-              {/* Dashboard */}
-              <Route path={`${path}/dashboard`}>
-                <AdminDashboard />
-              </Route>
-
-              {/* Drug */}
-              <Route path={`${path}/drug/category`}>
-                <DrugCategoryPage />
-              </Route>
-              <Route path={`${path}/drug/unit`}>
-                <DrugUnitPage />
-              </Route>
-              <Route path={`${path}/drug`} exact>
-                <DrugPage />
-              </Route>
-              <Route path={`${path}/drug/instruction`}>
-                <DrugInstructionPage />
-              </Route>
-
-              {/* Disease */}
-              <Route path={`${path}/disease/category`}>
-                <DiseaseCategory />
-              </Route>
-              <Route path={`${path}/disease`}>
-                <DiseasePage />
-              </Route>
 
               {/* Notification */}
               <Route path={`${path}/notification`}>
@@ -120,8 +97,12 @@ const PhysicianLayout = () => {
               </Route>
 
               {/* Patient */}
-              <Route path={`${path}/patient`}>
+              <Route path={`${path}/patient`} exact>
                 <PatientPage />
+              </Route>
+              
+              <Route path={`${path}/patient/:patientId`}>
+                <PatientDetails />
               </Route>
 
               {/* Appointment */}
@@ -129,28 +110,12 @@ const PhysicianLayout = () => {
                 <AppointmentPage />
               </Route>
 
-              {/* Service */}
-              <Route path={`${path}/service`}>
-                <ServicePage />
-              </Route>
-
-              {/* Room */}
-              <Route path={`${path}/room`}>
-                <RoomPage />
-              </Route>
-
-              {/* Account */}
-              <Route path={`${path}/account`}>
-                <AdminAccountPage />
-              </Route>
-
-              {/* Room */}
-              <Route path={`${path}/setting`}>
-                <AdminSettingPage />
+              <Route path={`${path}/profile`}>
+                <ProfilePage />
               </Route>
 
               {/* Fallback */}
-              <Redirect to={`/physician/dashboard`} />
+              <Redirect to={`/physician/notification`} />
             </Switch>
           </Content>
         </Layout>

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Select, Empty, Table, Button } from 'antd';
+import { connect } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+import { removeDuplicates } from 'utils/array';
+
+// APIs
 import { getRoomAPI } from 'services/user/room.service';
 import { getRoomAPI as adminGetRoomAPI } from 'services/admin/room.service';
 import { getVisitDataAPI } from 'services/user/visit.service';
 import { getVisitDataAPI as adminGetVisitDataAPI } from 'services/admin/visit.service';
-import { connect } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
-import { removeDuplicates } from 'utils/array';
+import { addEMRAPI } from 'services/user/emr.service';
 
 
 const VisitPage = props => {
@@ -18,9 +21,10 @@ const VisitPage = props => {
   const [roomLoading, setRoomLoading] = useState(false);
   const [visitData, setVisitData] = useState(null);
   const [visitLoading, setVisitLoading] = useState(false);
+  const [createEMRLoading, setCreateEMRLoading] = useState([]);
 
   const [selectedRoom, setSelectedRoom] = useState("");
-  const [visiting, setVisiting] = useState([]);
+  const [listEMR, setListEMR] = useState([]);
 
   const visitList = visitData?.results.filter(visit => {
     const createdAt = new Date(visit.created_at);
@@ -49,7 +53,7 @@ const VisitPage = props => {
     },
     {
       ken: 'action',
-      render: (_, record) => <Button onClick={() => handlePatientClick(record)}>Khám bệnh</Button>
+      render: (_, record) => <Button onClick={() => handlePatientClick(record)} loading={createEMRLoading.includes(record.id)}>Khám bệnh</Button>
     }
   ]
 
@@ -59,9 +63,7 @@ const VisitPage = props => {
       let roomResponse;
       if (user.role.name === "admin") {
         roomResponse = await adminGetRoomAPI();
-        console.log("admin");
       } else if (user.role.name === "physician" || user?.role?.name === "receptionist") {
-        console.log("user");
         roomResponse = await getRoomAPI();
       }
       setRooms(roomResponse.data);
@@ -105,10 +107,10 @@ const VisitPage = props => {
       getInitialData();
     }
 
-    const localVisitingStr = localStorage.getItem("visiting");
-    const localVisitingObj = JSON.parse(localVisitingStr);
-    if (localVisitingObj) {
-      setVisiting(localVisitingObj);
+    const localListEMRStr = localStorage.getItem("listEMR");
+    const localListEMRObj = JSON.parse(localListEMRStr);
+    if (localListEMRObj) {
+      setListEMR(localListEMRObj);
     }
   }, [user]);
 
@@ -116,11 +118,33 @@ const VisitPage = props => {
     if (selectedRoom) {
       localStorage.setItem("selectedRoom", selectedRoom);
     }
-  }, [selectedRoom, visiting])
+  }, [selectedRoom, listEMR])
+
+  async function createEmr(patientId, physicianId, visit) {
+    try {
+      setCreateEMRLoading(prev => [...prev, ...[visit.id]]);
+      const addEMRResponse = await addEMRAPI(patientId, physicianId);
+      console.log(addEMRResponse.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setCreateEMRLoading(prev => {
+        const cloneArr = [...prev];
+        cloneArr.splice(cloneArr.indexOf(visit.id), 1);
+        return cloneArr
+      });
+    }
+  }
 
   function handlePatientClick(visit) {
-    setVisiting(prev => {
-      const patient = visit.patient;
+    const { patient } = visit;
+
+    
+    // Create an empty EMR
+    // createEmr(patient.id, user.id, visit);
+
+    // return;
+    setListEMR(prev => {
       const emrObj = {
         id: visit.id,
         patient: {
@@ -141,17 +165,25 @@ const VisitPage = props => {
           avatar: user.avatar
         },
         room: visit.room.name,
-        livingFunctions: null,
+        livingFunctions: {
+          heartbeat: null,
+          temp: null,
+          pressure: null,
+          breathing: null,
+          height: null,
+          weight: null,
+          bmi: null
+        },
         emr_diseases: null,
         emr_services: null,
         emr_drugs: null,
-        images: null,
+        images: [],
         created_at: visit.created_at,
         symptom: "",
       }
       const newArr = [...prev, ...[emrObj]];
       const unique = removeDuplicates(newArr, "id");
-      localStorage.setItem("visiting", JSON.stringify(unique));
+      localStorage.setItem("listEMR", JSON.stringify(unique));
       return unique;
     });
     history.push(`${pathname}/examination?visit-id=${visit.id}`);

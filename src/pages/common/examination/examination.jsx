@@ -16,6 +16,7 @@ import { getDrugCategoryAPI as adminGetDrugCategoryAPI } from 'services/admin/dr
 import { getDrugInstructionsAPI as adminGetDrugInstructionsAPI } from 'services/admin/drug-instruction.service';
 import { useHistory } from 'react-router-dom';
 import { removeDuplicates } from 'utils/array';
+import VisitImagesForm from 'forms/Visit/VisitImagesForm';
 
 const ExaminationPage = props => {
 
@@ -27,7 +28,7 @@ const ExaminationPage = props => {
   const [drugCategories, setDrugCategories] = useState([]);
   const [drugInstructions, setDrugInstructions] = useState([]);
 
-  const [visiting, setVisiting] = useState([]);
+  const [listEMR, setListEMR] = useState([]);
 
   async function getDiseaseCategories() {
     try {
@@ -103,64 +104,80 @@ const ExaminationPage = props => {
       getInitialData();
     }
 
-    const localVisitingStr = localStorage.getItem("visiting");
-    const localVisitingObj = JSON.parse(localVisitingStr);
-    if (localVisitingObj) {
-      setVisiting(localVisitingObj);
+    const localListEMRStr = localStorage.getItem("listEMR");
+    const localListEMRObj = JSON.parse(localListEMRStr);
+    if (localListEMRObj) {
+      setListEMR(localListEMRObj);
     }
   }, [user]);
 
   function handleSaveLivingFunctions(visitId, values) {
-    setVisiting(prevValue => {
+    setListEMR(prevValue => {
       const visit = prevValue.find(v => v.id === visitId);
       visit.livingFunctions = values;
       const newState = [...prevValue, ...[visit]];
       const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("visiting", JSON.stringify(finalList));
+      localStorage.setItem("listEMR", JSON.stringify(finalList));
       message.success({ content: "Lưu thành công" });
       return finalList;
     })
   }
 
   function handleSaveDiseases(visitId, values) {
-    setVisiting(prevValue => {
-      const visit = prevValue.find(v => v.id === visitId);
-      visit.emr_diseases = values.emr_diseases;
-      const newState = [...prevValue, ...[visit]];
-      const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("visiting", JSON.stringify(finalList));
+    const visit = listEMR.find(v => v.id === visitId);
+    visit.emr_diseases = values.emr_diseases;
+    const newState = [...listEMR, ...[visit]];
+    const finalList = removeDuplicates(newState, "id");
+    localStorage.setItem("listEMR", JSON.stringify(finalList));
+    setListEMR(prevValue => {
       message.success({ content: "Lưu thành công" });
       return finalList;
     })
   }
 
   function handleSaveServices(visitId, values) {
-    setVisiting(prevValue => {
+    setListEMR(prevValue => {
       const visit = prevValue.find(v => v.id === visitId);
       visit.emr_services = values.emr_services;
       const newState = [...prevValue, ...[visit]];
       const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("visiting", JSON.stringify(finalList));
+      localStorage.setItem("listEMR", JSON.stringify(finalList));
       message.success({ content: "Lưu thành công" });
       return finalList;
     })
   }
 
   function handleSaveDrugs(visitId, values) {
-    setVisiting(prevValue => {
+    setListEMR(prevValue => {
       const visit = prevValue.find(v => v.id === visitId);
       visit.emr_drugs = values.emr_drugs;
       const newState = [...prevValue, ...[visit]];
       const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("visiting", JSON.stringify(finalList));
+      localStorage.setItem("listEMR", JSON.stringify(finalList));
       message.success({ content: "Lưu thành công" });
       return finalList;
     })
   }
 
   function handleFinishExamination(visitId) {
-    const visit = visiting.find(v => v.id === visitId);
+    const visit = listEMR.find(v => v.id === visitId);
     console.log(visit);
+  }
+
+  function handleUploadChange({ event, file, fileList }, visitId) {
+    if (file && file.status === "done") {
+      const response = file.response;
+      const fileListElement = { uid: response.id, id: response.id, url: response.url };
+      const emr = listEMR.find(v => v.id === visitId);
+      const newEmr = {...emr};
+      newEmr.images.push(fileListElement);
+      const newState = [...listEMR, ...[newEmr]]
+      const finalList = removeDuplicates(newState, "id");
+      localStorage.setItem("listEMR", JSON.stringify(finalList));
+      setListEMR(prev => {
+        return finalList;
+      });
+    }
   }
 
   return (
@@ -168,7 +185,7 @@ const ExaminationPage = props => {
       <PageHeader title="Khám bệnh" onBack={() => history.goBack()} />
       <Tabs type="card">
         {
-          visiting.map(v => (
+          listEMR.map(v => (
             <Tabs.TabPane key={v.id} tab={`${v.patient.first_name} ${v.patient.last_name}`}>
               <Descriptions title="Thông tin bệnh nhân">
                 <Descriptions.Item span={1} label="Họ và tên">
@@ -186,7 +203,7 @@ const ExaminationPage = props => {
                 </Descriptions.Item>
               </Descriptions>
 
-              <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs"]}>
+              <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs", "images"]}>
                 <Collapse.Panel header="Chức năng sống" key="living-function">
                   <VisitLivingFunctionForm
                     onFinish={(values) => handleSaveLivingFunctions(v.id, values)}
@@ -214,6 +231,12 @@ const ExaminationPage = props => {
                     instructions={drugInstructions}
                     onFinish={(values) => handleSaveDrugs(v.id, values)}
                     currentValues={v} />
+                </Collapse.Panel>
+                <Collapse.Panel header="Hình ảnh" key="images">
+                  <VisitImagesForm
+                    emrId="288e8054-fe90-45da-acb1-62c76a8c102c"
+                    onChange={(e) => handleUploadChange(e, v.id)}
+                    fileList={v.images} />
                 </Collapse.Panel>
               </Collapse>
 

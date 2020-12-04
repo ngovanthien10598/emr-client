@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { API_URL } from 'constant/apiUrl';
 
-const endpointPrefix = `${API_URL}/user/patient`;
+const endpointPrefix = `${API_URL}/admin/patient`;
 
 export function listAllPatientsAPI(search = "") {
   const url = `${endpointPrefix}/?search=${search}`;

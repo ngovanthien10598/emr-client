@@ -10,6 +10,8 @@ import setupInterceptor from 'utils/interceptor';
 import { useDispatch } from 'react-redux';
 import { getProfileAction } from 'store/actions/user.action';
 import { refreshToken } from 'services/auth/auth.service';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 // import "normalize.css/normalize.css";
 // import "@blueprintjs/core/lib/css/blueprint.css";
@@ -17,6 +19,8 @@ import { refreshToken } from 'services/auth/auth.service';
 import 'antd/dist/antd.css';
 import 'styles/main.scss';
 import VerifyPage from 'pages/verify-email';
+
+moment.locale('vi');
 
 
 function App() {

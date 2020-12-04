@@ -21,7 +21,7 @@ const ReceivePage = props => {
     return (
       <Menu>
         {
-          rooms.map(room => (
+          rooms?.map(room => (
             <Menu.Item key={room.id} onClick={() => handleCreateVisit(patientId, room.id)}>{room.name}</Menu.Item>
           ))
         }
