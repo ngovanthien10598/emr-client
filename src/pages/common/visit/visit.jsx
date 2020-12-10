@@ -120,33 +120,31 @@ const VisitPage = props => {
     }
   }, [selectedRoom, listEMR])
 
-  async function createEmr(patientId, physicianId, visit) {
+  async function createEmr(emr) {
     try {
-      setCreateEMRLoading(prev => [...prev, ...[visit.id]]);
-      const addEMRResponse = await addEMRAPI(patientId, physicianId);
-      console.log(addEMRResponse.data);
+      setCreateEMRLoading(prev => [...prev, ...[emr.id]]);
+      const response = await addEMRAPI(emr);
+      return Promise.resolve(response);
     } catch (error) {
       console.log(error);
+      return Promise.reject(error);
     } finally {
       setCreateEMRLoading(prev => {
         const cloneArr = [...prev];
-        cloneArr.splice(cloneArr.indexOf(visit.id), 1);
+        cloneArr.splice(cloneArr.indexOf(emr.id), 1);
         return cloneArr
       });
     }
   }
 
-  function handlePatientClick(visit) {
+  async function handlePatientClick(visit) {
     const { patient } = visit;
+    const existVisit = listEMR.find(v => v.id === visit.id);
 
-    
-    // Create an empty EMR
-    // createEmr(patient.id, user.id, visit);
+    if (!existVisit) {
 
-    // return;
-    setListEMR(prev => {
       const emrObj = {
-        id: visit.id,
+        visit_id: visit.id,
         patient: {
           id: patient.id,
           first_name: patient.first_name,
@@ -165,7 +163,7 @@ const VisitPage = props => {
           avatar: user.avatar
         },
         room: visit.room.name,
-        livingFunctions: {
+        living_functions: {
           heartbeat: null,
           temp: null,
           pressure: null,
@@ -174,18 +172,27 @@ const VisitPage = props => {
           weight: null,
           bmi: null
         },
-        emr_diseases: null,
-        emr_services: null,
-        emr_drugs: null,
-        images: [],
-        created_at: visit.created_at,
-        symptom: "",
+        emr_diseases: [],
+        emr_services: [],
+        emr_drugs: [],
+        images: []
       }
-      const newArr = [...prev, ...[emrObj]];
-      const unique = removeDuplicates(newArr, "id");
-      localStorage.setItem("listEMR", JSON.stringify(unique));
-      return unique;
-    });
+
+      try {
+        const createResponse = await createEmr(emrObj);
+        const newEmr = createResponse.data.data;
+  
+        setListEMR(prev => {
+          const newArr = [...prev, ...[newEmr]];
+          const unique = removeDuplicates(newArr, "visit_id");
+          localStorage.setItem("listEMR", JSON.stringify(unique));
+          return unique;
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     history.push(`${pathname}/examination?visit-id=${visit.id}`);
   }
 

@@ -23,3 +23,4 @@ export function createPatientAPI({ first_name, last_name, phone, DOB, gender }) 
     gender
   })
 }
+

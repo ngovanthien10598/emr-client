@@ -15,5 +15,5 @@ export function getProfile() {
 export function addBlockChainUserAPI(userId, role = "user") {
   if (role !== "user" && role !== "patient") return Promise.reject(new Error('Unknown role'));
   const url = `${NODE_URL}/api/register-${role}`;
-  return axios.post(url, { user_id: userId });
+  return axios.post(url, { [`${role}_id`]: userId });
 }

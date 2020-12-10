@@ -117,7 +117,7 @@ const ExaminationPage = props => {
   function handleSaveLivingFunctions(visitId, values) {
     setListEMR(prevValue => {
       const visit = prevValue.find(v => v.id === visitId);
-      visit.livingFunctions = values;
+      visit.living_functions = values;
       const newState = [...prevValue, ...[visit]];
       const finalList = removeDuplicates(newState, "id");
       localStorage.setItem("listEMR", JSON.stringify(finalList));
@@ -223,7 +223,7 @@ const ExaminationPage = props => {
                 <Collapse.Panel header="Chức năng sống" key="living-function">
                   <VisitLivingFunctionForm
                     onFinish={(values) => handleSaveLivingFunctions(v.id, values)}
-                    currentValues={v.livingFunctions} />
+                    currentValues={v.living_functions} />
                 </Collapse.Panel>
 
                 <Collapse.Panel header="Bệnh" key="diseases">
