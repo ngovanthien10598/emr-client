@@ -10,12 +10,12 @@ import { removeImageAPI } from 'services/user/emr.service';
 
 const VisitImagesForm = props => {
 
-  const { emrId, fileList } = props;
+  const { emrId } = props;
 
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
-  // const [fileList, setFileList] = useState([]);
+  const [fileList, setFileList] = useState([...props.fileList]);
   const token = Cookie.get('EMR_token');
 
   const uploadButton = (
@@ -25,8 +25,13 @@ const VisitImagesForm = props => {
     </div>
   );
 
-  function handleChange(uploadEvent) {
-    props.onChange(uploadEvent)
+  async function handleChange(uploadEvent) {
+    const { event, file, fileList } = uploadEvent;
+    setFileList(fileList);
+    if (file.status === "removed") {
+      await removeImageAPI(emrId, file.id);
+    }
+    props.onChange(uploadEvent);
   }
 
   async function handlePreview(file) {
@@ -43,14 +48,6 @@ const VisitImagesForm = props => {
     setPreviewVisible(false);
   }
 
-  async function handleRemove(file) {
-    try {
-      await removeImageAPI(emrId, file.id);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   return (
     <>
       <Upload
@@ -60,8 +57,7 @@ const VisitImagesForm = props => {
         action={`${API_URL}/user/emr/${emrId}/image/`}
         name="image"
         headers={{ Authorization: `Bearer ${token}` }}
-        onPreview={handlePreview}
-        onRemove={handleRemove}>
+        onPreview={handlePreview}>
         {uploadButton}
       </Upload>
       <Modal

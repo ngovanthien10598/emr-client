@@ -6,6 +6,11 @@ import VisitLivingFunctionForm from 'forms/Visit/VisitLivingFunctionForm';
 import VisitDiseaseForm from 'forms/Visit/VisitDiseaseForm';
 import VisitServiceForm from 'forms/Visit/VisitServiceForm';
 import VisitDrugForm from 'forms/Visit/VisitDrugForm';
+import { useHistory } from 'react-router-dom';
+import { removeDuplicates } from 'utils/array';
+import VisitImagesForm from 'forms/Visit/VisitImagesForm';
+
+// APIs
 import { getDiseaseCategoryAPI } from 'services/user/disease-category.service';
 import { getServicesAPI } from 'services/user/medical-service.service';
 import { getDrugCategoryAPI } from 'services/user/drug-category.service';
@@ -14,9 +19,7 @@ import { getDiseaseCategoryAPI as adminGetDiseaseCategoryAPI } from 'services/ad
 import { getServicesAPI as adminGetServicesAPI } from 'services/admin/medical-service.service';
 import { getDrugCategoryAPI as adminGetDrugCategoryAPI } from 'services/admin/drug-category.service';
 import { getDrugInstructionsAPI as adminGetDrugInstructionsAPI } from 'services/admin/drug-instruction.service';
-import { useHistory } from 'react-router-dom';
-import { removeDuplicates } from 'utils/array';
-import VisitImagesForm from 'forms/Visit/VisitImagesForm';
+import { removeImageAPI } from 'services/user/emr.service';
 
 const ExaminationPage = props => {
 
@@ -164,31 +167,33 @@ const ExaminationPage = props => {
     console.log(visit);
   }
 
-  function handleUploadChange({ event, file, fileList }, visitId) {
+  async function handleUploadChange({ event, file, fileList }, visitId) {
+   
     if (file && file.status === "done") {
       const response = file.response;
       const fileListElement = { uid: response.id, id: response.id, url: response.url };
       const emr = listEMR.find(v => v.id === visitId);
-      const newEmr = {...emr};
+      const newEmr = { ...emr };
       newEmr.images.push(fileListElement);
       const newState = [...listEMR, ...[newEmr]]
       const finalList = removeDuplicates(newState, "id");
       localStorage.setItem("listEMR", JSON.stringify(finalList));
-      setListEMR(prev => {
-        return finalList;
-      });
-    } else if (file && file.status === "removed") {
+      setListEMR(finalList);
+    }
+
+    if (file && file.status === "removed") {
       const emr = listEMR.find(v => v.id === visitId);
-      const newEmr = {...emr};
-      const imageIndex = newEmr.images.findIndex(img => img.id === file.id);
-      newEmr.images.splice(imageIndex, 1);
-      const newState = [...listEMR, ...[newEmr]]
+      const newEmr = { ...emr };
+      newEmr.images = [...fileList];
+      const newState = [...[newEmr], ...listEMR];
       const finalList = removeDuplicates(newState, "id");
       localStorage.setItem("listEMR", JSON.stringify(finalList));
-      setListEMR(prev => {
-        return finalList;
-      });
+      setListEMR(finalList);
     }
+  }
+
+  function handleDeleteImage(visitId, imageId) {
+    
   }
 
   return (
@@ -247,6 +252,7 @@ const ExaminationPage = props => {
                   <VisitImagesForm
                     emrId="288e8054-fe90-45da-acb1-62c76a8c102c"
                     onChange={(e) => handleUploadChange(e, v.id)}
+                    onDeleteImage={(imageId) => handleDeleteImage(v.id, imageId)}
                     fileList={v.images} />
                 </Collapse.Panel>
               </Collapse>

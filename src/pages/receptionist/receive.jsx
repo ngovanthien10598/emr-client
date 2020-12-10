@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Table, Form, PageHeader, Button, Modal, Menu, Dropdown } from 'antd';
-import { listAllPatientsAPI } from 'services/user/patient.service';
 import { PlusOutlined } from '@ant-design/icons';
 import PatientForm from 'forms/PatientForm/PatientForm';
+
+// APIs
 import { getRoomAPI } from 'services/user/room.service';
 import { createVisitAPI } from 'services/user/visit.service';
+import { listAllPatientsAPI, createPatientAPI } from 'services/user/patient.service';
+import { addBlockChainUserAPI } from 'services/user/user.service';
 
 const ReceivePage = props => {
 
@@ -13,6 +16,7 @@ const ReceivePage = props => {
   const [rooms, setRooms] = useState(null);
   const [roomLoading, setRoomLoading] = useState(false);
   const [roomModalVisible, setRoomModalVisible] = useState(false);
+  const [isCreatingPatient, setCreatingPatient] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isCreatingVisit, setCreatingVisit] = useState(false);
   const [patientForm] = Form.useForm();
@@ -120,8 +124,19 @@ const ReceivePage = props => {
     listAllPatients(values.search);
   }
 
-  function handleSubmit() {
-
+  async function handleSubmit() {
+    try {
+      setCreatingPatient(true);
+      const values = await patientForm.validateFields();
+      values.DOB = values.DOB.format('YYYY-MM-DD');
+      const createResponse = await createPatientAPI(values);
+      const userId = createResponse.data.id;
+      await addBlockChainUserAPI(userId, "patient");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setCreatingPatient(false);
+    }
   }
 
   function handleReceiveClick(patientId) {
@@ -159,7 +174,9 @@ const ReceivePage = props => {
         columns={tableColumns} />
       <Modal
         visible={modalVisible}
+        confirmLoading={isCreatingPatient}
         onCancel={handleCloseModal}
+        onOk={handleSubmit}
         destroyOnClose={true}
         title="Bệnh nhân mới">
         <PatientForm form={patientForm} onFinish={handleSubmit} />

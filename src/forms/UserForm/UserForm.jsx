@@ -3,6 +3,7 @@ import { Form, Input, Select, Spin, Row, Col, DatePicker, Radio } from 'antd';
 import { getUserDetailsAPI } from 'services/admin/user.service';
 import { ROLES, ROLES_LIST } from 'constant/roles';
 import moment from 'moment';
+import { requiredRule } from 'constant/formRules';
 
 const UserForm = props => {
   const { form, onFinish, defaultUser } = props;
@@ -70,61 +71,36 @@ const UserForm = props => {
             message: "Vui lòng điền vào trường này"
           }
         ]}>
-          <Input.Password />
+          <Input.Password autoComplete="new-password" placeholder={userDetail ? "Nhập mật khẩu mới" : ""} />
         </Form.Item>
 
         <Row>
           <Col flex={1}>
-            <Form.Item label="Họ" name="first_name" rules={[
-              {
-                required: true,
-                message: "Vui lòng điền vào trường này"
-              }
-            ]}>
+            <Form.Item label="Họ" name="first_name" rules={[requiredRule()]}>
               <Input />
             </Form.Item>
           </Col>
           <div style={{ width: 20 }}></div>
           <Col flex={1}>
-            <Form.Item label="Tên" name="last_name" rules={[
-              {
-                required: true,
-                message: "Vui lòng điền vào trường này"
-              }
-            ]}>
+            <Form.Item label="Tên" name="last_name" rules={[requiredRule()]}>
               <Input />
             </Form.Item>
           </Col>
         </Row>
 
-        <Form.Item label="Điện thoại" name="phone" initialValue={userDetail?.phone} rules={[
-          {
-            required: true,
-            message: "Vui lòng điền vào trường này"
-          }
-        ]}>
+        <Form.Item label="Điện thoại" name="phone" initialValue={userDetail?.phone} rules={[requiredRule()]}>
           <Input type="tel" />
         </Form.Item>
 
         <Row>
           <Col>
-            <Form.Item label="Ngày sinh" name="DOB" rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn ngày sinh"
-              }
-            ]}>
+            <Form.Item label="Ngày sinh" name="DOB" rules={[requiredRule()]}>
               <DatePicker placeholder="Chọn ngày" />
             </Form.Item>
           </Col>
-          <div style={{ width: 20 }}></div>
+          <div style={{ width: 15 }}></div>
           <Col flex={1}>
-            <Form.Item label="Giới tính" name="gender" rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn một giá trị"
-              }
-            ]}>
+            <Form.Item label="Giới tính" name="gender" rules={[requiredRule()]}>
               <Radio.Group>
                 <Radio value="Nam">Nam</Radio>
                 <Radio value="Nữ">Nữ</Radio>
@@ -135,12 +111,7 @@ const UserForm = props => {
         </Row>
 
 
-        <Form.Item label="Vai trò" name="role_id" initialValue={userDetail?.role_id} rules={[
-          {
-            required: true,
-            message: "Vui lòng chọn vai trò"
-          }
-        ]}>
+        <Form.Item label="Vai trò" name="role_id" initialValue={userDetail?.role_id} rules={[requiredRule()]}>
           <Select>
             {
               ROLES_LIST.map(role_id => (

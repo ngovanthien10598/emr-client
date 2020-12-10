@@ -41,7 +41,7 @@ const PatientPage = props => {
       render: (text, record) => (
         <Space>
           <Link to={`${path}/${record.id}`}>
-            <Button icon={<EyeOutlined />}></Button>
+            <Button icon={<EyeOutlined />}>Xem chi tiết</Button>
           </Link>
         </Space>
       )
@@ -74,7 +74,7 @@ const PatientPage = props => {
   return (
     <>
       <PageHeader title="Bệnh nhân" />
-      <Table columns={tableColumns} dataSource={patientData?.results} loading={patientLoading} />
+      <Table columns={tableColumns} dataSource={patientData?.results} loading={patientLoading} rowKey="id" />
     </>
   )
 }

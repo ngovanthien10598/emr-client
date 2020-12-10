@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
 import { PlusOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import UserForm from 'forms/UserForm/UserForm';
-import { getUsersAPI, addUserAPI, updateUserAPI, deleteUserAPI, blockUserAPI, unblockUserAPI } from 'services/admin/user.service';
 import { formActions } from 'constant/formActions';
 import NumberFormat from 'react-number-format';
 import { ROLES } from 'constant/roles';
 import { useHistory, useLocation } from 'react-router-dom';
 import Circle from 'components/Circle/Circle';
+
+// APIs
+import { getUsersAPI, addUserAPI, updateUserAPI, deleteUserAPI, blockUserAPI, unblockUserAPI } from 'services/admin/user.service';
+import { addBlockChainUserAPI } from 'services/user/user.service';
+
 
 const AdminAccountPage = () => {
 
@@ -46,17 +50,17 @@ const AdminAccountPage = () => {
         </Space>
       )
     },
-    {
-      title: 'Điện thoại',
-      key: 'phone',
-      dataIndex: 'phone',
-      render: (text, record) => (
-        <Space>
-          <Circle color={record.is_verified_phone ? 'success' : ''} />
-          <span>{record.phone}</span>
-        </Space>
-      )
-    },
+    // {
+    //   title: 'Điện thoại',
+    //   key: 'phone',
+    //   dataIndex: 'phone',
+    //   render: (text, record) => (
+    //     <Space>
+    //       <Circle color={record.is_verified_phone ? 'success' : ''} />
+    //       <span>{record.phone}</span>
+    //     </Space>
+    //   )
+    // },
     {
       title: 'Vai trò',
       key: 'role',
@@ -122,12 +126,17 @@ const AdminAccountPage = () => {
     try {
       setModalLoading(true);
       const values = await userForm.validateFields();
+
       if (action === formActions.CREATE) {
-        await addUserAPI(values);
+        const addReponse = await addUserAPI(values);
+        const responseData = addReponse.data;
+        const userId = responseData.id;
+        await addBlockChainUserAPI(userId, "user");
+        // await addBlockChainUserAPI("af6e0eb2-639b-471d-8394-74b0dfce3395", "user");
       }
 
       if (action === formActions.UPDATE) {
-        if (values.password.length === 0) {
+        if (!values.password) {
           delete values.password;
         }
         await updateUserAPI(selectedUser.id, values);

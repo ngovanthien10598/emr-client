@@ -2,33 +2,15 @@ import React from 'react';
 import { Link, Redirect, Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import {
-  UserOutlined,
-  DashboardOutlined,
-  MedicineBoxOutlined,
-  BugOutlined,
-  DollarOutlined,
   IdcardOutlined,
-  AppstoreOutlined,
   CalendarOutlined,
   ContainerOutlined,
-  SettingOutlined,
   ProfileOutlined,
   NotificationOutlined} from '@ant-design/icons';
-import AdminDashboard from 'pages/admin/dashboard';
-import DrugCategoryPage from 'pages/common/drug/drug-category';
-import DrugUnitPage from 'pages/common/drug/drug-unit';
-import DrugPage from 'pages/common/drug/drug';
-import DrugInstructionPage from 'pages/common/drug/drug-instruction';
-import DiseaseCategory from 'pages/common/disease/disease-category';
-import DiseasePage from 'pages/common/disease/disease';
 import NotificationPage from 'pages/common/notification/notification';
 import VisitPage from 'pages/common/visit/visit';
 import PatientPage from 'pages/common/patient/patient';
 import AppointmentPage from 'pages/common/appointment/apointment';
-import ServicePage from 'pages/common/service/service';
-import RoomPage from 'pages/common/room/room';
-import AdminAccountPage from 'pages/admin/account';
-import AdminSettingPage from 'pages/admin/setting';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 import ExaminationPage from 'pages/common/examination/examination';
@@ -36,7 +18,6 @@ import ProfilePage from 'pages/common/profile/profile';
 import PatientDetails from 'pages/common/patient/patient-details';
 
 const { Sider, Content } = Layout;
-const { SubMenu } = Menu;
 
 const PhysicianLayout = () => {
   const match = useRouteMatch();
