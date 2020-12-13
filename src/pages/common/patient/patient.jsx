@@ -33,7 +33,7 @@ const PatientPage = props => {
     {
       title: 'Địa chỉ',
       key: 'address',
-      render: (text, record) => record.address || <i>Đang cập nhật...</i>
+      render: (text, record) => record.address || <i className="text-gray-500">Đang cập nhật...</i>
     },
     {
       title: 'Hành động',

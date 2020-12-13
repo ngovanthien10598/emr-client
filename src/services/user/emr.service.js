@@ -18,7 +18,12 @@ export function addEMRAPI(emr) {
   return axios.post(url, emr);
 }
 
-export function removeImageAPI(emrId, emrImageId) {
-  const url = `${endpointPrefix}/${emrId}/image/${emrImageId}/`;
-  return axios.delete(url);
+export function getEMRHistoryAPI(emrId) {
+  const url = `${endpointPrefix}/physician/emrs/${emrId}`;
+  return axios.get(url);
+}
+
+export function updateEMRAPI(emrId, body) {
+  const url = `${endpointPrefix}/physician/emrs/${emrId}`;
+  return axios.put(url, body);
 }

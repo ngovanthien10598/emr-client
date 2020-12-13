@@ -6,7 +6,7 @@ import Cookie from 'js-cookie';
 import { getBase64 } from 'utils/image';
 
 // APIs
-import { removeImageAPI } from 'services/user/emr.service';
+// import { removeImageAPI } from 'services/user/emr.service';
 
 const VisitImagesForm = props => {
 
@@ -28,9 +28,6 @@ const VisitImagesForm = props => {
   async function handleChange(uploadEvent) {
     const { event, file, fileList } = uploadEvent;
     setFileList(fileList);
-    if (file.status === "removed") {
-      await removeImageAPI(emrId, file.id);
-    }
     props.onChange(uploadEvent);
   }
 
@@ -54,7 +51,7 @@ const VisitImagesForm = props => {
         onChange={handleChange}
         listType="picture-card"
         fileList={fileList}
-        action={`${API_URL}/user/emr/${emrId}/image/`}
+        action={`${API_URL}/user/emr/image/`}
         name="image"
         headers={{ Authorization: `Bearer ${token}` }}
         onPreview={handlePreview}>

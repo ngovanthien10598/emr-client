@@ -4,7 +4,7 @@ import { Calendar, PageHeader, Row, Col } from 'antd';
 const AppointmentPage = () => {
   return (
     <>
-      <PageHeader title="Lịch hẹn" />
+      <h3 className="text-xl">Lịch hẹn</h3>
       <Row>
         <Col flex="1">
           <Calendar mode="month" locale="vi" />

@@ -6,8 +6,8 @@ const { Item, useForm } = Form;
 
 const VisitLivingFunctionForm = props => {
 
-  const { currentValues} = props;
-  const [bmi, setBmi] = useState(currentValues?.bmi || 0.0);
+  const { currentValues, loading } = props;
+  const [bmi, setBmi] = useState(currentValues ? Number(currentValues.bmi) : 0.0);
 
   const [form] = useForm();
   const row1 = [
@@ -116,7 +116,7 @@ const VisitLivingFunctionForm = props => {
         <strong>BMI: </strong>{bmi.toFixed(2)} ({getBMIDesc()})
       </div>
       <div>
-        <Button icon={<SaveOutlined />} htmlType="submit">Lưu</Button>
+        <Button loading={loading} icon={<SaveOutlined />} htmlType="submit">Lưu</Button>
       </div>
     </Form>
   )

@@ -8,7 +8,7 @@ const { Item, List } = Form;
 const { Option } = Select;
 
 const VisitDiseaseForm = props => {
-  const { form, categories, user, currentValues } = props;
+  const { form, categories, user, currentValues, loading } = props;
   const [localCategories, setLocalCategories] = useState(categories);
   const [diseases, setDiseases] = useState(null);
   const [diseaseLoading, setDiseaseLoading] = useState(false);
@@ -116,7 +116,7 @@ const VisitDiseaseForm = props => {
       </List>
 
       <div>
-        <Button htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
+        <Button loading={loading} htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
       </div>
     </Form>
   )

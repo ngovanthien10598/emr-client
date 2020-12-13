@@ -24,31 +24,6 @@ export default function setupInterceptor() {
   }, (error) => Promise.reject(error));
 
   axios.interceptors.response.use(((res) => {
-    switch (res.config.method) {
-      case "post":
-        if (res.data.id) {
-          // Check if new object created because login is also a post request
-          message.success({
-            content: "Thao tác thành công"
-          });
-        }
-
-        break;
-      case "put":
-      case "patch":
-        message.success({
-          content: "Cập nhật thành công"
-        });
-        break;
-      case "delete":
-        message.destroy();
-        message.success({
-          content: "Xóa thành công"
-        });
-        break;
-      default:
-      // Do nothing
-    }
     return res;
   }), async (error) => {
     const originalRequest = error.config;

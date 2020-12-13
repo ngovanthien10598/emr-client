@@ -1,6 +1,5 @@
 import React from 'react';
-import { Form, Row, Col, Select, Button, Input } from 'antd';
-import NumberFormat from 'react-number-format';
+import { Form, Row, Col, Select, Button } from 'antd';
 import { SaveOutlined, PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
 const { Item, List } = Form;
@@ -8,11 +7,10 @@ const { Option } = Select;
 
 const VisitServiceForm = props => {
 
-  const { services, currentValues } = props;
+  const { services, currentValues, loading } = props;
 
   function onFinish(values) {
-    // Transform array of indexes to array of objects
-    values.emr_services = values.emr_services.map(service => ({ name: services[service.index].name, price: services[service.index].price }));
+    values.emr_services = values.emr_services.map(service => services.find(s => s.id === service.id));
     props.onFinish(values);
   }
 
@@ -27,12 +25,12 @@ const VisitServiceForm = props => {
                   <Row gutter={15} key={field.key} align="middle" className="mb-5">
                     <Col>{index + 1}</Col>
                     <Col flex={1}>
-                      <Item {...field} name={[field.name, 'index']} fieldKey={[field.fieldKey, 'index']} style={{margin: 0}} rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
+                      <Item {...field} name={[field.name, 'id']} fieldKey={[field.fieldKey, 'id']} style={{margin: 0}} rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
                         <Select placeholder="Chọn dịch vụ">
                           {
-                            services.map((_, index) => (
-                              <Option value={index} key={services[index].id}>
-                                {services[index].name} (<NumberFormat displayType="text" thousandSeparator=" " value={services[index].price} suffix=" VNĐ" />)
+                            services.map((service, index) => (
+                              <Option value={service.id} key={service.id}>
+                                {service.name}
                               </Option>
                             ))
                           }
@@ -54,7 +52,7 @@ const VisitServiceForm = props => {
       </List>
 
       <div>
-        <Button htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
+        <Button loading={loading} htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
       </div>
     </Form>
   )

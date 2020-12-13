@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Row, Col, Button } from 'antd';
 import { getDrugsAPI as adminGetDrugsAPI } from 'services/admin/drug.service';
 import { getDrugsAPI } from 'services/user/drug.service';
-import { useForm } from 'antd/lib/form/Form';
 import { PlusOutlined, MinusCircleOutlined, SaveOutlined } from '@ant-design/icons';
 
-const { Item, List } = Form;
+const { Item, List, useForm } = Form;
 const { Option } = Select;
 
 const VisitDrugForm = props => {
-  const { user, categories, instructions, currentValues } = props;
+  const { user, categories, instructions, currentValues, loading } = props;
 
   const [drugs, setDrugs] = useState([]);
   const [drugLoading, setDrugLoading] = useState(false);
+  const [form] = useForm();
 
   async function getDrugsByCategory(category) {
     try {
@@ -35,8 +35,25 @@ const VisitDrugForm = props => {
     getDrugsByCategory(category);
   }
 
+  function handleTotalFocus() {
+    console.log(form.getFieldValue('numberOfDays'));
+    console.log(form.getFieldValue('morning'));
+    console.log(form.getFieldValue('afternoon'));
+    console.log(form.getFieldValue('evening'));
+    console.log(form.getFieldValue('night'));
+  }
+
+  function onFinish(values) {
+    values.emr_drugs = values.emr_drugs.map(drug => {
+      const currentDrug = drugs.find(d => d.name === drug.drug);
+      drug.price = currentDrug.price;
+      return drug;
+    })
+    props.onFinish(values);
+  }
+
   return (
-    <Form layout="vertical" onFinish={props.onFinish} initialValues={currentValues}>
+    <Form layout="vertical" onFinish={onFinish} form={form} initialValues={currentValues}>
       <List name="emr_drugs">
         {(fields, { add, remove }) => (
           <>
@@ -131,7 +148,7 @@ const VisitDrugForm = props => {
                       label="Số lượng"
                       name={[field.name, 'total']}
                       fieldKey={[field.fieldKey, 'total']}>
-                      <Input type="number" />
+                      <Input type="number" onFocus={handleTotalFocus} />
                     </Item>
                   </Col>
                   <Col>
@@ -149,7 +166,7 @@ const VisitDrugForm = props => {
       </List>
 
       <div>
-        <Button htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
+        <Button loading={loading} htmlType="submit" icon={<SaveOutlined />}>Lưu</Button>
       </div>
     </Form>
   )

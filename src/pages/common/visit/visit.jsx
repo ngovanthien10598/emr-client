@@ -3,13 +3,14 @@ import { Row, Col, Select, Empty, Table, Button } from 'antd';
 import { connect } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { removeDuplicates } from 'utils/array';
+import moment from 'moment';
 
 // APIs
 import { getRoomAPI } from 'services/user/room.service';
 import { getRoomAPI as adminGetRoomAPI } from 'services/admin/room.service';
 import { getVisitDataAPI } from 'services/user/visit.service';
 import { getVisitDataAPI as adminGetVisitDataAPI } from 'services/admin/visit.service';
-import { addEMRAPI } from 'services/user/emr.service';
+import { addEMRAPI, getEMRHistoryAPI } from 'services/user/emr.service';
 
 
 const VisitPage = props => {
@@ -37,9 +38,9 @@ const VisitPage = props => {
 
   const tableColumns = [
     {
-      title: '#',
+      title: 'Số thứ tự',
       key: '#',
-      render: (_, __, index) => index + 1
+      dataIndex: 'visit_number'
     },
     {
       title: 'Họ và tên',
@@ -50,6 +51,11 @@ const VisitPage = props => {
       title: 'Giới tính',
       key: 'gender',
       render: (_, record) => record.patient.gender
+    },
+    {
+      title: 'Ngày sinh',
+      key: 'DOB',
+      render: (_,record) => moment(record.patient.DOB).format('DD/MM/YYYY')
     },
     {
       ken: 'action',
@@ -122,7 +128,7 @@ const VisitPage = props => {
 
   async function createEmr(emr) {
     try {
-      setCreateEMRLoading(prev => [...prev, ...[emr.id]]);
+      setCreateEMRLoading(prev => [...prev, ...[emr.visit_id]]);
       const response = await addEMRAPI(emr);
       return Promise.resolve(response);
     } catch (error) {
@@ -131,7 +137,25 @@ const VisitPage = props => {
     } finally {
       setCreateEMRLoading(prev => {
         const cloneArr = [...prev];
-        cloneArr.splice(cloneArr.indexOf(emr.id), 1);
+        cloneArr.splice(cloneArr.indexOf(emr.visit_id), 1);
+        return cloneArr
+      });
+    }
+  }
+
+  async function checkExistEMR(emrId) {
+    try {
+      setCreateEMRLoading(prev => [...prev, ...[emrId]]);
+      const historyResponse = await getEMRHistoryAPI(emrId);
+      const data = historyResponse.data.data;
+      const existEmr = data.find(emr => emr.id === emrId && emr.completed_at === null);
+      return !!(existEmr);
+    } catch (error) {
+
+    } finally {
+      setCreateEMRLoading(prev => {
+        const cloneArr = [...prev];
+        cloneArr.splice(cloneArr.indexOf(emrId), 1);
         return cloneArr
       });
     }
@@ -139,7 +163,7 @@ const VisitPage = props => {
 
   async function handlePatientClick(visit) {
     const { patient } = visit;
-    const existVisit = listEMR.find(v => v.id === visit.id);
+    const existVisit = await checkExistEMR(visit.id);
 
     if (!existVisit) {
 
@@ -184,7 +208,7 @@ const VisitPage = props => {
   
         setListEMR(prev => {
           const newArr = [...prev, ...[newEmr]];
-          const unique = removeDuplicates(newArr, "visit_id");
+          const unique = removeDuplicates(newArr, "id");
           localStorage.setItem("listEMR", JSON.stringify(unique));
           return unique;
         });
@@ -193,7 +217,7 @@ const VisitPage = props => {
       }
     }
 
-    history.push(`${pathname}/examination?visit-id=${visit.id}`);
+    history.push(`${pathname}/${visit.id}`);
   }
 
   function handleChangeRoom(value) {
@@ -205,7 +229,7 @@ const VisitPage = props => {
       <Row className="flex-no-wrap">
         <Col style={{ width: 350 }} className="flex-shrink-0">
           <div className="mb-5">
-            <h2 className="text-sm">Phòng trực</h2>
+            <h3 className="text-xl">Phòng khám</h3>
             <Select loading={roomLoading} style={{ width: '100%' }} value={selectedRoom} onChange={handleChangeRoom}>
               {
                 rooms.map(room => (
@@ -214,17 +238,16 @@ const VisitPage = props => {
               }
             </Select>
           </div>
-
-
         </Col>
-        <Col className="ml-3" flex={1}>
-          <h2 className="text-sm">Bệnh nhân đang chờ khám</h2>
+        <Col flex="0 0 45px"></Col>
+        <Col flex={1}>
+          <h3 className="text-xl">Bệnh nhân đang chờ khám</h3>
           {
             !selectedRoom ?
               <Empty description="Vui lòng chọn phòng" />
               :
               visitList?.length > 0 ?
-                <Table dataSource={visitList} columns={tableColumns} rowKey="id" loading={visitLoading} />
+                <Table dataSource={visitList} columns={tableColumns} rowKey="id" loading={visitLoading} pagination={false} />
                 : <Empty description="Không có dữ liệu" />
           }
         </Col>

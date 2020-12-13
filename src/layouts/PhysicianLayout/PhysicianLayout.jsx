@@ -34,10 +34,6 @@ const PhysicianLayout = () => {
             style={{ height: '100%', borderRight: 0 }}
             selectedKeys={[location.pathname]}
           >
-
-            <Menu.Item key="/physician/notification" icon={<NotificationOutlined />}>
-              <Link to="/physician/notification">Thông báo</Link>
-            </Menu.Item>
             <Menu.Item key="/physician/visit" icon={<ContainerOutlined />}>
               <Link to="/physician/visit">Khám bệnh</Link>
             </Menu.Item>
@@ -63,17 +59,12 @@ const PhysicianLayout = () => {
           >
             <Switch>
 
-              {/* Notification */}
-              <Route path={`${path}/notification`}>
-                <NotificationPage />
-              </Route>
-
               {/* Visit */}
               <Route path={`${path}/visit`} exact>
                 <VisitPage />
               </Route>
 
-              <Route path={`${path}/visit/examination`}>
+              <Route path={`${path}/visit/:emr`}>
                 <ExaminationPage />
               </Route>
 
@@ -96,7 +87,7 @@ const PhysicianLayout = () => {
               </Route>
 
               {/* Fallback */}
-              <Redirect to={`/physician/notification`} />
+              <Redirect to={`/physician/visit`} />
             </Switch>
           </Content>
         </Layout>

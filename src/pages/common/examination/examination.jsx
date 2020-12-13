@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, Descriptions, Collapse, PageHeader, message, Divider, Button, Row, Col, Space } from 'antd';
+import { Tabs, Descriptions, Collapse, PageHeader, message, Divider, Button, Row, Col, Space, Spin } from 'antd';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import VisitLivingFunctionForm from 'forms/Visit/VisitLivingFunctionForm';
 import VisitDiseaseForm from 'forms/Visit/VisitDiseaseForm';
 import VisitServiceForm from 'forms/Visit/VisitServiceForm';
 import VisitDrugForm from 'forms/Visit/VisitDrugForm';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { removeDuplicates } from 'utils/array';
 import VisitImagesForm from 'forms/Visit/VisitImagesForm';
 
@@ -19,17 +19,25 @@ import { getDiseaseCategoryAPI as adminGetDiseaseCategoryAPI } from 'services/ad
 import { getServicesAPI as adminGetServicesAPI } from 'services/admin/medical-service.service';
 import { getDrugCategoryAPI as adminGetDrugCategoryAPI } from 'services/admin/drug-category.service';
 import { getDrugInstructionsAPI as adminGetDrugInstructionsAPI } from 'services/admin/drug-instruction.service';
-import { removeImageAPI } from 'services/user/emr.service';
+import { getEMRHistoryAPI, updateEMRAPI } from 'services/user/emr.service';
 
 const ExaminationPage = props => {
 
   const user = props.user;
   const history = useHistory();
+  const params = useParams();
 
   const [diseaseCategories, setDiseaseCategories] = useState([]);
   const [services, setServices] = useState([]);
   const [drugCategories, setDrugCategories] = useState([]);
   const [drugInstructions, setDrugInstructions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [emr, setEmr] = useState(null);
+
+  const [livingFncLoading, setLivingFncLoading] = useState(false);
+  const [diseaseLoading, setDiseaseLoading] = useState(false);
+  const [serviceLoading, setServiceLoading] = useState(false);
+  const [drugLoading, setDrugLoading] = useState(false);
 
   const [listEMR, setListEMR] = useState([]);
 
@@ -93,8 +101,24 @@ const ExaminationPage = props => {
     }
   }
 
+  async function getEmrDetail(emrId) {
+    try {
+      setLoading(true);
+      const emrList = await getEMRHistoryAPI(emrId);
+      const data = emrList.data.data;
+      const emr = data.find(emr => emr.id === emrId && emr.completed_at === null);
+      setEmr(emr);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function getInitialData() {
+    const emr = params.emr;
     await Promise.all([
+      getEmrDetail(emr),
       getDiseaseCategories(),
       getServices(),
       getDrugCategories(),
@@ -106,60 +130,63 @@ const ExaminationPage = props => {
     if (user) {
       getInitialData();
     }
-
-    const localListEMRStr = localStorage.getItem("listEMR");
-    const localListEMRObj = JSON.parse(localListEMRStr);
-    if (localListEMRObj) {
-      setListEMR(localListEMRObj);
-    }
   }, [user]);
 
-  function handleSaveLivingFunctions(visitId, values) {
-    setListEMR(prevValue => {
-      const visit = prevValue.find(v => v.id === visitId);
-      visit.living_functions = values;
-      const newState = [...prevValue, ...[visit]];
-      const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("listEMR", JSON.stringify(finalList));
+  async function handleSaveLivingFunctions(emrId, values) {
+    try {
+      values.bmi = values.bmi.toFixed(2);
+      setLivingFncLoading(true);
+      const emrToUpdate = { ...emr, living_functions: values };
+      const response = await updateEMRAPI(emrId, emrToUpdate);
+      setEmr(emrToUpdate);
       message.success({ content: "Lưu thành công" });
-      return finalList;
-    })
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLivingFncLoading(false);
+    }
   }
 
-  function handleSaveDiseases(visitId, values) {
-    const visit = listEMR.find(v => v.id === visitId);
-    visit.emr_diseases = values.emr_diseases;
-    const newState = [...listEMR, ...[visit]];
-    const finalList = removeDuplicates(newState, "id");
-    localStorage.setItem("listEMR", JSON.stringify(finalList));
-    setListEMR(prevValue => {
+  async function handleSaveDiseases(emrId, values) {
+    try {
+      setDiseaseLoading(true);
+      const emrToUpdate = { ...emr, ...values };
+      const response = await updateEMRAPI(emrId, emrToUpdate);
+      setEmr(emrToUpdate);
       message.success({ content: "Lưu thành công" });
-      return finalList;
-    })
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDiseaseLoading(false);
+    }
   }
 
-  function handleSaveServices(visitId, values) {
-    setListEMR(prevValue => {
-      const visit = prevValue.find(v => v.id === visitId);
-      visit.emr_services = values.emr_services;
-      const newState = [...prevValue, ...[visit]];
-      const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("listEMR", JSON.stringify(finalList));
+  async function handleSaveServices(emrId, values) {
+    try {
+      setServiceLoading(true);
+      const emrToUpdate = { ...emr, ...values };
+      const response = await updateEMRAPI(emrId, emrToUpdate);
+      setEmr(emrToUpdate);
       message.success({ content: "Lưu thành công" });
-      return finalList;
-    })
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setServiceLoading(false);
+    }
   }
 
-  function handleSaveDrugs(visitId, values) {
-    setListEMR(prevValue => {
-      const visit = prevValue.find(v => v.id === visitId);
-      visit.emr_drugs = values.emr_drugs;
-      const newState = [...prevValue, ...[visit]];
-      const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("listEMR", JSON.stringify(finalList));
+  async function handleSaveDrugs(emrId, values) {
+    try {
+      setDrugLoading(true);
+      const emrToUpdate = { ...emr, ...values };
+      const response = await updateEMRAPI(emrId, emrToUpdate);
+      setEmr(emrToUpdate);
       message.success({ content: "Lưu thành công" });
-      return finalList;
-    })
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDrugLoading(false);
+    }
   }
 
   function handleFinishExamination(visitId) {
@@ -167,108 +194,111 @@ const ExaminationPage = props => {
     console.log(visit);
   }
 
-  async function handleUploadChange({ event, file, fileList }, visitId) {
-   
+  async function handleUploadChange({ event, file, fileList }, emrId) {
+
     if (file && file.status === "done") {
-      const response = file.response;
-      const fileListElement = { uid: response.id, id: response.id, url: response.url };
-      const emr = listEMR.find(v => v.id === visitId);
-      const newEmr = { ...emr };
-      newEmr.images.push(fileListElement);
-      const newState = [...listEMR, ...[newEmr]]
-      const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("listEMR", JSON.stringify(finalList));
-      setListEMR(finalList);
+
+      try {
+        setDrugLoading(true);
+
+        // Upload image
+        const response = file.response;
+        const fileListElement = { uid: response.url, id: response.url, url: response.url };
+        const cloneEmr = { ...emr };
+        cloneEmr.images = [...cloneEmr.images, ...[fileListElement]];
+        const updateRes = await updateEMRAPI(emrId, cloneEmr);
+        setEmr(cloneEmr);
+        message.success({ content: "Lưu thành công" });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setDrugLoading(false);
+      }
     }
 
     if (file && file.status === "removed") {
-      const emr = listEMR.find(v => v.id === visitId);
-      const newEmr = { ...emr };
-      newEmr.images = [...fileList];
-      const newState = [...[newEmr], ...listEMR];
-      const finalList = removeDuplicates(newState, "id");
-      localStorage.setItem("listEMR", JSON.stringify(finalList));
-      setListEMR(finalList);
+      console.log(fileList);
     }
   }
 
-  function handleDeleteImage(visitId, imageId) {
-    
-  }
+  useEffect(() => {
+    console.log(emr);
+  }, [emr]);
 
   return (
     <>
       <PageHeader title="Khám bệnh" onBack={() => history.goBack()} />
-      <Tabs type="card">
-        {
-          listEMR.map(v => (
-            <Tabs.TabPane key={v.id} tab={`${v.patient.first_name} ${v.patient.last_name}`}>
-              <Descriptions title="Thông tin bệnh nhân">
-                <Descriptions.Item span={1} label="Họ và tên">
-                  {v.patient.first_name} {v.patient.last_name} ({v.patient.gender})
+      {
+        emr ?
+          <>
+            <Descriptions title="Thông tin bệnh nhân">
+              <Descriptions.Item span={1} label="Họ và tên">
+                {emr.patient.first_name} {emr.patient.last_name} ({emr.patient.gender})
                     </Descriptions.Item>
-                <Descriptions.Item span={1} label="Ngày sinh">
-                  {v.patient.DOB}
-                </Descriptions.Item>
-              </Descriptions>
+              <Descriptions.Item span={1} label="Ngày sinh">
+                {emr.patient.DOB}
+              </Descriptions.Item>
+            </Descriptions>
 
-              <Descriptions title={`Thông tin khám bệnh (Phòng khám: ${v.room})`}>
-                <Descriptions.Item span={1} label="Ngày vào khám">{moment(v.created_at).format("DD/MM/YYYY HH:mm:ss")}</Descriptions.Item>
-                <Descriptions.Item span={1} label="Bác sĩ khám bệnh">
-                  {v.physician.first_name} {v.physician.last_name}
-                </Descriptions.Item>
-              </Descriptions>
+            <Descriptions title={`Thông tin khám bệnh (Phòng khám: ${emr.room})`}>
+              <Descriptions.Item span={1} label="Ngày vào khám">{moment(emr.created_at).format("DD/MM/YYYY HH:mm:ss")}</Descriptions.Item>
+              <Descriptions.Item span={1} label="Bác sĩ khám bệnh">
+                {emr.physician.first_name} {emr.physician.last_name}
+              </Descriptions.Item>
+            </Descriptions>
 
-              <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs", "images"]}>
-                <Collapse.Panel header="Chức năng sống" key="living-function">
-                  <VisitLivingFunctionForm
-                    onFinish={(values) => handleSaveLivingFunctions(v.id, values)}
-                    currentValues={v.living_functions} />
-                </Collapse.Panel>
+            <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs", "images"]}>
+              <Collapse.Panel header="Dấu hiệu sinh tồn" key="living-function">
+                <VisitLivingFunctionForm
+                  onFinish={(values) => handleSaveLivingFunctions(emr.id, values)}
+                  loading={livingFncLoading}
+                  currentValues={emr.living_functions} />
+              </Collapse.Panel>
 
-                <Collapse.Panel header="Bệnh" key="diseases">
-                  <VisitDiseaseForm
-                    categories={diseaseCategories}
-                    user={user}
-                    onFinish={(values) => handleSaveDiseases(v.id, values)}
-                    currentValues={v} />
-                </Collapse.Panel>
-                <Collapse.Panel header="Chỉ định dịch vụ" key="services">
-                  <VisitServiceForm
-                    user={user}
-                    services={services}
-                    onFinish={(values) => handleSaveServices(v.id, values)}
-                    currentValues={v} />
-                </Collapse.Panel>
-                <Collapse.Panel header="Kê đơn thuốc" key="drugs">
-                  <VisitDrugForm
-                    user={user}
-                    categories={drugCategories}
-                    instructions={drugInstructions}
-                    onFinish={(values) => handleSaveDrugs(v.id, values)}
-                    currentValues={v} />
-                </Collapse.Panel>
-                <Collapse.Panel header="Hình ảnh" key="images">
-                  <VisitImagesForm
-                    emrId="288e8054-fe90-45da-acb1-62c76a8c102c"
-                    onChange={(e) => handleUploadChange(e, v.id)}
-                    onDeleteImage={(imageId) => handleDeleteImage(v.id, imageId)}
-                    fileList={v.images} />
-                </Collapse.Panel>
-              </Collapse>
+              <Collapse.Panel header="Bệnh" key="diseases">
+                <VisitDiseaseForm
+                  categories={diseaseCategories}
+                  user={user}
+                  loading={diseaseLoading}
+                  onFinish={(values) => handleSaveDiseases(emr.id, values)}
+                  currentValues={emr} />
+              </Collapse.Panel>
+              <Collapse.Panel header="Chỉ định dịch vụ" key="services">
+                <VisitServiceForm
+                  user={user}
+                  loading={serviceLoading}
+                  services={services}
+                  onFinish={(values) => handleSaveServices(emr.id, values)}
+                  currentValues={emr} />
+              </Collapse.Panel>
+              <Collapse.Panel header="Kê đơn thuốc" key="drugs">
+                <VisitDrugForm
+                  user={user}
+                  categories={drugCategories}
+                  loading={drugLoading}
+                  instructions={drugInstructions}
+                  onFinish={(values) => handleSaveDrugs(emr.id, values)}
+                  currentValues={emr} />
+              </Collapse.Panel>
+              <Collapse.Panel header="Hình ảnh" key="images">
+                <VisitImagesForm
+                  emrId="288e8054-fe90-45da-acb1-62c76a8c102c"
+                  onChange={(e) => handleUploadChange(e, emr.id)}
+                  fileList={emr.images} />
+              </Collapse.Panel>
+            </Collapse>
 
-              <Divider />
-              <div className="text-right">
-                <Space>
-                  <Button danger size="large">Hủy đơn</Button>
-                  <Button type="primary" size="large" onClick={() => handleFinishExamination(v.id)}>Kết thúc khám</Button>
-                </Space>
-              </div>
-            </Tabs.TabPane>
-          ))
-        }
-
-      </Tabs>
+            <Divider />
+            <div className="text-right">
+              <Space>
+                <Button danger size="large">Hủy đơn</Button>
+                <Button type="primary" size="large" onClick={() => handleFinishExamination(emr.id)}>Kết thúc khám</Button>
+              </Space>
+            </div>
+          </>
+          :
+          <div className="py-10 text-center"><Spin spinning={loading} /></div>
+      }
     </>
   )
 }
