@@ -9,10 +9,10 @@ const RoomForm = props => {
       layout="vertical"
       form={form}
       onFinish={onFinish}>
-      <Form.Item label="Số phòng" name="number" initialValue={defaultRoom?.number}>
+      <Form.Item label="Mã" name="number" initialValue={defaultRoom?.number}>
         <Input type="number" autoFocus />
       </Form.Item>
-      <Form.Item label="Tên phòng" name="name" initialValue={defaultRoom?.name}>
+      <Form.Item label="Tên khoa" name="name" initialValue={defaultRoom?.name}>
         <Input />
       </Form.Item>
     </Form>

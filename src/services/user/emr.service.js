@@ -27,3 +27,8 @@ export function updateEMRAPI(emrId, body) {
   const url = `${endpointPrefix}/physician/emrs/${emrId}`;
   return axios.put(url, body);
 }
+
+export function completeEMRAPI(emrId) {
+  const url = `${endpointPrefix}/physician/emrs/${emrId}/complete`;
+  return axios.get(url);
+}

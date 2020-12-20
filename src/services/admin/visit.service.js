@@ -1,10 +1,14 @@
 import axios from 'axios';
 import { API_URL } from 'constant/apiUrl';
+import { getQueryString } from 'utils/string';
 
 const endpointPrefix = `${API_URL}/admin/manage-visit`;
 
-export function getVisitDataAPI() {
+export function getVisitDataAPI(query) {
   const url = `${endpointPrefix}/`;
+  if (query) {
+    return axios.get(`${url}?${getQueryString(query)}`);
+  }
   return axios.get(url);
 }
 

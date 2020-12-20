@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import DiseaseCategoryForm from 'forms/DiseaseCategoryForm/DiseaseCategoryForm';
-import { addDiseaseCategoryAPI, deleteDiseaseCategoryAPI, getDiseaseCategoryAPI, updateDiseaseCategoryAPI } from 'services/admin/disease-category.service';
+import DrugRouteForm from 'forms/DrugRouteForm/DrugRouteForm';
+import { addDrugRouteAPI, deleteDrugRouteAPI, getDrugRouteAPI, updateDrugRouteAPI } from 'services/admin/drug-route.service';
 import { formActions } from 'constant/formActions';
 
-const DiseaseCategoryPage = () => {
+const DrugRoutePage = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
+  const [routes, setRoutes] = useState([]);
+  const [fetchingRoutes, setFetchingRoutes] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [action, setAction] = useState(formActions.CREATE);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [diseaseCategoryForm] = Form.useForm();
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [drugRouteForm] = Form.useForm();
 
   const tableColumns = [
     {
@@ -53,31 +53,31 @@ const DiseaseCategoryPage = () => {
     setModalVisible(false);
   }
 
-  async function getDiseaseCategories() {
+  async function getDrugRoutes() {
     try {
-      setFetchingCategories(true);
-      const response = await getDiseaseCategoryAPI();
-      setCategories(response.data);
+      setFetchingRoutes(true);
+      const response = await getDrugRouteAPI();
+      setRoutes(response.data);
     } catch (error) {
       console.log(error);
     } finally {
-      setFetchingCategories(false);
+      setFetchingRoutes(false);
     }
   }
 
   async function handleFormSubmit() {
     try {
       setModalLoading(true);
-      const values = await diseaseCategoryForm.validateFields();
+      const values = await drugRouteForm.validateFields();
       if (action === formActions.CREATE) {
-        await addDiseaseCategoryAPI(values.name);
+        await addDrugRouteAPI(values.name);
       }
 
       if (action === formActions.UPDATE) {
-        await updateDiseaseCategoryAPI(selectedCategory.id, values.name);
+        await updateDrugRouteAPI(selectedRoute.id, values.name);
       }
 
-      getDiseaseCategories();
+      getDrugRoutes();
 
       setModalVisible(false);
     } catch (error) {
@@ -87,34 +87,34 @@ const DiseaseCategoryPage = () => {
     }
   }
 
-  function handleEditClick(category) {
+  function handleEditClick(route) {
     setAction(formActions.UPDATE);
-    setSelectedCategory(category);
+    setSelectedRoute(route);
     setModalVisible(true);
   }
 
   async function handleDelete(unit) {
     try {
-      await deleteDiseaseCategoryAPI(unit.id);
-      getDiseaseCategories();
+      await deleteDrugRouteAPI(unit.id);
+      getDrugRoutes();
     } catch (error) {
       console.log(error);
     }
   }
 
   function afterClose() {
-    diseaseCategoryForm.resetFields();
-    setSelectedCategory(null);
+    drugRouteForm.resetFields();
+    setSelectedRoute(null);
   }
 
   useEffect(() => {
-    getDiseaseCategories();
+    getDrugRoutes();
   }, []);
 
   return (
     <>
       <Row justify="space-between">
-        <Col><h1 className="text-xl">Quản lý nhóm bệnh</h1></Col>
+        <Col><h1 className="text-xl">Quản lý đường dùng thuốc</h1></Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
@@ -122,21 +122,21 @@ const DiseaseCategoryPage = () => {
       <Table
         rowKey="id"
         columns={tableColumns}
-        dataSource={categories}
+        dataSource={routes}
         pagination={false}
-        loading={fetchingCategories} />
+        loading={fetchingRoutes} />
       <Modal
         visible={modalVisible}
-        title={action === formActions.CREATE ? 'Thêm loại bệnh' : 'Cập nhật loại bệnh'}
+        title={action === formActions.CREATE ? 'Thêm đường dùng thuốc' : 'Cập nhật đường dùng thuốc'}
         onCancel={handleCloseModal}
         confirmLoading={modalLoading}
         destroyOnClose={true}
         afterClose={afterClose}
         onOk={handleFormSubmit}>
-        <DiseaseCategoryForm onFinish={handleFormSubmit} form={diseaseCategoryForm} defaultCategory={selectedCategory} />
+        <DrugRouteForm onFinish={handleFormSubmit} form={drugRouteForm} defaultRoute={selectedRoute} />
       </Modal>
     </>
   )
 }
 
-export default DiseaseCategoryPage;
+export default DrugRoutePage;

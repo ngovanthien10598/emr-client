@@ -33,10 +33,9 @@ const DrugPage = () => {
       dataIndex: 'name'
     },
     {
-      title: 'Giá',
-      key: 'price',
-      dataIndex: 'price',
-      render: (text, record, index) => (<NumberFormat thousandSeparator=" " suffix=" VNĐ" value={text} displayType="text" />)
+      title: 'Hàm lượng/nồng độ',
+      key: 'strength',
+      dataIndex: 'strength'
     },
     {
       title: 'Hành động',
@@ -81,19 +80,23 @@ const DrugPage = () => {
     try {
       setModalLoading(true);
       const values = await drugForm.validateFields();
+      console.log(values);
       const data = {
         code: values.code,
         name: values.name,
         price: values.price,
         drug_category: values.drug_category,
-        drug_unit: values.drug_unit
+        drug_unit: values.drug_unit,
+        drug_route: values.drug_route,
+        drug_dosage_form: values.drug_dosage_form,
+        strength: values.strength
       }
       if (action === formActions.CREATE) {
-        await addDrugAPI(data);
+        await addDrugAPI(values);
       }
 
       if (action === formActions.UPDATE) {
-        await updateDrugAPI(selectedDrug.id, data);
+        await updateDrugAPI(selectedDrug.id, values);
       }
 
       getDrugs();

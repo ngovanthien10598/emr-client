@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Table, Form, PageHeader, Button, Modal, Menu, Dropdown } from 'antd';
+import { Input, Table, Form, PageHeader, Button, Modal, Menu, Dropdown, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PatientForm from 'forms/PatientForm/PatientForm';
 
@@ -21,12 +21,12 @@ const ReceivePage = props => {
   const [isCreatingVisit, setCreatingVisit] = useState(false);
   const [patientForm] = Form.useForm();
 
-  function renderMenu(patientId) {
+  function renderMenu(patient) {
     return (
       <Menu>
         {
           rooms?.map(room => (
-            <Menu.Item key={room.id} onClick={() => handleCreateVisit(patientId, room.id)}>{room.name}</Menu.Item>
+            <Menu.Item key={room.id} onClick={() => handleCreateVisit(patient, room)}>Khoa {room.name}</Menu.Item>
           ))
         }
       </Menu>
@@ -63,7 +63,7 @@ const ReceivePage = props => {
       title: 'Hành động',
       key: 'action',
       render: (text, record) => (
-        <Dropdown overlay={renderMenu(record.id)} overlayStyle={{ minWidth: 200 }} trigger="click">
+        <Dropdown overlay={renderMenu(record)} overlayStyle={{ minWidth: 200 }} trigger="click">
           <Button>Tiếp nhận</Button>
         </Dropdown>
       )
@@ -140,15 +140,11 @@ const ReceivePage = props => {
     }
   }
 
-  function handleReceiveClick(patientId) {
-    setRoomModalVisible(true);
-  }
-
-  async function handleCreateVisit(patientId, roomId) {
+  async function handleCreateVisit(patient, room) {
     try {
       setCreatingVisit(true);
-      const createVisitResponse = await createVisitAPI({ patientId, roomId });
-      console.log(createVisitResponse.data);
+      await createVisitAPI({ patientId: patient.id, roomId: room.id });
+      message.success(`Đã tiếp nhận bệnh nhân ${patient.first_name} ${patient.last_name} vào ${room.name}`);
     } catch (error) {
       console.log(error);
     } finally {

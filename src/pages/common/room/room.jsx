@@ -17,14 +17,10 @@ const RoomPage = () => {
 
   const tableColumns = [
     {
-      title: '#',
-      key: '#',
-      render: (text, record, index) => index + 1
-    },
-    {
-      title: 'Số phòng',
+      title: 'Mã khoa',
       key: 'number',
-      dataIndex: 'number'
+      dataIndex: 'number',
+      width: '150px'
     },
     {
       title: 'Tên',
@@ -34,6 +30,7 @@ const RoomPage = () => {
     {
       title: 'Hành động',
       key: 'action',
+      width: '150px',
       render: (text, record, index) => (
         <Space size={10}>
           <Button icon={<EditOutlined />} onClick={() => handleEditClick(record)}></Button>
@@ -119,7 +116,7 @@ const RoomPage = () => {
   return (
     <>
       <Row justify="space-between">
-        <Col><h1 className="text-xl">Quản lý phòng</h1></Col>
+        <Col><h1 className="text-xl">Quản lý khoa</h1></Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
@@ -132,7 +129,7 @@ const RoomPage = () => {
         loading={fetchingCategories} />
       <Modal
         visible={modalVisible}
-        title={action === formActions.CREATE ? 'Thêm phòng' : 'Cập nhật phòng'}
+        title={action === formActions.CREATE ? 'Thêm khoa' : 'Cập nhật khoa'}
         onCancel={handleCloseModal}
         confirmLoading={modalLoading}
         destroyOnClose={true}

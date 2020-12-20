@@ -1,10 +1,14 @@
 import axios from 'axios';
 import { API_URL } from 'constant/apiUrl';
+import { getQueryString } from 'utils/string';
 
 const endpointPrefix = `${API_URL}/user/visit`;
 
-export function getVisitDataAPI() {
+export function getVisitDataAPI(query) {
   const url = `${endpointPrefix}/`;
+  if (query) {
+    return axios.get(`${url}?${getQueryString(query)}`);
+  }
   return axios.get(url);
 }
 
@@ -14,4 +18,9 @@ export function createVisitAPI({ patientId, roomId }) {
     room_id: roomId,
     patient_id: patientId
   })
+}
+
+export function deleteVisitAPI(visitId) {
+  const url = `${endpointPrefix}/${visitId}/`;
+  return axios.delete(url);
 }

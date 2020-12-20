@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import DiseaseCategoryForm from 'forms/DiseaseCategoryForm/DiseaseCategoryForm';
-import { addDiseaseCategoryAPI, deleteDiseaseCategoryAPI, getDiseaseCategoryAPI, updateDiseaseCategoryAPI } from 'services/admin/disease-category.service';
+import DrugDosageFormForm from 'forms/DrugDosageFormForm/DrugDosageFormForm';
+import { addDrugDosageFormAPI, deleteDrugDosageFormAPI, getDrugDosageFormAPI, updateDrugDosageFormAPI } from 'services/admin/drug-dosage-form.service';
 import { formActions } from 'constant/formActions';
 
-const DiseaseCategoryPage = () => {
+const DrugDosageFormPage = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
+  const [dosageForms, setDosageForms] = useState([]);
+  const [fetchingDosageForms, setFetchingDosageForms] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [action, setAction] = useState(formActions.CREATE);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [diseaseCategoryForm] = Form.useForm();
+  const [selectedDosageForm, setSelectedDosageForm] = useState(null);
+  const [drugDosageFormForm] = Form.useForm();
 
   const tableColumns = [
     {
@@ -53,31 +53,31 @@ const DiseaseCategoryPage = () => {
     setModalVisible(false);
   }
 
-  async function getDiseaseCategories() {
+  async function getDrugDosageForms() {
     try {
-      setFetchingCategories(true);
-      const response = await getDiseaseCategoryAPI();
-      setCategories(response.data);
+      setFetchingDosageForms(true);
+      const response = await getDrugDosageFormAPI();
+      setDosageForms(response.data);
     } catch (error) {
       console.log(error);
     } finally {
-      setFetchingCategories(false);
+      setFetchingDosageForms(false);
     }
   }
 
   async function handleFormSubmit() {
     try {
       setModalLoading(true);
-      const values = await diseaseCategoryForm.validateFields();
+      const values = await drugDosageFormForm.validateFields();
       if (action === formActions.CREATE) {
-        await addDiseaseCategoryAPI(values.name);
+        await addDrugDosageFormAPI(values.name);
       }
 
       if (action === formActions.UPDATE) {
-        await updateDiseaseCategoryAPI(selectedCategory.id, values.name);
+        await updateDrugDosageFormAPI(selectedDosageForm.id, values.name);
       }
 
-      getDiseaseCategories();
+      getDrugDosageForms();
 
       setModalVisible(false);
     } catch (error) {
@@ -87,34 +87,34 @@ const DiseaseCategoryPage = () => {
     }
   }
 
-  function handleEditClick(category) {
+  function handleEditClick(dosageForm) {
     setAction(formActions.UPDATE);
-    setSelectedCategory(category);
+    setSelectedDosageForm(dosageForm);
     setModalVisible(true);
   }
 
   async function handleDelete(unit) {
     try {
-      await deleteDiseaseCategoryAPI(unit.id);
-      getDiseaseCategories();
+      await deleteDrugDosageFormAPI(unit.id);
+      getDrugDosageForms();
     } catch (error) {
       console.log(error);
     }
   }
 
   function afterClose() {
-    diseaseCategoryForm.resetFields();
-    setSelectedCategory(null);
+    drugDosageFormForm.resetFields();
+    setSelectedDosageForm(null);
   }
 
   useEffect(() => {
-    getDiseaseCategories();
+    getDrugDosageForms();
   }, []);
 
   return (
     <>
       <Row justify="space-between">
-        <Col><h1 className="text-xl">Quản lý nhóm bệnh</h1></Col>
+        <Col><h1 className="text-xl">Quản lý đường dùng thuốc</h1></Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
@@ -122,21 +122,21 @@ const DiseaseCategoryPage = () => {
       <Table
         rowKey="id"
         columns={tableColumns}
-        dataSource={categories}
+        dataSource={dosageForms}
         pagination={false}
-        loading={fetchingCategories} />
+        loading={fetchingDosageForms} />
       <Modal
         visible={modalVisible}
-        title={action === formActions.CREATE ? 'Thêm loại bệnh' : 'Cập nhật loại bệnh'}
+        title={action === formActions.CREATE ? 'Thêm đường dùng thuốc' : 'Cập nhật đường dùng thuốc'}
         onCancel={handleCloseModal}
         confirmLoading={modalLoading}
         destroyOnClose={true}
         afterClose={afterClose}
         onOk={handleFormSubmit}>
-        <DiseaseCategoryForm onFinish={handleFormSubmit} form={diseaseCategoryForm} defaultCategory={selectedCategory} />
+        <DrugDosageFormForm onFinish={handleFormSubmit} form={drugDosageFormForm} defaultDosageForm={selectedDosageForm} />
       </Modal>
     </>
   )
 }
 
-export default DiseaseCategoryPage;
+export default DrugDosageFormPage;

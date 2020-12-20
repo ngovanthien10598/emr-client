@@ -18,26 +18,14 @@ export function getDrugDetailsAPI(id) {
   return axios.get(url);
 }
 
-export function addDrugAPI({ code, name, drug_category, price, drug_unit }) {
+export function addDrugAPI(body) {
   const url = `${endpointPrefix}/`;
-  return axios.post(url, {
-    code,
-    name,
-    drug_category,
-    price: Number(price),
-    drug_unit
-  });
+  return axios.post(url, body);
 }
 
-export function updateDrugAPI(id, { code, name, drug_category, price, drug_unit }) {
+export function updateDrugAPI(id, body) {
   const url = `${endpointPrefix}/${id}/`;
-  return axios.put(url, {
-    code,
-    name,
-    drug_category,
-    price: Number(price),
-    drug_unit
-  });
+  return axios.put(url, body);
 }
 
 export function deleteDrugAPI(id) {

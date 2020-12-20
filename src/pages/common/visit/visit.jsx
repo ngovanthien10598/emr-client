@@ -25,7 +25,6 @@ const VisitPage = props => {
   const [createEMRLoading, setCreateEMRLoading] = useState([]);
 
   const [selectedRoom, setSelectedRoom] = useState("");
-  const [listEMR, setListEMR] = useState([]);
 
   const visitList = visitData?.results.filter(visit => {
     const createdAt = new Date(visit.created_at);
@@ -55,7 +54,7 @@ const VisitPage = props => {
     {
       title: 'Ngày sinh',
       key: 'DOB',
-      render: (_,record) => moment(record.patient.DOB).format('DD/MM/YYYY')
+      render: (_, record) => moment(record.patient.DOB).format('DD/MM/YYYY')
     },
     {
       ken: 'action',
@@ -75,7 +74,11 @@ const VisitPage = props => {
       setRooms(roomResponse.data);
 
       const prevSelected = localStorage.getItem("selectedRoom");
-      setSelectedRoom(prevSelected);
+      if (prevSelected) {
+        setSelectedRoom(prevSelected);
+        getVisitData(prevSelected);
+      }
+
     } catch (error) {
       console.log(error);
     } finally {
@@ -83,14 +86,14 @@ const VisitPage = props => {
     }
   }
 
-  async function getVisitData() {
+  async function getVisitData(roomId) {
     try {
       let visitDataResponse;
       setVisitLoading(true);
       if (user.role.name === "admin") {
-        visitDataResponse = await adminGetVisitDataAPI();
+        visitDataResponse = await adminGetVisitDataAPI({ room_id: roomId });
       } else {
-        visitDataResponse = await getVisitDataAPI()
+        visitDataResponse = await getVisitDataAPI({ room_id: roomId })
       }
       const visitData = visitDataResponse.data;
       setVisitData(visitData);
@@ -103,7 +106,6 @@ const VisitPage = props => {
 
   async function getInitialData() {
     await Promise.all([
-      getVisitData(),
       getRooms(),
     ]);
   }
@@ -112,19 +114,13 @@ const VisitPage = props => {
     if (user) {
       getInitialData();
     }
-
-    const localListEMRStr = localStorage.getItem("listEMR");
-    const localListEMRObj = JSON.parse(localListEMRStr);
-    if (localListEMRObj) {
-      setListEMR(localListEMRObj);
-    }
   }, [user]);
 
   useEffect(() => {
     if (selectedRoom) {
       localStorage.setItem("selectedRoom", selectedRoom);
     }
-  }, [selectedRoom, listEMR])
+  }, [selectedRoom])
 
   async function createEmr(emr) {
     try {
@@ -186,16 +182,8 @@ const VisitPage = props => {
           role: user.role.name,
           avatar: user.avatar
         },
-        room: visit.room.name,
-        living_functions: {
-          heartbeat: null,
-          temp: null,
-          pressure: null,
-          breathing: null,
-          height: null,
-          weight: null,
-          bmi: null
-        },
+        room: "",
+        living_functions: null,
         emr_diseases: [],
         emr_services: [],
         emr_drugs: [],
@@ -203,25 +191,19 @@ const VisitPage = props => {
       }
 
       try {
-        const createResponse = await createEmr(emrObj);
-        const newEmr = createResponse.data.data;
-  
-        setListEMR(prev => {
-          const newArr = [...prev, ...[newEmr]];
-          const unique = removeDuplicates(newArr, "id");
-          localStorage.setItem("listEMR", JSON.stringify(unique));
-          return unique;
-        });
+        await createEmr(emrObj);
+        history.push(`${pathname}/${visit.id}`);
       } catch (error) {
         console.log(error);
       }
+    } else {
+      history.push(`${pathname}/${visit.id}`);
     }
-
-    history.push(`${pathname}/${visit.id}`);
   }
 
   function handleChangeRoom(value) {
     setSelectedRoom(value);
+    getVisitData(value);
   }
 
   return (
@@ -229,11 +211,11 @@ const VisitPage = props => {
       <Row className="flex-no-wrap">
         <Col style={{ width: 350 }} className="flex-shrink-0">
           <div className="mb-5">
-            <h3 className="text-xl">Phòng khám</h3>
+            <h3 className="text-xl">Khoa</h3>
             <Select loading={roomLoading} style={{ width: '100%' }} value={selectedRoom} onChange={handleChangeRoom}>
               {
                 rooms.map(room => (
-                  <Select.Option key={room.id} value={room.id}>{room.name}</Select.Option>
+                  <Select.Option key={room.id} value={room.id} onChange={handleChangeRoom}>{room.name}</Select.Option>
                 ))
               }
             </Select>
@@ -242,14 +224,7 @@ const VisitPage = props => {
         <Col flex="0 0 45px"></Col>
         <Col flex={1}>
           <h3 className="text-xl">Bệnh nhân đang chờ khám</h3>
-          {
-            !selectedRoom ?
-              <Empty description="Vui lòng chọn phòng" />
-              :
-              visitList?.length > 0 ?
-                <Table dataSource={visitList} columns={tableColumns} rowKey="id" loading={visitLoading} pagination={false} />
-                : <Empty description="Không có dữ liệu" />
-          }
+          <Table dataSource={visitList} columns={tableColumns} rowKey="id" loading={visitLoading} pagination={false} />
         </Col>
       </Row>
     </>

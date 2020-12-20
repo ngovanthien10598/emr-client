@@ -69,12 +69,20 @@ const DrugCategoryPage = () => {
     try {
       setModalLoading(true);
       const values = await drugCategoryForm.validateFields();
+      const name = values.name;
+      const index = name.indexOf(". ");
+      let cut = name.substr(index > -1 ? index + 2 : 0);
+      const indexOfNhom = cut.indexOf("Nhóm");
+      if (indexOfNhom === -1) {
+        cut = "Nhóm " + cut;
+      }
+      const convertedStr = cut.charAt(0).toUpperCase() + cut.substr(1).toLowerCase();
       if (action === formActions.CREATE) {
-        await addDrugCategoryAPI(values.name);
+        await addDrugCategoryAPI(convertedStr);
       }
 
       if (action === formActions.UPDATE) {
-        await updateDrugCategoryAPI(selectedCategory.id, values.name);
+        await updateDrugCategoryAPI(selectedCategory.id, convertedStr);
       }
 
       getDrugCategories();
@@ -114,7 +122,7 @@ const DrugCategoryPage = () => {
   return (
     <>
       <Row justify="space-between">
-        <Col><h1 className="text-xl">Quản lý loại thuốc</h1></Col>
+        <Col><h1 className="text-xl">Quản lý nhóm thuốc</h1></Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
@@ -127,7 +135,7 @@ const DrugCategoryPage = () => {
         loading={fetchingCategories} />
       <Modal
         visible={modalVisible}
-        title={action === formActions.CREATE ? 'Thêm loại thuốc' : 'Cập nhật loại thuốc'}
+        title={action === formActions.CREATE ? 'Thêm nhóm thuốc' : 'Cập nhật nhóm thuốc'}
         onCancel={handleCloseModal}
         confirmLoading={modalLoading}
         destroyOnClose={true}
