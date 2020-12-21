@@ -41,6 +41,7 @@ import { getDrugsAPI as adminGetDrugsAPI } from 'services/admin/drug.service';
 import { getDrugsAPI } from 'services/user/drug.service';
 
 const { Option } = Select;
+const { useForm } = Form;
 
 const ExaminationPage = props => {
 
@@ -62,7 +63,7 @@ const ExaminationPage = props => {
   const [drugLoading, setDrugLoading] = useState(false);
   const [finishLoading, setFinishLoading] = useState(false);
 
-  const [listEMR, setListEMR] = useState([]);
+  const [emrForm] = useForm();
 
   async function getDiseaseCategories() {
     try {
@@ -190,72 +191,73 @@ const ExaminationPage = props => {
     // }
   }
 
-  async function handleSaveEmr(values) {
+  async function handleSaveEmr() {
+
+    const values = await emrForm.validateFields();
 
     const emrBody = {
-      id: emr.id,
       patient: emr.patient,
       physician: user,
       medical_record: {
         administrative: {
-          fullname: values.fullname,
-          dayOfBirth: values.dayOfBirth.format('DD/MM/YYYY'),
-          gender: values.gender,
-          job: values.job,
-          ethnicity: values.ethnicity,
-          expatriate: values.expatriate,
-          address: values.address,
-          workplace: values.workplace,
-          object: values.object,
-          insurance_expirity: values.insurance_expirity.format('DD/MM/YYYY'),
-          insurance_number: values.insurance_number,
-          family_member_and_address: values.family_member_and_address,
-          phone: values.phone,
-          checkin_at: values.checkin,
-          previous_diagnose: values.previous_diagnose,
-          come_from: values.come_from
+          fullname: values.fullname || null,
+          dayOfBirth: values.dayOfBirth?.format('DD/MM/YYYY') || null,
+          gender: values.gender || null,
+          job: values.job || null,
+          ethnicity: values.ethnicity || null,
+          expatriate: values.expatriate || null,
+          address: values.address || null,
+          workplace: values.workplace || null,
+          object: values.object || null,
+          insurance_expirity: values.insurance_expirity?.format('DD/MM/YYYY') || null,
+          insurance_number: values.insurance_number || null,
+          family_member_and_address: values.family_member_and_address || null,
+          phone: values.phone || null,
+          checkin_at: values.checkin || null,
+          previous_diagnose: values.previous_diagnose || null,
+          come_from: values.come_from || null
         },
-        present_complaint: values.present_complaint,
+        present_complaint: values.present_complaint || null,
         ask: {
-          pathological_process: values.pathological_process,
-          self_medical_history: values.self_medical_history,
-          family_medical_history: values.family_medical_history
+          pathological_process: values.pathological_process || null,
+          self_medical_history: values.self_medical_history || null,
+          family_medical_history: values.family_medical_history || null
         },
         examination: {
-          heartbeat: values.heartbeat,
-          temperature: values.temperature,
-          blood_pressure: values.blood_pressure,
-          breathing: values.breathing,
-          weight: values.weight,
-          body: values.body,
-          partials: values.partials,
-          subclinical_summary: values.subclinical_summary,
-          initial_diagnose: values.initial_diagnose,
-          drugs: values.drugs,
-          processed: values.processed,
-          diagnose: values.diagnose,
-          from_date: values.from_date.format('DD/MM/YYYY'),
-          to_date: values.to_date.format('DD/MM/YYYY'),
+          heartbeat: values.heartbeat || null,
+          temperature: values.temperature || null,
+          blood_pressure: values.blood_pressure || null,
+          breathing: values.breathing || null,
+          weight: values.weight || null,
+          body: values.body || null,
+          partials: values.partials || null,
+          subclinical_summary: values.subclinical_summary || null,
+          initial_diagnose: values.initial_diagnose || null,
+          drugs: values.drugs || null,
+          processed: values.processed || null,
+          diagnose: values.diagnose || null,
+          from_date: values.from_date?.format('DD/MM/YYYY') || null,
+          to_date: values.to_date?.format('DD/MM/YYYY') || null,
         },
         summary: {
-          pathological_process_and_clinical_course: values.pathological_process_and_clinical_course,
-          valuable_subclinical_summary: values.valuable_subclinical_summary,
-          primary_disease: values.primary_disease,
-          sub_disease: values.sub_disease,
-          treatment_method: values.treatment_method,
-          patient_status: values.patient_status,
-          direction_of_treatment: values.direction_of_treatment,
-
-          services: values.services,
-          attachments: emr.images
+          pathological_process_and_clinical_course: values.pathological_process_and_clinical_course || null,
+          valuable_subclinical_summary: values.valuable_subclinical_summary || null,
+          primary_disease: values.primary_disease || null,
+          sub_disease: values.sub_disease || null,
+          treatment_method: values.treatment_method || null,
+          patient_status: values.patient_status || null,
+          direction_of_treatment: values.direction_of_treatment || null,
+          services: values.services || null,
+          attachments: emr.summary.attachments || null
         }
       }
     }
 
-    console.log(emrBody);
+    await updateEMRAPI(emr.id, emrBody);
   }
 
   async function handleUploadChange({ event, file, fileList }, emrId) {
+    console.log("change");
 
     if (file && file.status === "done") {
 
@@ -265,7 +267,7 @@ const ExaminationPage = props => {
         const response = file.response;
         const fileListElement = { uid: response.url, id: response.url, url: response.url };
         const cloneEmr = { ...emr };
-        cloneEmr.images = [...cloneEmr.images, ...[fileListElement]];
+        cloneEmr.medical_record.summary.attachments = [...cloneEmr.medical_record.summary.attachments, ...[fileListElement]];
         const updateRes = await updateEMRAPI(emrId, cloneEmr);
         setEmr(cloneEmr);
         message.success({ content: "Lưu thành công" });
@@ -277,7 +279,7 @@ const ExaminationPage = props => {
     if (file && file.status === "removed") {
       try {
         const cloneEmr = { ...emr };
-        cloneEmr.images = fileList;
+        cloneEmr.medical_record.summary.attachments = fileList;
         const updateRes = await updateEMRAPI(emrId, cloneEmr);
         setEmr(cloneEmr);
         message.success({ content: "Lưu thành công" });
@@ -309,7 +311,7 @@ const ExaminationPage = props => {
       {
         emr ?
           <>
-            <Form layout="vertical" onFinish={handleSaveEmr}>
+            <Form layout="vertical" form={emrForm}>
 
               {/* <Descriptions title="Thông tin bệnh nhân">
               <Descriptions.Item span={1} label="Họ và tên">
@@ -451,7 +453,7 @@ const ExaminationPage = props => {
                   <Row gutter={15}>
                     <Col flex="0 0 50%">
                       <Form.Item label="10. Giá trị BHYT" name="insurance_expirity">
-                        <DatePicker style={{ width: '100%' }} />
+                        <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
                       </Form.Item>
                     </Col>
                     <Col flex="0 0 50%">
@@ -503,7 +505,7 @@ const ExaminationPage = props => {
                 </Collapse.Panel>
                 <Collapse.Panel header={<strong className="uppercase">iii. hỏi bệnh</strong>} key="ask">
                   <Form.Item label="1. Quá trình bệnh lý" name="pathological_process">
-                    <Input.TextArea rows={3} autoSize={true} />
+                    <Input.TextArea autoSize={{ minRows: 3, maxRows: 7 }}/>
                   </Form.Item>
                   <Form.Item label="2. Tiền sử bệnh" name="self_medical_history" className="mb-3">
                     <Input placeholder="Bản thân" />
@@ -587,7 +589,7 @@ const ExaminationPage = props => {
                                   <Select loading={drugLoading}>
                                     {
                                       drugs.map(drug => (
-                                        <Option key={drug.id} value={drug.name}>{drug.name} {drug.strength}</Option>
+                                        <Option key={drug.id} value={`${drug.name} ${drug.strength}`}>{drug.name} {drug.strength}</Option>
                                       ))
                                     }
                                   </Select>
@@ -702,15 +704,15 @@ const ExaminationPage = props => {
                     <Input addonBefore="Bệnh phụ (nếu có)" />
                   </Form.Item>
 
-                  <Form.Item label="4. Phương pháp điều trị" className="treatment_method">
+                  <Form.Item label="4. Phương pháp điều trị" name="treatment_method">
                     <Input.TextArea rows={6} />
                   </Form.Item>
 
-                  <Form.Item label="5. Tình trạng người bệnh ra viện" className="patient_status">
+                  <Form.Item label="5. Tình trạng người bệnh ra viện" name="patient_status">
                     <Input.TextArea rows={6} />
                   </Form.Item>
 
-                  <Form.Item label="6. Hướng điều trị và các chế độ tiếp theo" className="direction_of_treatment">
+                  <Form.Item label="6. Hướng điều trị và các chế độ tiếp theo" name="direction_of_treatment">
                     <Input.TextArea rows={6} />
                   </Form.Item>
 
@@ -756,7 +758,7 @@ const ExaminationPage = props => {
                     </Col>
                     <Col flex="0 0 50%">
                       <div className="mb-3">Tệp đính kèm</div>
-                      <VisitImagesForm onChange={(e) => handleUploadChange(e, emr.id)} fileList={emr.images || []} />
+                      <VisitImagesForm onChange={(e) => handleUploadChange(e, emr.id)} fileList={emr.medical_record.summary.attachments || []} />
                     </Col>
                   </Row>
                 </Collapse.Panel>
@@ -768,7 +770,7 @@ const ExaminationPage = props => {
               <div className="text-right">
                 <Space>
                   <Button danger type="default" size="large" icon={<DeleteOutlined />}>Hủy đơn</Button>
-                  <Button htmlType="submit" type="default" size="large" icon={<SaveOutlined />}>Lưu lại</Button>
+                  <Button type="default" size="large" onClick={handleSaveEmr} icon={<SaveOutlined />}>Lưu lại</Button>
                   <Button type="primary" size="large" onClick={() => handleFinishExamination(emr.id)} loading={finishLoading} icon={<FileDoneOutlined />}>Kết thúc khám</Button>
                 </Space>
               </div>

@@ -34,3 +34,8 @@ export function verifyEmailAPI(token) {
   const url = `${endpointPrefix}/verify-email/${token}/`;
   return axios.get(url);
 }
+
+export function changePasswordAPI(body) {
+  const url = `${endpointPrefix}/change-password/`;
+  return axios.put(url, body);
+}

@@ -165,39 +165,71 @@ const VisitPage = props => {
 
       const emrObj = {
         visit_id: visit.id,
-        patient: {
-          id: patient.id,
-          first_name: patient.first_name,
-          last_name: patient.last_name,
-          gender: patient.gender,
-          role: patient.role.name,
-          avatar: patient.avatar,
-          DOB: patient.DOB
-        },
-        physician: {
-          id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          gender: user.gender,
-          role: user.role.name,
-          avatar: user.avatar
-        },
-        room: "",
-        living_functions: null,
-        emr_diseases: [],
-        emr_services: [],
-        emr_drugs: [],
-        images: []
+        patient: visit.patient,
+        physician: user,
+        medical_record: {
+          administrative: {
+            fullname: null,
+            dayOfBirth: null,
+            gender: null,
+            job: null,
+            ethnicity: null,
+            expatriate: null,
+            address: null,
+            workplace: null,
+            object: null,
+            insurance_expirity: null,
+            insurance_number: null,
+            family_member_and_address: null,
+            phone: null,
+            checkin_at: null,
+            previous_diagnose: null,
+            come_from: null
+          },
+          present_complaint: null,
+          ask: {
+            pathological_process: null,
+            self_medical_history: null,
+            family_medical_history: null
+          },
+          examination: {
+            heartbeat: null,
+            temperature: null,
+            blood_pressure: null,
+            breathing: null,
+            weight: null,
+            body: null,
+            partials: null,
+            subclinical_summary: null,
+            initial_diagnose: null,
+            drugs: null,
+            processed: null,
+            diagnose: null,
+            from_date: null,
+            to_date: null,
+          },
+          summary: {
+            pathological_process_and_clinical_course: null,
+            valuable_subclinical_summary: null,
+            primary_disease: null,
+            sub_disease: null,
+            treatment_method: null,
+            patient_status: null,
+            direction_of_treatment: null,
+            services: null,
+            attachments: []
+          }
+        }
       }
 
       try {
-        await createEmr(emrObj);
+          await createEmr(emrObj);
+          history.push(`${pathname}/${visit.id}`);
+        } catch(error) {
+          console.log(error);
+        }
+      } else {
         history.push(`${pathname}/${visit.id}`);
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      history.push(`${pathname}/${visit.id}`);
     }
   }
 

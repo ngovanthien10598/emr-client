@@ -45,6 +45,23 @@ const PatientForm = props => {
         </Col>
       </Row>
 
+      <Row gutter={15}>
+        <Col flex="0 0 50%">
+          <Form.Item name="job" label="Nghề nghiệp">
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col flex="0 0 50%">
+          <Form.Item name="ethnicity" label="Dân tộc">
+            <Input />
+          </Form.Item>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col flex="0 0 50%"></Col>
+      </Row>
+
     </Form>
   )
 }

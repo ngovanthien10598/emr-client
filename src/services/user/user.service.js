@@ -17,3 +17,8 @@ export function addBlockChainUserAPI(userId, role = "user") {
   const url = `${NODE_URL}/api/register-${role}`;
   return axios.post(url, { [`${role}_id`]: userId });
 }
+
+export function updateProfile(body) {
+  const url = `${endpointPrefix}/profile/`;
+  return axios.put(url, body);
+}
