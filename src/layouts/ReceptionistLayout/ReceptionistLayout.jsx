@@ -30,7 +30,7 @@ const ReceptionistLayout = () => {
             selectedKeys={[location.pathname]}
           >
             <Menu.Item key="/receptionist/receive" icon={<DashboardOutlined />}>
-              <Link to="/receptionist/receive">Tiếp đón</Link>
+              <Link to="/receptionist/receive">Tiếp nhận bệnh</Link>
             </Menu.Item>
             <Menu.Item key="/receptionist/appointment" icon={<CalendarOutlined />}>
               <Link to="/receptionist/appointment">Lịch hẹn</Link>

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { PageHeader, Table, Space, Button } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import { Link, useRouteMatch } from 'react-router-dom';
+import moment from 'moment';
 
 // API
 import { listAllPatientsAPI } from 'services/user/patient.service';
@@ -29,6 +30,11 @@ const PatientPage = props => {
       title: 'Giới tính',
       key: 'gender',
       dataIndex: 'gender'
+    },
+    {
+      title: 'Ngày sinh',
+      key: 'DOB',
+      render: (text, record) => moment(record.DOB).format('DD/MM/YYYY')
     },
     {
       title: 'Địa chỉ',

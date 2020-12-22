@@ -5,7 +5,7 @@ import { getQueryString } from 'utils/string';
 const endpointPrefix = `${NODE_URL}/api`;
 
 export function listEMRAPI(query) {
-  const url = `${endpointPrefix}/patient/emrs`;
+  const url = `${endpointPrefix}/physician/emrs/`;
   if (query) {
     return axios.get(`${url}?${getQueryString(query)}`);
   }

@@ -167,6 +167,7 @@ const VisitPage = props => {
         visit_id: visit.id,
         patient: visit.patient,
         physician: user,
+        room: visit.room,
         medical_record: {
           administrative: {
             fullname: null,

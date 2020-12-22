@@ -16,6 +16,7 @@ import CustomHeader from 'components/Header';
 import ExaminationPage from 'pages/common/examination/examination';
 import ProfilePage from 'pages/common/profile/profile';
 import PatientDetails from 'pages/common/patient/patient-details';
+import EmrDetailsPage from 'pages/common/patient/emr-details';
 
 const { Sider, Content } = Layout;
 
@@ -75,6 +76,10 @@ const PhysicianLayout = () => {
               
               <Route path={`${path}/patient/:patientId`}>
                 <PatientDetails />
+              </Route>
+
+              <Route path={`${path}/patient/:patientId/:emrId`}>
+                <EmrDetailsPage />
               </Route>
 
               {/* Appointment */}
