@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { PageHeader, Descriptions, Spin, Table } from 'antd';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { PageHeader, Descriptions, Spin, Table, Space, Button } from 'antd';
+import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import moment from 'moment';
+import { EyeOutlined } from '@ant-design/icons';
 
 // APIs
 import { getPatientDetailsAPI } from 'services/user/patient.service';
 import { listEMRAPI } from 'services/user/emr.service';
+import Circle from 'components/Circle/Circle';
 
 const { Item } = Descriptions;
 
 const PatientDetails = props => {
 
   const { goBack } = useHistory();
-  const { params } = useRouteMatch();
+  const { params, url } = useRouteMatch();
   const patientId = params.patientId;
 
   const [patient, setPatient] = useState(null);
@@ -24,26 +26,40 @@ const PatientDetails = props => {
     {
       title: '#',
       key: '#',
-      render: (text, record, index) => index + 1
+      render: (_, __, index) => index + 1
     },
     {
-      title: 'Ngày khám',
-      key: 'created_at',
-      render: (text, record) => moment(record.created_at).format('DD/MM/YYYY HH:mm')
+      title: 'Ngày khám bệnh',
+      key: 'date',
+      render: (_, row) => moment(row.Record.created_at).format("DD/MM/YYYY")
     },
     {
-      title: 'Giờ kết thúc',
-      key: 'completed_at'
-    },
-    {
-      title: 'Bác sĩ',
+      title: 'Bác sĩ khám bệnh',
       key: 'physician',
-      render: (text, { physician }) => physician.first_name + " " + physician.last_name
+      render: (_, row) => row.Record.physician.first_name + " " + row.Record.physician.last_name
     },
     {
-      title: 'Chẩn đoán',
-      key: 'diagnose',
-      render: (text, { emr_diseases }) => emr_diseases.map(disease => disease.name).join(", ")
+      title: 'Khoa khám',
+      key: 'room',
+      render: (_, row) => "Khoa " + row.Record.room.name
+    },
+    {
+      title: 'Trạng thái',
+      key: 'status',
+      render: (_, row) => <div className="flex items-center">
+        <Circle color={row.Record.completed_at !== null ? 'success' : ''} />
+        <span className="ml-2">{row.Record.completed_at !== null ? ' Đã đóng' : ' Chưa đóng'}</span>
+      </div>
+    },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      render: (_, row) => <Space>
+        <Link to={`${url}/${row.Key}`}>
+          <Button icon={<EyeOutlined />}>Xem</Button>
+        </Link>
+
+      </Space>
     }
   ]
 
@@ -63,7 +79,7 @@ const PatientDetails = props => {
     try {
       setEMRLoading(true);
       const EMRResponse = await listEMRAPI({ patient_id: patientId });
-      setEMRs(EMRResponse.data);
+      setEMRs(EMRResponse.data.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -97,7 +113,7 @@ const PatientDetails = props => {
       </Spin>
 
       <div className="ant-descriptions-title mb-3">Lịch sử khám bệnh</div>
-      <Table rowKey="id" dataSource={EMRs?.results} loading={EMRLoading} columns={tableColumns} />
+      <Table rowKey="id" dataSource={EMRs} loading={EMRLoading} columns={tableColumns} />
 
     </>
   )

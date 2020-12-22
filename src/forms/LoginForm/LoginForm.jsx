@@ -31,6 +31,7 @@ const LoginForm = () => {
       className="auth"
       layout="vertical"
       autoComplete="off"
+      noValidate
       onFinish={handleSubmit}>
 
       <div className="auth__header text-center">

@@ -74,7 +74,7 @@ const PhysicianLayout = () => {
                 <PatientPage />
               </Route>
               
-              <Route path={`${path}/patient/:patientId`}>
+              <Route path={`${path}/patient/:patientId`} exact>
                 <PatientDetails />
               </Route>
 

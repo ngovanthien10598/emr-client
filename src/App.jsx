@@ -19,6 +19,7 @@ import 'moment/locale/vi';
 import 'antd/dist/antd.css';
 import 'styles/main.scss';
 import VerifyPage from 'pages/verify-email';
+import PatientLayout from 'layouts/PatientLayout/PatientLayout';
 
 moment.locale('vi');
 
@@ -69,6 +70,7 @@ function App() {
           <Route path="/admin" component={AdminLayout} />
           <Route path="/physician" component={PhysicianLayout} />
           <Route path="/receptionist" component={ReceptionistLayout} />
+          <Route path="/patient" component={PatientLayout} />
 
           <Redirect to="/login" />
         </Switch>

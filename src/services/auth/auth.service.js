@@ -9,10 +9,10 @@ const endpointPrefix = `${API_URL}/auth`;
  * @param email
  * @param password
  */
-export function login(email, password) {
+export function login(username, password) {
   const url = `${endpointPrefix}/login/`;
   return axios.post(url, {
-    email: email,
+    [username.includes('+84') ? 'phone' : 'email']: username,
     password: password
   });
 }
