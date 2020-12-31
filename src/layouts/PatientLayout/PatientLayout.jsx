@@ -10,6 +10,7 @@ import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 import ProfilePage from 'pages/common/profile/profile';
 import PatientEmrPage from 'pages/patient/emr';
+import PatientEmrDetailsPage from 'pages/patient/patient-emr-details';
 
 const { Sider, Content } = Layout;
 
@@ -48,8 +49,12 @@ const PatientLayout = () => {
           >
             <Switch>
               {/* Dashboard */}
-              <Route path={`${path}/emr`}>
+              <Route path={`${path}/emr`} exact>
                 <PatientEmrPage />
+              </Route>
+
+              <Route path={`${path}/emr/:emrId`}>
+                <PatientEmrDetailsPage />
               </Route>
 
               <Route path={`${path}/profile`}>

@@ -8,3 +8,8 @@ export function listAllEmrs() {
   const url = `${endpointPrefix}/`;
   return axios.get(url);
 }
+
+export function getEMRHistoryAPI(emrId) {
+  const url = `${endpointPrefix}/${emrId}`;
+  return axios.get(url);
+}

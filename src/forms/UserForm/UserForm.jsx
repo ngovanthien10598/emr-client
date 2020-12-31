@@ -58,7 +58,7 @@ const UserForm = props => {
         onFinish={onFinish}>
         <Form.Item label="Email" name="email" initialValue={userDetail?.email} rules={[
           {
-            required: true,
+            required: !userDetail || (userDetail && userDetail.role.id != 4),
             message: "Vui lòng điền vào trường này"
           }
         ]}>

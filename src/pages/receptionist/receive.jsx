@@ -132,6 +132,9 @@ const ReceivePage = props => {
       const createResponse = await createPatientAPI(values);
       const userId = createResponse.data.id;
       await addBlockChainUserAPI(userId, "patient");
+      message.success("Tạo bệnh nhân thành công");
+      setModalVisible(false);
+      await listAllPatients();
       // await addBlockChainUserAPI("4f31587e-40cc-43a9-a3bf-a7e5fa731955", "patient");
     } catch (error) {
       console.log(error);

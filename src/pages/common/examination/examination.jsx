@@ -14,24 +14,22 @@ import {
   DatePicker,
   Select,
   Radio,
-  Tabs
+  Tabs,
+  Alert,
+  BackTop
 } from 'antd';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import VisitDiseaseForm from 'forms/Visit/VisitDiseaseForm';
-import VisitServiceForm from 'forms/Visit/VisitServiceForm';
-import VisitDrugForm from 'forms/Visit/VisitDrugForm';
 import { useHistory, useParams } from 'react-router-dom';
-import { removeDuplicates } from 'utils/array';
 import VisitImagesForm from 'forms/Visit/VisitImagesForm';
-import { FileDoneOutlined, SaveOutlined, DeleteOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, SaveOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import ReactQuill from 'react-quill';
+import { quillToolbar } from 'constant/quill';
 
 // APIs
-import { getDiseaseCategoryAPI } from 'services/user/disease-category.service';
 import { getServicesAPI } from 'services/user/medical-service.service';
 import { getDrugCategoryAPI } from 'services/user/drug-category.service';
 import { getDrugInstructionsAPI } from 'services/user/drug-instruction.service';
-import { getDiseaseCategoryAPI as adminGetDiseaseCategoryAPI } from 'services/admin/disease-category.service';
 import { getServicesAPI as adminGetServicesAPI } from 'services/admin/medical-service.service';
 import { getDrugCategoryAPI as adminGetDrugCategoryAPI } from 'services/admin/drug-category.service';
 import { getDrugInstructionsAPI as adminGetDrugInstructionsAPI } from 'services/admin/drug-instruction.service';
@@ -39,17 +37,26 @@ import { getEMRHistoryAPI, updateEMRAPI, completeEMRAPI } from 'services/user/em
 import { deleteVisitAPI } from 'services/user/visit.service';
 import { getDrugsAPI as adminGetDrugsAPI } from 'services/admin/drug.service';
 import { getDrugsAPI } from 'services/user/drug.service';
+import { fetchDiseaseCategory } from 'store/actions/disease-category.action';
+import { fetchDisease } from 'store/actions/disease.action';
+import DiseaseSelect from 'components/DiseaseSelect/DiseaseSelect';
 
 const { Option } = Select;
 const { useForm } = Form;
 
 const ExaminationPage = props => {
 
-  const user = props.user;
+  const {
+    user,
+    diseaseCategories,
+    diseases,
+    fetchDiseaseCategory,
+    fetchDisease,
+  } = props;
+
   const history = useHistory();
   const params = useParams();
 
-  const [diseaseCategories, setDiseaseCategories] = useState([]);
   const [services, setServices] = useState([]);
   const [drugCategories, setDrugCategories] = useState([]);
   const [drugs, setDrugs] = useState([]);
@@ -57,29 +64,11 @@ const ExaminationPage = props => {
   const [loading, setLoading] = useState(false);
   const [emr, setEmr] = useState(null);
 
-  const [livingFncLoading, setLivingFncLoading] = useState(false);
-  const [diseaseLoading, setDiseaseLoading] = useState(false);
-  const [serviceLoading, setServiceLoading] = useState(false);
   const [drugLoading, setDrugLoading] = useState(false);
   const [finishLoading, setFinishLoading] = useState(false);
   const [isSavingEmr, setIsSavingEmr] = useState(false);
 
   const [emrForm] = useForm();
-
-  async function getDiseaseCategories() {
-    try {
-      let diseaseCategoryResponse;
-      if (user.role.name === "admin") {
-        diseaseCategoryResponse = await adminGetDiseaseCategoryAPI();
-      } else {
-        diseaseCategoryResponse = await getDiseaseCategoryAPI()
-      }
-      const diseaseCategoriesData = diseaseCategoryResponse.data;
-      setDiseaseCategories(diseaseCategoriesData);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async function getServices() {
     try {
@@ -149,8 +138,9 @@ const ExaminationPage = props => {
       setLoading(true);
       const emrList = await getEMRHistoryAPI(emrId);
       const data = emrList.data.data;
-      const emr = data.find(emr => emr.id === emrId && emr.completed_at === null);
-      setEmr(emr);
+      if (data[0]) {
+        setEmr(data[0]);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -162,10 +152,11 @@ const ExaminationPage = props => {
     const emr = params.emr;
     await Promise.all([
       getEmrDetail(emr),
-      getDiseaseCategories(),
       getServices(),
       getDrugCategories(),
-      getDrugInstructions()
+      getDrugInstructions(),
+      fetchDisease(),
+      fetchDiseaseCategory()
     ]);
   }
 
@@ -195,6 +186,8 @@ const ExaminationPage = props => {
   async function handleSaveEmr() {
 
     const values = await emrForm.validateFields();
+
+    // return console.log(values);
 
     const emrBody = {
       patient: emr.patient,
@@ -234,18 +227,30 @@ const ExaminationPage = props => {
           body: values.body || null,
           partials: values.partials || null,
           subclinical_summary: values.subclinical_summary || null,
-          initial_diagnose: values.initial_diagnose || null,
+          initial_diagnose: {
+            category: values.initial_diagnose.category || null,
+            disease: values.initial_diagnose.disease || null,
+          },
           drugs: values.drugs || null,
           processed: values.processed || null,
-          diagnose: values.diagnose || null,
+          diagnose: {
+            category: values.diagnose.category || null,
+            disease: values.diagnose.disease || null
+          },
           from_date: values.from_date?.format('DD/MM/YYYY') || null,
           to_date: values.to_date?.format('DD/MM/YYYY') || null,
         },
         summary: {
           pathological_process_and_clinical_course: values.pathological_process_and_clinical_course || null,
           valuable_subclinical_summary: values.valuable_subclinical_summary || null,
-          primary_disease: values.primary_disease || null,
-          sub_disease: values.sub_disease || null,
+          primary_disease: {
+            category: values.primary_disease.category || null,
+            disease: values.primary_disease.disease || null
+          },
+          sub_disease: {
+            category: values.sub_disease.category || null,
+            disease: values.sub_disease.disease || null
+          },
           treatment_method: values.treatment_method || null,
           patient_status: values.patient_status || null,
           direction_of_treatment: values.direction_of_treatment || null,
@@ -321,315 +326,262 @@ const ExaminationPage = props => {
       <PageHeader title="Bệnh án ngoại trú" onBack={() => history.goBack()} />
       {
         emr ?
-          <>
-            <Spin spinning={isSavingEmr}>
-              <Form layout="vertical" form={emrForm} initialValues={
-                { drugs: emr.medical_record.examination.drugs },
-                { services: emr.medical_record.summary.services }
-              }>
+          emr.completed_at === null ?
+            <>
+              <Spin spinning={isSavingEmr}>
+                <Form layout="vertical" form={emrForm} initialValues={
+                  { drugs: emr.medical_record.examination.drugs },
+                  { services: emr.medical_record.summary.services }
+                }>
 
-                {/* <Descriptions title="Thông tin bệnh nhân">
-              <Descriptions.Item span={1} label="Họ và tên">
-                {emr.patient.first_name} {emr.patient.last_name} ({emr.patient.gender})
-                    </Descriptions.Item>
-              <Descriptions.Item span={1} label="Ngày sinh">
-                {emr.patient.DOB}
-              </Descriptions.Item>
-            </Descriptions>
-
-            <Descriptions title={`Thông tin khám bệnh (Phòng khám: ${emr.room})`}>
-              <Descriptions.Item span={1} label="Ngày vào khám">{moment(emr.created_at).format("DD/MM/YYYY HH:mm:ss")}</Descriptions.Item>
-              <Descriptions.Item span={1} label="Bác sĩ khám bệnh">
-                {emr.physician.first_name} {emr.physician.last_name}
-              </Descriptions.Item>
-            </Descriptions>
-
-            <Collapse defaultActiveKey={["living-function", "diseases", "services", "drugs", "images"]}>
-              <Collapse.Panel header="Dấu hiệu sinh tồn" key="living-function">
-                <VisitLivingFunctionForm
-                  onFinish={(values) => handleSaveLivingFunctions(emr.id, values)}
-                  loading={livingFncLoading}
-                  currentValues={emr.living_functions} />
-              </Collapse.Panel>
-
-              <Collapse.Panel header="Bệnh" key="diseases">
-                <VisitDiseaseForm
-                  categories={diseaseCategories}
-                  user={user}
-                  loading={diseaseLoading}
-                  onFinish={(values) => handleSaveDiseases(emr.id, values)}
-                  currentValues={emr} />
-              </Collapse.Panel>
-              <Collapse.Panel header="Chỉ định dịch vụ" key="services">
-                <VisitServiceForm
-                  user={user}
-                  loading={serviceLoading}
-                  services={services}
-                  onFinish={(values) => handleSaveServices(emr.id, values)}
-                  currentValues={emr} />
-              </Collapse.Panel>
-              <Collapse.Panel header="Kê đơn thuốc" key="drugs">
-                <VisitDrugForm
-                  user={user}
-                  categories={drugCategories}
-                  loading={drugLoading}
-                  instructions={drugInstructions}
-                  onFinish={(values) => handleSaveDrugs(emr.id, values)}
-                  currentValues={emr} />
-              </Collapse.Panel>
-              <Collapse.Panel header="Hình ảnh" key="images">
-                <VisitImagesForm
-                  emrId="288e8054-fe90-45da-acb1-62c76a8c102c"
-                  onChange={(e) => handleUploadChange(e, emr.id)}
-                  fileList={emr.images} />
-              </Collapse.Panel>
-            </Collapse> */}
-
-                <Row gutter={15}>
-                  <Col flex={1}>
+                  <Row gutter={15}>
+                    {/* <Col flex={1}>
                     <Form.Item label="Sở y tế" name="health_service_dept">
                       <Input />
                     </Form.Item>
-                  </Col>
-                  <Col flex={1}>
+                  </Col> */}
+                    {/* <Col flex={1}>
                     <Form.Item label="Bệnh viện" name="hospital">
                       <Input />
                     </Form.Item>
-                  </Col>
-                  <Col flex={1}>
-                    <Form.Item label="Khoa" name="room" initialValue={emr.room.name}>
-                      <Input readOnly />
-                    </Form.Item>
-                  </Col>
-                </Row>
+                  </Col> */}
+                    <Col flex={1}>
+                      <Form.Item label="Khoa" name="room" initialValue={emr.room.name}>
+                        <Input readOnly />
+                      </Form.Item>
+                    </Col>
+                  </Row>
 
-                <Collapse defaultActiveKey={["administrative", "present-complaint", "ask", "examination", "summary"]}>
-                  <Collapse.Panel header={<strong className="uppercase">i. Hành chính</strong>} key="administrative">
-                    <Row gutter={15}>
-                      <Col flex="0 0 33.33%">
-                        <Form.Item label="1. Họ và tên" name="fullname" initialValue={(emr.patient.first_name + " " + emr.patient.last_name).toUpperCase()}>
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col flex="0 0 33.33%">
-                        <Form.Item label="2. Sinh ngày" name="dayOfBirth" initialValue={moment(emr.patient.DOB)}>
-                          <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
-                        </Form.Item>
-                      </Col>
-                      <Col flex="0 0 33.33%">
-                        <Form.Item label="3. Giới tính" name="gender" initialValue={emr.patient.gender}>
-                          <Select>
-                            <Select.Option value="Nam">Nam</Select.Option>
-                            <Select.Option value="Nữ">Nữ</Select.Option>
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    <Row gutter={15}>
-                      <Col flex="0 0 33.33%">
-                        <Form.Item label="4. Nghề nghiệp" name="job">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col flex="0 0 33.33%">
-                        <Form.Item label="5. Dân tộc" name="ethnicity">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col flex="0 0 33.33%">
-                        <Form.Item label="6. Ngoại kiều" name="expatriate">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-                    <Form.Item label="7. Địa chỉ" name="address">
-                      <Input />
-                    </Form.Item>
-
-                    <Row gutter={15}>
-                      <Col flex="0 0 50%">
-                        <Form.Item label="8. Nơi làm việc" name="workplace">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col>
-                        <Form.Item label="9. Đối tượng" name="object">
-                          <Radio.Group>
-                            <Radio value="BHYT">1. BHYT</Radio>
-                            <Radio value="Thu phí">2. Thu phí</Radio>
-                            <Radio value="Miễn phí">3. Miễn phí</Radio>
-                            <Radio value="Khác">4. Khác</Radio>
-                          </Radio.Group>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-                    <Row gutter={15}>
-                      <Col flex="0 0 50%">
-                        <Form.Item label="10. Giá trị BHYT" name="insurance_expirity">
-                          <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-                        </Form.Item>
-                      </Col>
-                      <Col flex="0 0 50%">
-                        <Form.Item label="Số thẻ BHYT" name="insurance_number">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-                    <Row gutter={15}>
-                      <Col flex="0 0 50%">
-                        <Form.Item label="11. Họ tên, địa chỉ người nhà khi cần báo tin" name="family_member_and_address">
-                          <Input.TextArea rows={2} />
-                        </Form.Item>
-                      </Col>
-                      <Col flex="0 0 50%">
-                        <Form.Item label="Điện thoại" initialValue={emr.patient.phone} name="phone">
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-
-                    <Form.Item label="12. Đến khám bệnh lúc" initialValue={getDateString(emr.created_at)} name="checkin">
-                      <Input readOnly />
-                    </Form.Item>
-
-                    <Row gutter={15}>
-                      <Col flex={1}>
-                        <Form.Item label="13. Chẩn đoán của nơi giới thiệu" name="previous_diagnose" initialValue={emr.medical_record.administrative.previous_diagnose}>
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col>
-                        <Form.Item label="Nơi giới thiệu" name="come_from" initialValue={emr.medical_record.administrative.come_from}>
-                          <Radio.Group>
-                            <Radio value="Y tế">1. Y tế</Radio>
-                            <Radio value="Tự đến">2. Tự đến</Radio>
-                          </Radio.Group>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-                  </Collapse.Panel>
-                  <Collapse.Panel header={<strong className="uppercase">II. Lý do vào viện</strong>} key="present-complaint">
-                    <Form.Item label="Lý do vào viện" name="present_complaint" initialValue={emr.medical_record.present_complaint}>
-                      <Input />
-                    </Form.Item>
-                  </Collapse.Panel>
-                  <Collapse.Panel header={<strong className="uppercase">iii. hỏi bệnh</strong>} key="ask">
-                    <Form.Item label="1. Quá trình bệnh lý" name="pathological_process" initialValue={emr.medical_record.ask.pathological_process}>
-                      <Input.TextArea autoSize={{ minRows: 3, maxRows: 7 }} />
-                    </Form.Item>
-                    <Form.Item label="2. Tiền sử bệnh" name="self_medical_history" className="mb-3" initialValue={emr.medical_record.ask.self_medical_history}>
-                      <Input placeholder="Bản thân" />
-                    </Form.Item>
-                    <Form.Item name="family_medical_history" initialValue={emr.medical_record.ask.family_medical_history}>
-                      <Input placeholder="Gia đình" />
-                    </Form.Item>
-                  </Collapse.Panel>
-                  <Collapse.Panel header={<strong className="uppercase">iv. khám bệnh</strong>} key="examination">
-                    <Row gutter={15}>
-                      <Col flex={1}>
-                        <Form.Item label="1. Toàn thân" name="body" initialValue={emr.medical_record.examination.body}>
-                          <Input.TextArea rows={7} />
-                        </Form.Item>
-                      </Col>
-                      <Col>
-                        <div className="border border-solid border-gray-400 p-2">
-                          <Form.Item className="mb-2" name="heartbeat" initialValue={emr.medical_record.examination.heartbeat}>
-                            <Input addonBefore={<div style={{ width: 80 }}>Mạch</div>} suffix="lần/ph" />
+                  <Collapse defaultActiveKey={["administrative", "present-complaint", "ask", "examination", "summary"]}>
+                    <Collapse.Panel header={<strong className="uppercase">i. Hành chính</strong>} key="administrative">
+                      <Row gutter={15}>
+                        <Col flex="0 0 33.33%">
+                          <Form.Item label="1. Họ và tên" name="fullname" initialValue={(emr.patient.first_name + " " + emr.patient.last_name).toUpperCase()}>
+                            <Input />
                           </Form.Item>
-                          <Form.Item className="mb-2" name="temperature" initialValue={emr.medical_record.examination.temperature}>
-                            <Input addonBefore={<div style={{ width: 80 }}>Nhiệt độ</div>} suffix="°C" />
+                        </Col>
+                        <Col flex="0 0 33.33%">
+                          <Form.Item label="2. Sinh ngày" name="dayOfBirth" initialValue={moment(emr.patient.DOB)}>
+                            <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
                           </Form.Item>
-                          <Form.Item className="mb-2" name="blood_pressure" initialValue={emr.medical_record.examination.blood_pressure}>
-                            <Input addonBefore={<div style={{ width: 80 }}>Huyết áp</div>} suffix="mmHg" />
+                        </Col>
+                        <Col flex="0 0 33.33%">
+                          <Form.Item label="3. Giới tính" name="gender" initialValue={emr.patient.gender}>
+                            <Select>
+                              <Select.Option value="Nam">Nam</Select.Option>
+                              <Select.Option value="Nữ">Nữ</Select.Option>
+                            </Select>
                           </Form.Item>
-                          <Form.Item className="mb-2" name="breathing" initialValue={emr.medical_record.examination.breathing}>
-                            <Input addonBefore={<div style={{ width: 80 }}>Nhịp thở</div>} suffix="lần/ph" />
+                        </Col>
+                      </Row>
+                      <Row gutter={15}>
+                        <Col flex="0 0 33.33%">
+                          <Form.Item label="4. Nghề nghiệp" name="job">
+                            <Input />
                           </Form.Item>
-                          <Form.Item className="mb-0" name="weight" initialValue={emr.medical_record.examination.weight}>
-                            <Input addonBefore={<div style={{ width: 80 }}>Câng nặng</div>} suffix="kg" />
+                        </Col>
+                        <Col flex="0 0 33.33%">
+                          <Form.Item label="5. Dân tộc" name="ethnicity">
+                            <Input />
                           </Form.Item>
-                        </div>
-                      </Col>
-                    </Row>
+                        </Col>
+                        <Col flex="0 0 33.33%">
+                          <Form.Item label="6. Ngoại kiều" name="expatriate">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
 
-                    <Form.Item label="2. Các bộ phận" name="partials" initialValue={emr.medical_record.examination.partials}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
+                      <Form.Item label="7. Địa chỉ" name="address">
+                        <Input />
+                      </Form.Item>
 
-                    <Form.Item label="3. Tóm tắt kết quả cận lâm sàng" name="subclinical_summary" initialValue={emr.medical_record.examination.subclinical_summary}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
+                      <Row gutter={15}>
+                        <Col flex="0 0 50%">
+                          <Form.Item label="8. Nơi làm việc" name="workplace">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col>
+                          <Form.Item label="9. Đối tượng" name="object">
+                            <Radio.Group>
+                              <Radio value="BHYT">1. BHYT</Radio>
+                              <Radio value="Thu phí">2. Thu phí</Radio>
+                              <Radio value="Miễn phí">3. Miễn phí</Radio>
+                              <Radio value="Khác">4. Khác</Radio>
+                            </Radio.Group>
+                          </Form.Item>
+                        </Col>
+                      </Row>
 
-                    <Form.Item label="4. Chẩn đoán ban đầu" name="initial_diagnose" initialValue={emr.medical_record.examination.initial_diagnose}>
-                      <Input />
-                    </Form.Item>
+                      <Row gutter={15}>
+                        <Col flex="0 0 50%">
+                          <Form.Item label="10. Giá trị BHYT" name="insurance_expirity">
+                            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+                          </Form.Item>
+                        </Col>
+                        <Col flex="0 0 50%">
+                          <Form.Item label="Số thẻ BHYT" name="insurance_number">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
 
-                    <div className="mb-3">5. Đã xử lý (thuốc, chăm sóc)</div>
+                      <Row gutter={15}>
+                        <Col flex="0 0 50%">
+                          <Form.Item label="11. Họ tên, địa chỉ người nhà khi cần báo tin" name="family_member_and_address">
+                            <Input.TextArea rows={2} />
+                          </Form.Item>
+                        </Col>
+                        <Col flex="0 0 50%">
+                          <Form.Item label="Điện thoại" initialValue={emr.patient.phone} name="phone">
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                      </Row>
 
-                    <Form.List name="drugs">
-                      {(fields, { add, remove }) => (
-                        <>
-                          {
-                            fields.map((field, index) => (
-                              <Row gutter={15} key={field.key} align="middle">
-                                <Col>{index + 1}</Col>
-                                <Col flex="0 0 220px">
-                                  <Form.Item
-                                    {...field}
-                                    label="Nhóm thuốc"
-                                    name={[field.name, 'drugCategory']}
-                                    fieldKey={[field.fieldKey, 'drugCategory']}
-                                    rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
-                                    <Select onChange={handleChangeDrugCategory}>
-                                      {
-                                        drugCategories.map(cat => (
-                                          <Option key={cat.id} value={cat.id}>{cat.name}</Option>
-                                        ))
-                                      }
-                                    </Select>
-                                  </Form.Item>
-                                </Col>
-                                <Col flex="1 0 220px">
-                                  <Form.Item
-                                    {...field}
-                                    label="Thuốc"
-                                    name={[field.name, 'drug']}
-                                    fieldKey={[field.fieldKey, 'drug']}
-                                    rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
-                                    <Select loading={drugLoading}>
-                                      {
-                                        drugs.map(drug => (
-                                          <Option key={drug.id} value={`${drug.name} ${drug.strength}`}>{drug.name} {drug.strength}</Option>
-                                        ))
-                                      }
-                                    </Select>
-                                  </Form.Item>
-                                </Col>
-                                <Col flex="0 0 120px">
-                                  <Form.Item
-                                    {...field}
-                                    name={[field.name, 'drugInstruction']}
-                                    fieldKey={[field.fieldKey, 'drugInstruction']}
-                                    rules={[{ required: true, message: "Trường này là bắt buộc" }]}
-                                    label="Cách dùng"
-                                    style={{ minWidth: 200 }}>
-                                    <Select>
-                                      {
-                                        drugInstructions.map(ins => (
-                                          <Option key={ins.id} value={ins.instruction}>{ins.instruction}</Option>
-                                        ))
-                                      }
-                                    </Select>
-                                  </Form.Item>
-                                </Col>
-                                {/* </Row> */}
-                                {/* <Row gutter={15}> */}
-                                {/* <Col flex="0 0 80px">
+
+                      <Form.Item label="12. Đến khám bệnh lúc" initialValue={getDateString(emr.created_at)} name="checkin">
+                        <Input readOnly />
+                      </Form.Item>
+
+                      <Row gutter={15}>
+                        <Col flex={1}>
+                          <Form.Item label="13. Chẩn đoán của nơi giới thiệu" name="previous_diagnose" initialValue={emr.medical_record.administrative.previous_diagnose}>
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col>
+                          <Form.Item label="Nơi giới thiệu" name="come_from" initialValue={emr.medical_record.administrative.come_from}>
+                            <Radio.Group>
+                              <Radio value="Y tế">1. Y tế</Radio>
+                              <Radio value="Tự đến">2. Tự đến</Radio>
+                            </Radio.Group>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                    </Collapse.Panel>
+                    <Collapse.Panel header={<strong className="uppercase">II. Lý do vào viện</strong>} key="present-complaint">
+                      <Form.Item label="Lý do vào viện" name="present_complaint" initialValue={emr.medical_record.present_complaint}>
+                        <Input />
+                      </Form.Item>
+                    </Collapse.Panel>
+                    <Collapse.Panel header={<strong className="uppercase">iii. hỏi bệnh</strong>} key="ask">
+                      <Form.Item label="1. Quá trình bệnh lý" name="pathological_process" initialValue={emr.medical_record.ask.pathological_process} getValueFromEvent={e => e.target.getContent()}>
+                        {/* <Input.TextArea autoSize={{ minRows: 3, maxRows: 7 }} /> */}
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
+                      <Form.Item label="2. Tiền sử bệnh" name="self_medical_history" className="mb-3" initialValue={emr.medical_record.ask.self_medical_history}>
+                        <Input placeholder="Bản thân" />
+                      </Form.Item>
+                      <Form.Item name="family_medical_history" initialValue={emr.medical_record.ask.family_medical_history}>
+                        <Input placeholder="Gia đình" />
+                      </Form.Item>
+                    </Collapse.Panel>
+                    <Collapse.Panel header={<strong className="uppercase">iv. khám bệnh</strong>} key="examination">
+                      <Row gutter={15} className="flex-no-wrap">
+                        <Col flex={1}>
+                          <Form.Item label="1. Toàn thân" name="body" initialValue={emr.medical_record.examination.body}>
+                            <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                          </Form.Item>
+                        </Col>
+                        <Col flex="0 0 auto">
+                          <Form.Item label="Dấu hiệu sinh tồn">
+                            {/* <div className="border border-solid border-gray-400 p-2"> */}
+                            <Form.Item className="mb-2" name="heartbeat" initialValue={emr.medical_record.examination.heartbeat}>
+                              <Input addonBefore={<div style={{ width: 80 }}>Mạch</div>} suffix="lần/ph" />
+                            </Form.Item>
+                            <Form.Item className="mb-2" name="temperature" initialValue={emr.medical_record.examination.temperature}>
+                              <Input addonBefore={<div style={{ width: 80 }}>Nhiệt độ</div>} suffix="°C" />
+                            </Form.Item>
+                            <Form.Item className="mb-2" name="blood_pressure" initialValue={emr.medical_record.examination.blood_pressure}>
+                              <Input addonBefore={<div style={{ width: 80 }}>Huyết áp</div>} suffix="mmHg" />
+                            </Form.Item>
+                            <Form.Item className="mb-2" name="breathing" initialValue={emr.medical_record.examination.breathing}>
+                              <Input addonBefore={<div style={{ width: 80 }}>Nhịp thở</div>} suffix="lần/ph" />
+                            </Form.Item>
+                            <Form.Item className="mb-0" name="weight" initialValue={emr.medical_record.examination.weight}>
+                              <Input addonBefore={<div style={{ width: 80 }}>Câng nặng</div>} suffix="kg" />
+                            </Form.Item>
+                            {/* </div> */}
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                      <Form.Item label="2. Các bộ phận" name="partials" initialValue={emr.medical_record.examination.partials}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
+
+                      <Form.Item label="3. Tóm tắt kết quả cận lâm sàng" name="subclinical_summary" initialValue={emr.medical_record.examination.subclinical_summary}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
+
+                      <Form.Item label="4. Chẩn đoán ban đầu" name="initial_diagnose" initialValue={emr.medical_record.examination.initial_diagnose}>
+                        <DiseaseSelect diseaseCategories={diseaseCategories} diseases={diseases} />
+                      </Form.Item>
+
+                      <div className="mb-3">5. Đã xử lý (thuốc, chăm sóc)</div>
+
+                      <Form.List name="drugs">
+                        {(fields, { add, remove }) => (
+                          <>
+                            {
+                              fields.map((field, index) => (
+                                <Row gutter={15} key={field.key} align="middle">
+                                  <Col>{index + 1}</Col>
+                                  <Col flex="0 0 220px">
+                                    <Form.Item
+                                      {...field}
+                                      label="Nhóm thuốc"
+                                      name={[field.name, 'drugCategory']}
+                                      fieldKey={[field.fieldKey, 'drugCategory']}
+                                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
+                                      <Select onChange={handleChangeDrugCategory}>
+                                        {
+                                          drugCategories.map(cat => (
+                                            <Option key={cat.id} value={cat.id}>{cat.name}</Option>
+                                          ))
+                                        }
+                                      </Select>
+                                    </Form.Item>
+                                  </Col>
+                                  <Col flex="1 0 220px">
+                                    <Form.Item
+                                      {...field}
+                                      label="Thuốc"
+                                      name={[field.name, 'drug']}
+                                      fieldKey={[field.fieldKey, 'drug']}
+                                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
+                                      <Select loading={drugLoading}>
+                                        {
+                                          drugs.map(drug => (
+                                            <Option key={drug.id} value={`${drug.name} ${drug.strength}`}>{drug.name} {drug.strength}</Option>
+                                          ))
+                                        }
+                                      </Select>
+                                    </Form.Item>
+                                  </Col>
+                                  <Col flex="0 0 120px">
+                                    <Form.Item
+                                      {...field}
+                                      name={[field.name, 'drugInstruction']}
+                                      fieldKey={[field.fieldKey, 'drugInstruction']}
+                                      rules={[{ required: true, message: "Trường này là bắt buộc" }]}
+                                      label="Cách dùng"
+                                      style={{ minWidth: 200 }}>
+                                      <Select>
+                                        {
+                                          drugInstructions.map(ins => (
+                                            <Option key={ins.id} value={ins.instruction}>{ins.instruction}</Option>
+                                          ))
+                                        }
+                                      </Select>
+                                    </Form.Item>
+                                  </Col>
+                                  {/* </Row> */}
+                                  {/* <Row gutter={15}> */}
+                                  {/* <Col flex="0 0 80px">
                                 <Form.Item
                                   {...field}
                                   name={[field.name, 'numberOfDays']}
@@ -659,149 +611,166 @@ const ExaminationPage = props => {
                                   <Input type="number" />
                                 </Form.Item>
                               </Col> */}
-                                <Col flex="0 0 80px">
-                                  <Form.Item
-                                    {...field}
-                                    label="Số lượng"
-                                    name={[field.name, 'total']}
-                                    fieldKey={[field.fieldKey, 'total']}>
-                                    <Input type="number" />
-                                  </Form.Item>
-                                </Col>
-                                <Col>
-                                  <MinusCircleOutlined onClick={() => remove(field.name)} />
-                                </Col>
-                              </Row>
-                            ))
+                                  <Col flex="0 0 80px">
+                                    <Form.Item
+                                      {...field}
+                                      label="Số lượng"
+                                      name={[field.name, 'total']}
+                                      fieldKey={[field.fieldKey, 'total']}>
+                                      <Input type="number" />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col>
+                                    <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                  </Col>
+                                </Row>
+                              ))
 
-                          }
-                          <Form.Item>
-                            <Button type="dashed" block onClick={() => add()} icon={<PlusOutlined />}>Thêm thuốc</Button>
+                            }
+                            <Form.Item>
+                              <Button type="dashed" block onClick={() => add()} icon={<PlusOutlined />}>Thêm thuốc</Button>
+                            </Form.Item>
+                          </>
+                        )}
+                      </Form.List>
+
+                      <Form.Item name="processed" initialValue={emr.medical_record.examination.processed}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
+
+                      <Form.Item label="6. Chẩn đoán khi ra viện" name="diagnose" initialValue={emr.medical_record.examination.diagnose}>
+                        <DiseaseSelect diseaseCategories={diseaseCategories} diseases={diseases} />
+                      </Form.Item>
+
+                      <Row gutter={15}>
+                        <Col>
+                          <Form.Item label="7. Điều trị ngoại trú từ ngày" initialValue={moment(emr.created_at)} name="from_date">
+                            <DatePicker format="DD/MM/YYYY" />
                           </Form.Item>
-                        </>
-                      )}
-                    </Form.List>
+                        </Col>
+                        <Col>
+                          <Form.Item label="Đến ngày" name="to_date" initialValue={moment(emr.medical_record.examination.to_date || new Date(), "DD/MM/YYYY")}>
+                            <DatePicker format="DD/MM/YYYY" />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Collapse.Panel>
+                    <Collapse.Panel header={<strong className="uppercase">tổng kết bệnh án</strong>} key="summary">
+                      <Form.Item label="1. Quá trình bệnh lý và diễn biến lâm sàng" name="pathological_process_and_clinical_course" initialValue={emr.medical_record.summary.pathological_process_and_clinical_course}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
 
-                    <Form.Item name="processed" initialValue={emr.medical_record.examination.processed}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
+                      <Form.Item label="2. Tóm tắt kết quả xét nghiệm cận lâm sàng có giá trị chẩn đoán" name="valuable_subclinical_summary" initialValue={emr.medical_record.summary.valuable_subclinical_summary}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
 
-                    <Form.Item label="6. Chẩn đoán khi ra viện" name="diagnose" initialValue={emr.medical_record.examination.diagnose}>
-                      <Input />
-                    </Form.Item>
-
-                    <Row gutter={15}>
-                      <Col>
-                        <Form.Item label="7. Điều trị ngoại trú từ ngày" initialValue={moment(emr.created_at)} name="from_date">
-                          <DatePicker format="DD/MM/YYYY" />
+                      <Form.Item label="3. Chẩn đoán khi ra viện" className="mb-3">
+                        <Form.Item name="primary_disease" initialValue={emr.medical_record.summary.primary_disease}>
+                          <DiseaseSelect label="Bệnh chính" diseaseCategories={diseaseCategories} diseases={diseases} />
                         </Form.Item>
-                      </Col>
-                      <Col>
-                        <Form.Item label="Đến ngày" name="to_date" initialValue={moment(emr.medical_record.examination.to_date, "DD/MM/YYYY")}>
-                          <DatePicker format="DD/MM/YYYY" />
+                        <Form.Item name="sub_disease" initialValue={emr.medical_record.summary.sub_disease}>
+                          <DiseaseSelect label="Bệnh phụ (nếu có)" diseaseCategories={diseaseCategories} diseases={diseases} clearable />
                         </Form.Item>
-                      </Col>
-                    </Row>
-                  </Collapse.Panel>
-                  <Collapse.Panel header={<strong className="uppercase">tổng kết bệnh án</strong>} key="summary">
-                    <Form.Item label="1. Quá trình bệnh lý và diễn biến lâm sàng" name="pathological_process_and_clinical_course" initialValue={emr.medical_record.summary.pathological_process_and_clinical_course}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
-
-                    <Form.Item label="2. Tóm tắt kết quả xét nghiệm cận lâm sàng có giá trị chẩn đoán" name="valuable_subclinical_summary" initialValue={emr.medical_record.summary.valuable_subclinical_summary}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
-
-                    <Form.Item label="3. Chuẩn đoán ra viện" className="mb-3" name="primary_disease" initialValue={emr.medical_record.summary.primary_disease}>
-                      <Input addonBefore="Bệnh chính" />
-                    </Form.Item>
-                    <Form.Item name="sub_disease" initialValue={emr.medical_record.summary.sub_disease}>
-                      <Input addonBefore="Bệnh phụ (nếu có)" />
-                    </Form.Item>
-
-                    <Form.Item label="4. Phương pháp điều trị" name="treatment_method" initialValue={emr.medical_record.summary.treatment_method}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
-
-                    <Form.Item label="5. Tình trạng người bệnh ra viện" name="patient_status" initialValue={emr.medical_record.summary.patient_status}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
-
-                    <Form.Item label="6. Hướng điều trị và các chế độ tiếp theo" name="direction_of_treatment" initialValue={emr.medical_record.summary.direction_of_treatment}>
-                      <Input.TextArea rows={6} />
-                    </Form.Item>
+                      </Form.Item>
 
 
 
-                    <Row gutter={15} className="mb-5">
-                      <Col flex="0 0 50%">
-                        <div className="mb-3">Chỉ định dịch vụ</div>
-                        <Form.List name="services">
-                          {
-                            (fields, { add, remove }) => (
-                              <>
-                                {
-                                  fields.map((field, index) => (
-                                    <Row gutter={15} key={field.key} align="middle" className="mb-5">
-                                      <Col>{index + 1}</Col>
-                                      <Col flex={1}>
-                                        <Form.Item {...field} name={[field.name, 'id']} fieldKey={[field.fieldKey, 'id']} style={{ margin: 0 }} rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
-                                          <Select placeholder="Chọn dịch vụ">
-                                            {
-                                              services.map((service, index) => (
-                                                <Option value={service.id} key={service.id}>
-                                                  {service.name}
-                                                </Option>
-                                              ))
-                                            }
-                                          </Select>
-                                        </Form.Item>
-                                      </Col>
-                                      <Col>
-                                        <MinusCircleOutlined onClick={() => remove(field.name)} />
-                                      </Col>
-                                    </Row>
-                                  ))
-                                }
-                                <Form.Item>
-                                  <Button type="dashed" block onClick={() => add()} icon={<PlusOutlined />}>Thêm dịch vụ</Button>
-                                </Form.Item>
-                              </>
-                            )
-                          }
-                        </Form.List>
-                      </Col>
-                      <Col flex="0 0 50%">
-                        <div className="mb-3">Tệp đính kèm</div>
-                        <VisitImagesForm onChange={(e) => handleUploadChange(e, emr.id)} fileList={emr.medical_record.summary.attachments || []} />
-                      </Col>
-                    </Row>
-                  </Collapse.Panel>
-                </Collapse>
+                      <Form.Item label="4. Phương pháp điều trị" name="treatment_method" initialValue={emr.medical_record.summary.treatment_method}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
 
-                <Divider />
+                      <Form.Item label="5. Tình trạng người bệnh ra viện" name="patient_status" initialValue={emr.medical_record.summary.patient_status}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
+
+                      <Form.Item label="6. Hướng điều trị và các chế độ tiếp theo" name="direction_of_treatment" initialValue={emr.medical_record.summary.direction_of_treatment}>
+                        <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
+                      </Form.Item>
 
 
-                <div className="text-right">
-                  <Space>
-                    <Button danger type="default" size="large" icon={<DeleteOutlined />}>Hủy đơn</Button>
-                    <Button type="default" size="large" onClick={handleSaveEmr} icon={<SaveOutlined />}>Lưu lại</Button>
-                    <Button type="primary" size="large" onClick={() => handleFinishExamination(emr.id)} loading={finishLoading} icon={<FileDoneOutlined />}>Kết thúc khám</Button>
-                  </Space>
-                </div>
-              </Form>
-            </Spin>
-          </>
 
+                      <Row gutter={15} className="mb-5">
+                        <Col flex="0 0 50%">
+                          <div className="mb-3">Chỉ định dịch vụ</div>
+                          <Form.List name="services">
+                            {
+                              (fields, { add, remove }) => (
+                                <>
+                                  {
+                                    fields.map((field, index) => (
+                                      <Row gutter={15} key={field.key} align="middle" className="mb-5">
+                                        <Col>{index + 1}</Col>
+                                        <Col flex={1}>
+                                          <Form.Item {...field} name={[field.name, 'name']} fieldKey={[field.fieldKey, 'name']} style={{ margin: 0 }} rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
+                                            <Select placeholder="Chọn dịch vụ">
+                                              {
+                                                services.map((service, index) => (
+                                                  <Option value={service.name} key={service.id}>
+                                                    {service.name}
+                                                  </Option>
+                                                ))
+                                              }
+                                            </Select>
+                                          </Form.Item>
+                                        </Col>
+                                        <Col>
+                                          <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                        </Col>
+                                      </Row>
+                                    ))
+                                  }
+                                  <Form.Item>
+                                    <Button type="dashed" block onClick={() => add()} icon={<PlusOutlined />}>Thêm dịch vụ</Button>
+                                  </Form.Item>
+                                </>
+                              )
+                            }
+                          </Form.List>
+                        </Col>
+                        <Col flex="0 0 50%">
+                          <div className="mb-3">Tệp đính kèm</div>
+                          <VisitImagesForm onChange={(e) => handleUploadChange(e, emr.id)} fileList={emr.medical_record.summary.attachments || []} />
+                        </Col>
+                      </Row>
+                    </Collapse.Panel>
+                  </Collapse>
+
+                  <Divider />
+
+
+                  <div className="text-right">
+                    <Space>
+                      {/* <Button danger type="default" size="large" icon={<DeleteOutlined />}>Hủy đơn</Button> */}
+                      <Button type="default" size="large" onClick={handleSaveEmr} icon={<SaveOutlined />}>Lưu lại</Button>
+                      <Button type="primary" size="large" onClick={() => handleFinishExamination(emr.id)} loading={finishLoading} icon={<FileDoneOutlined />}>Kết thúc khám</Button>
+                    </Space>
+                  </div>
+                </Form>
+              </Spin>
+            </>
+            :
+            <Alert message="Lỗi" description={`Bệnh án này đã đóng vào ${moment(emr.created_at).format("DD/MM/YYYY HH:mm:ss")}`} type="error" showIcon />
           :
-          <div className="py-10 text-center"><Spin spinning={loading} /></div>
+          loading ?
+            <div className="py-10 text-center"><Spin spinning={loading} /></div>
+            :
+            <Alert message="Lỗi" description="Không tìm thấy bệnh án" type="error" showIcon />
       }
     </>
   )
 }
 
 const mapStateToProps = state => ({
-  user: state.userState.user
+  user: state.userState.user,
+  diseaseCategories: state.diseaseCategoryState.diseaseCategories,
+  fetchDiseaseCategoryLoading: state.diseaseCategoryState.fetchLoading,
+  diseases: state.diseaseState.diseases,
+  fetchDiseaseLoading: state.diseaseState.fetchLoading
 })
 
-export default connect(mapStateToProps)(ExaminationPage);
+const mapDispatchToProps = dispatch => ({
+  fetchDiseaseCategory: (role, query) => dispatch(fetchDiseaseCategory(role, query)),
+  fetchDisease: (role, query) => dispatch(fetchDisease(role, query))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExaminationPage);

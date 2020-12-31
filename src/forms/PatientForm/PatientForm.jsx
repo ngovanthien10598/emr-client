@@ -12,7 +12,7 @@ const PatientForm = props => {
       form={form}>
       <Row>
         <Col flex={1}>
-          <Form.Item label="Họ và tên lót" name="first_name" rules={[requiredRule()]}>
+          <Form.Item label="Họ" name="first_name" rules={[requiredRule()]}>
             <Input autoFocus />
           </Form.Item>
         </Col>

@@ -4,16 +4,32 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import DrugCategoryForm from 'forms/DrugCategoryForm/DrugCategoryForm';
 import { addDrugCategoryAPI, deleteDrugCategoryAPI, getDrugCategoryAPI, updateDrugCategoryAPI } from 'services/admin/drug-category.service';
 import { formActions } from 'constant/formActions';
+import { connect } from 'react-redux';
 
-const DrugCategoryPage = () => {
+// Redux
+import { createDrugCategory, fetchDrugCategories, updateDrugCategory, deleteDrugCategory } from 'store/actions/drug-category.action';
 
+const DrugCategoryPage = props => {
+
+  const {
+    categories,
+    createDrugCategory,
+    fetchDrugCategories,
+    updateDrugCategory,
+    deleteDrugCategory,
+    createLoading,
+    fetchLoading,
+    updateLoading,
+    deleteLoading
+  } = props;
   const [modalVisible, setModalVisible] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [fetchingCategories, setFetchingCategories] = useState(false);
-  const [modalLoading, setModalLoading] = useState(false);
   const [action, setAction] = useState(formActions.CREATE);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [drugCategoryForm] = Form.useForm();
+
+  useEffect(() => {
+    console.log(deleteLoading);
+  }, [deleteLoading]);
 
   const tableColumns = [
     {
@@ -33,7 +49,8 @@ const DrugCategoryPage = () => {
         <Space size={10}>
           <Button icon={<EditOutlined />} onClick={() => handleEditClick(record)}></Button>
           <Popconfirm
-            onConfirm={() => handleDelete(record)} title="Bạn có chắc muốn xóa không?"
+            onConfirm={async () => await handleDelete(record)} title="Bạn có chắc muốn xóa không?"
+            okButtonProps={{loading: deleteLoading}}
             okText="Xóa"
             okType="danger"
             cancelText="Hủy bỏ">
@@ -53,21 +70,8 @@ const DrugCategoryPage = () => {
     setModalVisible(false);
   }
 
-  async function getDrugCategories() {
-    try {
-      setFetchingCategories(true);
-      const response = await getDrugCategoryAPI();
-      setCategories(response.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setFetchingCategories(false);
-    }
-  }
-
   async function handleFormSubmit() {
     try {
-      setModalLoading(true);
       const values = await drugCategoryForm.validateFields();
       const name = values.name;
       const index = name.indexOf(". ");
@@ -78,20 +82,24 @@ const DrugCategoryPage = () => {
       }
       const convertedStr = cut.charAt(0).toUpperCase() + cut.substr(1).toLowerCase();
       if (action === formActions.CREATE) {
-        await addDrugCategoryAPI(convertedStr);
+        // await addDrugCategoryAPI(convertedStr);
+        await createDrugCategory({ name: convertedStr });
       }
 
       if (action === formActions.UPDATE) {
-        await updateDrugCategoryAPI(selectedCategory.id, convertedStr);
+        // await updateDrugCategoryAPI(selectedCategory.id, convertedStr);
+        await updateDrugCategory(selectedCategory.id, { name: convertedStr });
       }
 
-      getDrugCategories();
+      // getDrugCategories();
+      
 
       setModalVisible(false);
+      await fetchDrugCategories("admin");
+      
     } catch (error) {
       console.log(error);
-    } finally {
-      setModalLoading(false);
+      setModalVisible(false);
     }
   }
 
@@ -101,10 +109,12 @@ const DrugCategoryPage = () => {
     setModalVisible(true);
   }
 
-  async function handleDelete(unit) {
+  async function handleDelete(cat) {
     try {
-      await deleteDrugCategoryAPI(unit.id);
-      getDrugCategories();
+      // await deleteDrugCategoryAPI(unit.id);
+      await deleteDrugCategory(cat.id)
+      await fetchDrugCategories("admin");
+      // getDrugCategories();
     } catch (error) {
       console.log(error);
     }
@@ -116,7 +126,7 @@ const DrugCategoryPage = () => {
   }
 
   useEffect(() => {
-    getDrugCategories();
+    fetchDrugCategories("admin");
   }, []);
 
   return (
@@ -132,12 +142,12 @@ const DrugCategoryPage = () => {
         columns={tableColumns}
         dataSource={categories}
         pagination={false}
-        loading={fetchingCategories} />
+        loading={fetchLoading} />
       <Modal
         visible={modalVisible}
         title={action === formActions.CREATE ? 'Thêm nhóm thuốc' : 'Cập nhật nhóm thuốc'}
         onCancel={handleCloseModal}
-        confirmLoading={modalLoading}
+        confirmLoading={(action === formActions.UPDATE && updateLoading) || (action === formActions.CREATE && createLoading)}
         destroyOnClose={true}
         afterClose={afterClose}
         onOk={handleFormSubmit}>
@@ -147,4 +157,19 @@ const DrugCategoryPage = () => {
   )
 }
 
-export default DrugCategoryPage;
+const mapStateToProps = state => ({
+  categories: state.drugCategoryState.drugCategories,
+  createLoading: state.drugCategoryState.createLoading,
+  fetchLoading: state.drugCategoryState.fetchLoading,
+  updateLoading: state.drugCategoryState.updateLoading,
+  deleteLoading: state.drugCategoryState.deleteLoading
+})
+
+const mapDispatchToProps = dispatch => ({
+  createDrugCategory: (body) => dispatch(createDrugCategory(body)),
+  fetchDrugCategories: (role, query) => dispatch(fetchDrugCategories(role, query)),
+  updateDrugCategory: (id, body) => dispatch(updateDrugCategory(id, body)),
+  deleteDrugCategory: (id) => dispatch(deleteDrugCategory(id))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(DrugCategoryPage);

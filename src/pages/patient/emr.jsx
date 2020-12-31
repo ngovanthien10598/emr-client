@@ -1,11 +1,14 @@
-import { Table } from 'antd';
+import { Button, Space, Table } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { listAllEmrs } from 'services/patient/emr.service';
 import moment from 'moment';
 import Circle from 'components/Circle/Circle';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { EyeOutlined } from '@ant-design/icons';
 
 const PatientEmrPage = props => {
 
+  const { url } = useRouteMatch();
   const [emrs, setEmrs] = useState(null);
   const [emrLoading, setEmrLoading] = useState(false);
 
@@ -37,6 +40,15 @@ const PatientEmrPage = props => {
         <Circle color={row.Record.completed_at !== null ? 'success' : ''} />
         <span className="ml-2">{row.Record.completed_at !== null ? ' Đã đóng' : ' Chưa đóng'}</span>
       </div>
+    },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      render: (_, row) => <Space>
+        <Link to={`${url}/${row.Key}`}>
+          <Button icon={<EyeOutlined />}>Xem</Button>
+        </Link>
+      </Space>
     }
   ]
 

@@ -8,3 +8,9 @@
 @import "forms/LoginForm/_LoginForm.style";
 
 // Layouts
+$quillRowHeight: 18px;
+$quillPaddingTop: 12px;
+.ql-editor {
+  min-height: ($quillRowHeight * 6) + ($quillPaddingTop * 2) !important;
+  max-height: ($quillRowHeight * 10) + ($quillPaddingTop * 2);
+}
