@@ -150,10 +150,10 @@ const DrugForm = props => {
         code: drugDetail.code,
         name: drugDetail.name,
         price: drugDetail.price || 0,
-        drug_category: drugDetail.drug_category.id,
-        drug_unit: drugDetail.drug_unit.id,
-        drug_dosage_form: drugDetail.drug_dosage_form.id,
-        drug_route: drugDetail.drug_route.id,
+        drug_category_id: drugDetail.drug_category.id,
+        drug_unit_id: drugDetail.drug_unit.id,
+        drug_dosage_form_id: drugDetail.drug_dosage_form.id,
+        drug_route_id: drugDetail.drug_route.id,
         strength: drugDetail.strength
       });
     }
@@ -177,7 +177,7 @@ const DrugForm = props => {
           <Input type="number" suffix="VNĐ" value={0} />
         </Form.Item>
 
-        <Form.Item label="Nhóm thuốc" name="drug_category" initialValue={drugDetail?.drug_category.id}>
+        <Form.Item label="Nhóm thuốc" name="drug_category_id" initialValue={drugDetail?.drug_category.id}>
           <Select loading={catLoading}>
             {
               categories.map(cat => (
@@ -187,7 +187,7 @@ const DrugForm = props => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Đơn vị tính" name="drug_unit" initialValue={drugDetail?.drug_unit.id}>
+        <Form.Item label="Đơn vị tính" name="drug_unit_id" initialValue={drugDetail?.drug_unit.id}>
           <Select loading={unitLoading}>
             {
               units.map(cat => (
@@ -197,7 +197,7 @@ const DrugForm = props => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Đường dùng" name="drug_route" initialValue={drugDetail?.drug_route.id}>
+        <Form.Item label="Đường dùng" name="drug_route_id" initialValue={drugDetail?.drug_route.id}>
           <Select loading={routeLoading}>
             {
               routes.map(route => (
@@ -206,7 +206,7 @@ const DrugForm = props => {
             }
           </Select>
         </Form.Item>
-        <Form.Item label="Dạng bào chế" name="drug_dosage_form" initialValue={drugDetail?.drug_dosage_form.id}>
+        <Form.Item label="Dạng bào chế" name="drug_dosage_form_id" initialValue={drugDetail?.drug_dosage_form.id}>
           <Select loading={formLoading}>
             {
               forms.map(f => (
