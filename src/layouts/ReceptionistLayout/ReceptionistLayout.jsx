@@ -32,9 +32,9 @@ const ReceptionistLayout = () => {
             <Menu.Item key="/receptionist/receive" icon={<DashboardOutlined />}>
               <Link to="/receptionist/receive">Tiếp nhận bệnh</Link>
             </Menu.Item>
-            <Menu.Item key="/receptionist/appointment" icon={<CalendarOutlined />}>
+            {/* <Menu.Item key="/receptionist/appointment" icon={<CalendarOutlined />}>
               <Link to="/receptionist/appointment">Lịch hẹn</Link>
-            </Menu.Item>
+            </Menu.Item> */}
 
             <Menu.Item key="/receptionist/profile" icon={<UserOutlined />}>
               <Link to="/receptionist/profile">Hồ sơ</Link>
@@ -57,9 +57,9 @@ const ReceptionistLayout = () => {
               </Route>
 
               {/* Appointment */}
-              <Route path={`${path}/appointment`}>
+              {/* <Route path={`${path}/appointment`}>
                 <AppointmentPage />
-              </Route>
+              </Route> */}
 
               <Route path={`${path}/profile`}>
                 <ProfilePage />

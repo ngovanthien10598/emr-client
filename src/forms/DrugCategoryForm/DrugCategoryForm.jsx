@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input } from 'antd';
+import { requiredRule } from 'constant/formRules';
 
 const DrugCategoryForm = props => {
   const { form, onFinish, defaultCategory } = props;
@@ -9,7 +10,7 @@ const DrugCategoryForm = props => {
       layout="vertical"
       form={form}
       onFinish={onFinish}>
-      <Form.Item label="Loại thuốc" name="name" initialValue={defaultCategory?.name}>
+      <Form.Item label="Nhóm thuốc" name="name" initialValue={defaultCategory?.name} rules={[requiredRule("Trường này là bắt buộc")]}>
         <Input autoFocus />
       </Form.Item>
     </Form>

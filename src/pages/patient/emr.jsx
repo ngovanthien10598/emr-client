@@ -29,9 +29,9 @@ const PatientEmrPage = props => {
       render: (_, row) => row.Record.physician.first_name + " " + row.Record.physician.last_name
     },
     {
-      title: 'Khoa khám',
+      title: 'Phòng khám',
       key: 'room',
-      render: (_, row) => "Khoa " + row.Record.room.name
+      render: (_, row) => row.Record.room.name
     },
     {
       title: 'Trạng thái',

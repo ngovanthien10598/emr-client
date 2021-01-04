@@ -172,6 +172,10 @@ const ExaminationPage = props => {
     await getDrugs(category);
   }
 
+  async function confirmPassword() {
+    
+  }
+
   async function handleFinishExamination(visitId) {
     try {
       setFinishLoading(true);

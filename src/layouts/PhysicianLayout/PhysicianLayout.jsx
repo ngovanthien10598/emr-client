@@ -41,9 +41,9 @@ const PhysicianLayout = () => {
             <Menu.Item key="/physician/patient" icon={<IdcardOutlined />}>
               <Link to="/physician/patient">Bệnh nhân</Link>
             </Menu.Item>
-            <Menu.Item key="/physician/appointment" icon={<CalendarOutlined />}>
+            {/* <Menu.Item key="/physician/appointment" icon={<CalendarOutlined />}>
               <Link to="/physician/appointment">Lịch hẹn</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="/physician/profile" icon={<ProfileOutlined />}>
               <Link to="/physician/profile">Hồ sơ</Link>
             </Menu.Item>
@@ -83,9 +83,9 @@ const PhysicianLayout = () => {
               </Route>
 
               {/* Appointment */}
-              <Route path={`${path}/appointment`}>
+              {/* <Route path={`${path}/appointment`}>
                 <AppointmentPage />
-              </Route>
+              </Route> */}
 
               <Route path={`${path}/profile`}>
                 <ProfilePage />
