@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PageHeader, Descriptions, Spin, Table, Space, Button } from 'antd';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import moment from 'moment';
-import { EyeOutlined } from '@ant-design/icons';
+import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 
 // APIs
 import { getPatientDetailsAPI } from 'services/user/patient.service';
@@ -39,9 +39,9 @@ const PatientDetails = props => {
       render: (_, row) => row.Record.physician.first_name + " " + row.Record.physician.last_name
     },
     {
-      title: 'Khoa khám',
+      title: 'Phòng khám',
       key: 'room',
-      render: (_, row) => "Khoa " + row.Record.room.name
+      render: (_, row) => row.Record.room.name
     },
     {
       title: 'Trạng thái',
@@ -58,7 +58,12 @@ const PatientDetails = props => {
         <Link to={`${url}/${row.Key}`}>
           <Button icon={<EyeOutlined />}>Xem</Button>
         </Link>
-
+        {
+          url.includes('/physician') && row.Record.completed_at === null &&
+            <Link to={`/physician/visit/${row.Record.id}`}>
+              <Button icon={<EditOutlined />}>Cập nhật</Button>
+            </Link>
+        }
       </Space>
     }
   ]
@@ -113,7 +118,7 @@ const PatientDetails = props => {
       </Spin>
 
       <div className="ant-descriptions-title mb-3">Lịch sử khám bệnh</div>
-      <Table rowKey="id" dataSource={EMRs} loading={EMRLoading} columns={tableColumns} />
+      <Table rowKey="Key" dataSource={EMRs} loading={EMRLoading} columns={tableColumns} />
 
     </>
   )

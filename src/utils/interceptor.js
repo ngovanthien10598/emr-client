@@ -8,10 +8,6 @@ import { API_URL } from 'constant/apiUrl';
 export default function setupInterceptor() {
   axios.interceptors.request.use((config) => {
 
-    if (config.method === 'delete') {
-      message.loading('Đang thực hiện');
-    }
-
     try {
       const token = Cookie.get('EMR_token');
       if (token && jwtDecode(token)) {

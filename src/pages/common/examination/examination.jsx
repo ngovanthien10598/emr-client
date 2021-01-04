@@ -16,6 +16,7 @@ import {
   Radio,
   Tabs,
   Alert,
+  Modal,
   BackTop
 } from 'antd';
 import moment from 'moment';
@@ -310,7 +311,7 @@ const ExaminationPage = props => {
   //   console.log(emr);
   // }, [emr]);
 
-  
+
 
   function getTodayString() {
     const now = new Date();
@@ -350,6 +351,14 @@ const ExaminationPage = props => {
             :
             <Alert message="Lỗi" description="Không tìm thấy bệnh án" type="error" showIcon />
       }
+
+      <Modal visible={false} title="Xác nhận mật khẩu">
+        <Form>
+          <Form.Item label="Mật khẩu">
+            <Input.Password />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   )
 }

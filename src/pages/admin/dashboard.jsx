@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Statistic, Spin, Card, Select } from 'antd';
+import { Row, Col, Statistic, Spin, Card, Select, Space } from 'antd';
 import { fetchDashboard } from 'store/actions/dashboard.action';
 import { connect } from 'react-redux';
 import { ProfileOutlined, FileDoneOutlined, FileExcelOutlined } from '@ant-design/icons';
@@ -8,8 +8,9 @@ import { ResponsiveBar } from '@nivo/bar';
 const AdminDashboard = props => {
 
   const [result, setResult] = useState({ total: 0, completed: 0, unCompleted: 0 });
+  const [resultByYear, setResultByYear] = useState({ total: 0, completed: 0, unCompleted: 0 });
   const [years, setYears] = useState([]);
-  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedYear, setSelectedYear] = useState('Tất cả');
   const [chartData, setChartData] = useState(
     [
       { month: 1, "Đã đóng": 0, "Chưa đóng": 0 },
@@ -54,7 +55,7 @@ const AdminDashboard = props => {
         const [month, year] = key.split('/');
 
         if (!years[year]) {
-          years.unshift(year);
+          years.push(year);
         }
       })
 
@@ -68,7 +69,7 @@ const AdminDashboard = props => {
         unCompleted += statistic.uncompleted_emr[key];
       })
 
-      setSelectedYear(years[0]);
+      setSelectedYear(years[years.length - 1]);
       setResult({ total: total, completed: completed, unCompleted: unCompleted });
       setYears(years);
     }
@@ -90,6 +91,11 @@ const AdminDashboard = props => {
       { month: 11, "Đã đóng": 0, "Chưa đóng": 0 },
       { month: 12, "Đã đóng": 0, "Chưa đóng": 0 },
     ]
+    let total = 0;
+    let completed = 0;
+    let unCompleted = 0;
+
+    // Calc EMRs
 
     // Calc completed EMRs
     Object.keys(statistic.completed_emr).map(key => {
@@ -98,6 +104,7 @@ const AdminDashboard = props => {
 
       if (year == selectedYear) {
         chartData[month - 1]["Đã đóng"] = statistic.completed_emr[key];
+        completed += statistic.completed_emr[key];
       }
     })
 
@@ -108,10 +115,12 @@ const AdminDashboard = props => {
 
       if (year == selectedYear) {
         chartData[month - 1]["Chưa đóng"] = statistic.uncompleted_emr[key];
+        unCompleted += statistic.uncompleted_emr[key];
       }
     })
 
     setChartData(chartData);
+    setResultByYear({ total: completed + unCompleted, completed: completed, unCompleted: unCompleted });
   }
 
   function handleYearChange(year) {
@@ -119,7 +128,7 @@ const AdminDashboard = props => {
   }
 
   useEffect(() => {
-    if (selectedYear) {
+    if (selectedYear && statistic) {
       getChartData();
     }
   }, [selectedYear])
@@ -130,7 +139,7 @@ const AdminDashboard = props => {
 
   return (
     <>
-      <h1 className="text-xl mb-5">Bảng điều khiển</h1>
+      <h1 className="text-xl mb-5">Thống kê</h1>
       <Row gutter={60} className="mb-5">
         <Col flex={1}>
           <Spin spinning={fetchLoading}>
@@ -167,9 +176,16 @@ const AdminDashboard = props => {
         </Col>
       </Row>
 
-      <Row justify="space-between">
+      <Row justify="space-between" align='middle' gutter={30}>
         <Col>
           <h2>Bệnh án</h2>
+        </Col>
+        <Col className="ml-auto">
+          <Space size="large">
+            <span><strong>Tổng:</strong> {resultByYear.total}</span>
+            <span><strong>Đóng:</strong> {resultByYear.completed}</span>
+            <span><strong>Chưa đóng:</strong> {resultByYear.unCompleted}</span>
+          </Space>
         </Col>
         <Col>
           <Select style={{ width: 100 }} value={selectedYear} onChange={handleYearChange}>
@@ -181,16 +197,29 @@ const AdminDashboard = props => {
           </Select>
         </Col>
       </Row>
-      <div style={{ height: 300, width: '100%' }}>
+      <div style={{ height: 400, width: '100%' }}>
         <ResponsiveBar
           data={chartData}
           margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
           padding={0.3}
           keys={['Đã đóng', 'Chưa đóng']}
+          colors={['#3f8600', '#cf1322']}
+          labelTextColor={'#fff'}
           tooltip={(d) => (
-            <span>{d.id}: {d.indexValue}</span>
+            <span>{d.id}: {d.value}</span>
           )}
-          indexBy={'month'} />
+          indexBy={'month'}
+          legends={[
+            {
+              dataFrom: 'keys',
+              anchor: 'bottom-right',
+              direction: 'column',
+              justify: false,
+              itemHeight: 24,
+              itemWidth: 40,
+              translateX: 70
+            }
+          ]} />
       </div>
 
     </>

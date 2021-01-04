@@ -11,7 +11,7 @@ import {
   ClockCircleOutlined,
   AppstoreOutlined,
   CalendarOutlined,
-  ContainerOutlined,
+  ProfileOutlined,
   SettingOutlined,
   NotificationOutlined} from '@ant-design/icons';
 import AdminDashboard from 'pages/admin/dashboard';
@@ -34,6 +34,7 @@ import AdminSettingPage from 'pages/admin/setting';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 import DrugDosageFormPage from 'pages/common/drug/drug-dosage-form';
+import ProfilePage from 'pages/common/profile/profile';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -54,7 +55,7 @@ const AdminLayout = () => {
             selectedKeys={[location.pathname]}
           >
             <Menu.Item key="/admin/dashboard" icon={<DashboardOutlined />}>
-              <Link to="/admin/dashboard">Bảng điều khiển</Link>
+              <Link to="/admin/dashboard">Thống kê</Link>
             </Menu.Item>
             <SubMenu key="drug" icon={<MedicineBoxOutlined />} title="Quản lý thuốc">
               <Menu.Item key="/admin/drug/category">
@@ -94,16 +95,16 @@ const AdminLayout = () => {
             <Menu.Item key="/admin/patient" icon={<IdcardOutlined />}>
               <Link to="/admin/patient">Bệnh nhân</Link>
             </Menu.Item>
-            <Menu.Item key="/admin/appointment" icon={<CalendarOutlined />}>
+            {/* <Menu.Item key="/admin/appointment" icon={<CalendarOutlined />}>
               <Link to="/admin/appointment">Lịch hẹn</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="/admin/service" icon={<DollarOutlined />}>
               <Link to="/admin/service">Dịch vụ</Link>
             </Menu.Item>
 
-            <Menu.Item key="/admin/working-hour" icon={<ClockCircleOutlined />}>
+            {/* <Menu.Item key="/admin/working-hour" icon={<ClockCircleOutlined />}>
               <Link to="/admin/working-hour">Giờ làm việc</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="/admin/room" icon={<AppstoreOutlined />}>
               <Link to="/admin/room">Phòng khám</Link>
             </Menu.Item>
@@ -111,9 +112,12 @@ const AdminLayout = () => {
             <Menu.Item key="/admin/account" icon={<UserOutlined />}>
               <Link to="/admin/account">Tài khoản</Link>
             </Menu.Item>
-            <Menu.Item key="/admin/setting" icon={<SettingOutlined />}>
-              <Link to="/admin/setting">Cài đặt</Link>
+            <Menu.Item key="/admin/profile" icon={<ProfileOutlined />}>
+              <Link to="/admin/profile">Hồ sơ</Link>
             </Menu.Item>
+            {/* <Menu.Item key="/admin/setting" icon={<SettingOutlined />}>
+              <Link to="/admin/setting">Cài đặt</Link>
+            </Menu.Item> */}
           </Menu>
         </Sider>
         <Layout style={{ padding: '0 24px 24px' }}>
@@ -175,9 +179,9 @@ const AdminLayout = () => {
               </Route>
 
               {/* Appointment */}
-              <Route path={`${path}/appointment`}>
+              {/* <Route path={`${path}/appointment`}>
                 <AppointmentPage />
-              </Route>
+              </Route> */}
 
               {/* Service */}
               <Route path={`${path}/service`}>
@@ -185,9 +189,9 @@ const AdminLayout = () => {
               </Route>
 
               {/* Service */}
-              <Route path={`${path}/working-hour`}>
+              {/* <Route path={`${path}/working-hour`}>
                 <WorkingHourPage />
-              </Route>
+              </Route> */}
 
               {/* Room */}
               <Route path={`${path}/room`}>
@@ -200,8 +204,12 @@ const AdminLayout = () => {
               </Route>
 
               {/* Room */}
-              <Route path={`${path}/setting`}>
+              {/* <Route path={`${path}/setting`}>
                 <AdminSettingPage />
+              </Route> */}
+
+              <Route path={`${path}/profile`}>
+                <ProfilePage />
               </Route>
 
               {/* Fallback */}

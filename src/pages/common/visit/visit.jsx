@@ -11,6 +11,7 @@ import { getRoomAPI as adminGetRoomAPI } from 'services/admin/room.service';
 import { getVisitDataAPI } from 'services/user/visit.service';
 import { getVisitDataAPI as adminGetVisitDataAPI } from 'services/admin/visit.service';
 import { addEMRAPI, getEMRHistoryAPI } from 'services/user/emr.service';
+import Modal from 'antd/lib/modal/Modal';
 
 
 const VisitPage = props => {
@@ -256,7 +257,7 @@ const VisitPage = props => {
       <Row className="flex-no-wrap">
         <Col style={{ width: 350 }} className="flex-shrink-0">
           <div className="mb-5">
-            <h3 className="text-xl">Khoa</h3>
+            <h3 className="text-xl">Phòng khám</h3>
             <Select loading={roomLoading} style={{ width: '100%' }} value={selectedRoom} onChange={handleChangeRoom}>
               {
                 rooms.map(room => (
