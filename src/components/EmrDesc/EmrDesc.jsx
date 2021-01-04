@@ -111,7 +111,7 @@ const EmrDesc = props => {
         <Item label="3. Tóm tắt kết quả cận lâm sàng" span={2}>
           <div dangerouslySetInnerHTML={{ __html: subclinical_summary }} className="whitespace-pre-line"></div>
         </Item>
-        <Item label="4. Chẩn đoán ban đầu" span={2}>{initial_diagnose}</Item>
+        <Item label="4. Chẩn đoán ban đầu" span={2}>{initial_diagnose?.disease}</Item>
         <Item label="5. Thuốc">
           {
             drugs?.map((d, index) => {
@@ -122,7 +122,7 @@ const EmrDesc = props => {
         <Item label="Đã xử lý">
           <div dangerouslySetInnerHTML={{ __html: processed }} className="whitespace-pre-line"></div>
         </Item>
-        <Item label="6. Chẩn đoán khi ra viện" span={2}>{diagnose}</Item>
+        <Item label="6. Chẩn đoán khi ra viện" span={2}>{diagnose?.disease}</Item>
         <Item label="7. Điều trị ngoại trú">Từ ngày {from_date} đến ngày {to_date}</Item>
       </Descriptions>
 
@@ -134,8 +134,8 @@ const EmrDesc = props => {
           <div dangerouslySetInnerHTML={{ __html: valuable_subclinical_summary }} className="whitespace-pre-line"></div>
         </Item>
         <Item label="3. Chẩn đoán ra viện" span={2}>
-          <div>Bệnh chính: {primary_disease}</div>
-          <div>Bệnh kèm theo (nếu có): {sub_disease}</div>
+          <div>Bệnh chính: {primary_disease?.disease}</div>
+          <div>Bệnh kèm theo (nếu có): {sub_disease?.disease}</div>
         </Item>
         <Item label="4. Phương pháp điều trị" span={2}>
           <div dangerouslySetInnerHTML={{ __html: treatment_method }} className="whitespace-pre-line"></div>

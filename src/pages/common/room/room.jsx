@@ -17,13 +17,13 @@ const RoomPage = () => {
 
   const tableColumns = [
     {
-      title: 'Mã khoa',
+      title: 'Mã phòng',
       key: 'number',
       dataIndex: 'number',
       width: '150px'
     },
     {
-      title: 'Tên',
+      title: 'Tên phòng',
       key: 'name',
       dataIndex: 'name'
     },
@@ -116,7 +116,7 @@ const RoomPage = () => {
   return (
     <>
       <Row justify="space-between">
-        <Col><h1 className="text-xl">Quản lý khoa</h1></Col>
+        <Col><h1 className="text-xl">Quản lý phòng</h1></Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenModal}>Tạo mới</Button>
         </Col>
@@ -129,7 +129,7 @@ const RoomPage = () => {
         loading={fetchingCategories} />
       <Modal
         visible={modalVisible}
-        title={action === formActions.CREATE ? 'Thêm khoa' : 'Cập nhật khoa'}
+        title={action === formActions.CREATE ? 'Thêm phòng' : 'Cập nhật phòng'}
         onCancel={handleCloseModal}
         confirmLoading={modalLoading}
         destroyOnClose={true}

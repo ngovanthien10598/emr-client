@@ -2,7 +2,7 @@ import axios from 'axios';
 import { NODE_URL } from 'constant/apiUrl';
 import { getQueryString } from 'utils/string';
 
-const endpointPrefix = `${NODE_URL}/api`;
+const endpointPrefix = `${NODE_URL}`;
 
 export function listEMRAPI(query) {
   const url = `${endpointPrefix}/physician/emrs/`;

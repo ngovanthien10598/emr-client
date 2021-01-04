@@ -1,5 +1,5 @@
 export const API_URL = 'https://emr-2020.wl.r.appspot.com/api';
-export const NODE_URL = 'https://api.emr-client.tech';
+export const NODE_URL = 'https://api.emr-client.tech/api';
 
 /* -------------------- AUTHENTICATION -------------------- */
 export const LOGIN_URL = API_URL + '/auth/login/';
@@ -7,7 +7,7 @@ export const REFRESH_TOKEN_URL = API_URL + '/auth/refresh-token/';
 export const CHANGE_PASSWORD_URL = API_URL + '/auth/change-password/';
 
 /* -------------------- ADMIN -------------------- */
-export const ADMIN_DASHBOARD_URL = '';
+export const ADMIN_DASHBOARD_URL = NODE_URL + '/admin/statistic';
 
 // Drug
 export const ADMIN_DRUG_CATEGORY_URL = API_URL + '/admin/manage-drug-category';

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@nivo/bar": "^0.67.0",
+    "@nivo/core": "^0.67.0",
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -22,10 +24,12 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
     "react-to-print": "^2.12.0",
+    "recharts": "^2.0.0-beta.7",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "tailwindcss": "^1.9.6",
+    "viser-react": "^2.4.8",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

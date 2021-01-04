@@ -202,18 +202,30 @@ const VisitPage = props => {
             body: null,
             partials: null,
             subclinical_summary: null,
-            initial_diagnose: null,
+            initial_diagnose: {
+              category: null,
+              disease: null
+            },
             drugs: null,
             processed: null,
-            diagnose: null,
+            diagnose: {
+              category: null,
+              disease: null
+            },
             from_date: null,
             to_date: null,
           },
           summary: {
             pathological_process_and_clinical_course: null,
             valuable_subclinical_summary: null,
-            primary_disease: null,
-            sub_disease: null,
+            primary_disease: {
+              category: null,
+              disease: null
+            },
+            sub_disease: {
+              category: null,
+              disease: null
+            },
             treatment_method: null,
             patient_status: null,
             direction_of_treatment: null,
@@ -224,13 +236,13 @@ const VisitPage = props => {
       }
 
       try {
-          await createEmr(emrObj);
-          history.push(`${pathname}/${visit.id}`);
-        } catch(error) {
-          console.log(error);
-        }
-      } else {
+        await createEmr(emrObj);
         history.push(`${pathname}/${visit.id}`);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      history.push(`${pathname}/${visit.id}`);
     }
   }
 

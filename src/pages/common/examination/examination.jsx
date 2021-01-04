@@ -229,14 +229,14 @@ const ExaminationPage = props => {
           partials: values.partials || null,
           subclinical_summary: values.subclinical_summary || null,
           initial_diagnose: {
-            category: values.initial_diagnose.category || null,
-            disease: values.initial_diagnose.disease || null,
+            category: values.initial_diagnose?.category || null,
+            disease: values.initial_diagnose?.disease || null,
           },
           drugs: values.drugs || null,
           processed: values.processed || null,
           diagnose: {
-            category: values.diagnose.category || null,
-            disease: values.diagnose.disease || null
+            category: values.diagnose?.category || null,
+            disease: values.diagnose?.disease || null
           },
           from_date: values.from_date?.format('DD/MM/YYYY') || null,
           to_date: values.to_date?.format('DD/MM/YYYY') || null,
@@ -245,12 +245,12 @@ const ExaminationPage = props => {
           pathological_process_and_clinical_course: values.pathological_process_and_clinical_course || null,
           valuable_subclinical_summary: values.valuable_subclinical_summary || null,
           primary_disease: {
-            category: values.primary_disease.category || null,
-            disease: values.primary_disease.disease || null
+            category: values.primary_disease?.category || null,
+            disease: values.primary_disease?.disease || null
           },
           sub_disease: {
-            category: values.sub_disease.category || null,
-            disease: values.sub_disease.disease || null
+            category: values.sub_disease?.category || null,
+            disease: values.sub_disease?.disease || null
           },
           treatment_method: values.treatment_method || null,
           patient_status: values.patient_status || null,
@@ -337,6 +337,7 @@ const ExaminationPage = props => {
                   services={services}
                   drugs={drugs}
                   handleUploadChange={handleUploadChange}
+                  handleSaveEmr={handleSaveEmr}
                   handleFinishExamination={handleFinishExamination}
                   finishLoading={finishLoading} />
               </Spin>

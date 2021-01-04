@@ -88,9 +88,9 @@ const AdminLayout = () => {
             {/* <Menu.Item key="/admin/notification" icon={<NotificationOutlined />}>
               <Link to="/admin/notification">Thông báo</Link>
             </Menu.Item> */}
-            <Menu.Item key="/admin/visit" icon={<ContainerOutlined />}>
-              <Link to="/admin/visit">Nhóm bệnh</Link>
-            </Menu.Item>
+            {/* <Menu.Item key="/admin/visit" icon={<ContainerOutlined />}>
+              <Link to="/admin/visit">Khám bệnh</Link>
+            </Menu.Item> */}
             <Menu.Item key="/admin/patient" icon={<IdcardOutlined />}>
               <Link to="/admin/patient">Bệnh nhân</Link>
             </Menu.Item>
@@ -105,7 +105,7 @@ const AdminLayout = () => {
               <Link to="/admin/working-hour">Giờ làm việc</Link>
             </Menu.Item>
             <Menu.Item key="/admin/room" icon={<AppstoreOutlined />}>
-              <Link to="/admin/room">Khoa</Link>
+              <Link to="/admin/room">Phòng khám</Link>
             </Menu.Item>
 
             <Menu.Item key="/admin/account" icon={<UserOutlined />}>

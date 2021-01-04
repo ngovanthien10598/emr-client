@@ -23,7 +23,7 @@ const DiseaseSelect = ({ value = { category: null, disease: null }, onChange, ..
         <Col flex="0 0 150px">{label}</Col>
       }
       <Col flex="0 0 300px" style={{ maxWidth: 300 }}>
-        <Select placeholder="Nhóm bệnh" onChange={handleCatChange} value={value.category}>
+        <Select placeholder="Nhóm bệnh" onChange={handleCatChange} value={value?.category}>
           {
             diseaseCategories.map(cat => {
               return <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
@@ -32,7 +32,7 @@ const DiseaseSelect = ({ value = { category: null, disease: null }, onChange, ..
         </Select>
       </Col>
       <Col flex="1 1 auto">
-        <Select placeholder="Bệnh" onChange={handleChange} value={value.disease}>
+        <Select placeholder="Bệnh" onChange={handleChange} value={value?.disease}>
           {
             diseases?.filter(d => selectedCat === '' || d.disease_category === selectedCat).map(d => {
               return <Select.Option key={d.id} value={d.name}>{d.name}</Select.Option>

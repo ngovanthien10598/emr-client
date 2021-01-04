@@ -21,7 +21,7 @@ const EMRForm = props => {
     drugInstructions,
     services,
     drugs,
-    finishLoading
+    finishLoading,
   } = props;
 
   function getDateString(dateStr) {

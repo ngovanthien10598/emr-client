@@ -40,7 +40,7 @@ const LoginForm = () => {
       </div>
 
       <Form.Item name="email">
-        <Input type="email" placeholder="Email" />
+        <Input type="email" placeholder="Email/Điện thoại" />
       </Form.Item>
 
       <Form.Item name="password" className="m-0">
@@ -48,7 +48,8 @@ const LoginForm = () => {
         {/* <Button type="link"> */}
         {/* </Button> */}
       </Form.Item>
-      <Link className="block mt-2 mb-6" to="/forgot-password">Quên mật khẩu</Link>
+      {/* <Link className="block mt-2 mb-6" to="/forgot-password">Quên mật khẩu</Link> */}
+      <div className="mt-2 mb-6"></div>
 
       <Form.Item>
         <Button loading={authState.loginLoading || userState.getProfileLoading} block type="primary" size="large" htmlType="submit">Đăng nhập</Button>
