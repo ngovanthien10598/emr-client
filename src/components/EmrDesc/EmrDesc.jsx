@@ -4,7 +4,7 @@ import React from 'react';
 const { Item } = Descriptions;
 
 const EmrDesc = props => {
-  const { emr } = props;
+  const { emr, role } = props;
   const {
     medical_record: {
       administrative: {
@@ -64,7 +64,7 @@ const EmrDesc = props => {
 
   return (
     <div>
-      <div className="mb-2">Khoa: Khoa {emr.room.name}</div>
+      <div className="mb-2">Phòng khám: {emr.room.name}</div>
       <Descriptions title="I. Hành chính" size="middle" bordered column={2} className="mb-5">
         <Item label="1. Họ và tên">{fullname}</Item>
         <Item label="2. Ngày sinh">{dayOfBirth}</Item>
@@ -82,49 +82,54 @@ const EmrDesc = props => {
         <Item label="12. Đến khám bệnh lúc">{checkin_at}</Item>
         <Item label="13. Chẩn đoán của nơi giới thiệu">{previous_diagnose} ({come_from})</Item>
       </Descriptions>
-      <Descriptions title="II. Lý do vào viện" bordered size="middle" className="mb-5">
-        <Item label="Lý do vào viện">{present_complaint}</Item>
-      </Descriptions>
+      {
+        role !== "patient" &&
+        <>
+          <Descriptions title="II. Lý do vào viện" bordered size="middle" className="mb-5">
+            <Item label="Lý do vào viện">{present_complaint}</Item>
+          </Descriptions>
 
-      <Descriptions title="III. Hỏi bệnh" bordered layout="vertical" column={2} className="mb-5">
-        <Item label="1. Quá trình bệnh lý" span={2}>
-          <div dangerouslySetInnerHTML={{ __html: pathological_process }} className="whitespace-pre-line"></div>
-        </Item>
-        <Item label="2. Tiền sử bệnh bản thân">{self_medical_history}</Item>
-        <Item label="Gia đình">{family_medical_history}</Item>
-      </Descriptions>
+          <Descriptions title="III. Hỏi bệnh" bordered layout="vertical" column={2} className="mb-5">
+            <Item label="1. Quá trình bệnh lý" span={2}>
+              <div dangerouslySetInnerHTML={{ __html: pathological_process }} className="whitespace-pre-line"></div>
+            </Item>
+            <Item label="2. Tiền sử bệnh bản thân">{self_medical_history}</Item>
+            <Item label="Gia đình">{family_medical_history}</Item>
+          </Descriptions>
 
-      <Descriptions title="IV. Khám bệnh" bordered column={2} layout="vertical" className="mb-5">
-        <Item label="1. Toàn thân" className="align-baseline">
-          <div dangerouslySetInnerHTML={{ __html: body }} className="whitespace-pre-line"></div>
-        </Item>
-        <Item label="Dấu hiệu sinh tồn">
-          <div>Mạch: {heartbeat} <i className="ml-auto">lần/ph</i></div>
-          <div>Nhiệt độ: {temperature} <i className="ml-auto">°C</i></div>
-          <div>Huyết áp: {blood_pressure} <i className="ml-auto">mmHg</i></div>
-          <div>Nhịp thở: {breathing} <i className="ml-auto">lần/ph</i></div>
-          <div>Cân nặng: {weight} <i className="ml-auto">kg</i></div>
-        </Item>
-        <Item label="2. Các bộ phận" span={2} className="align-baseline">
-          <div dangerouslySetInnerHTML={{ __html: partials }} className="whitespace-pre-line"></div>
-        </Item>
-        <Item label="3. Tóm tắt kết quả cận lâm sàng" span={2}>
-          <div dangerouslySetInnerHTML={{ __html: subclinical_summary }} className="whitespace-pre-line"></div>
-        </Item>
-        <Item label="4. Chẩn đoán ban đầu" span={2}>{initial_diagnose?.disease}</Item>
-        <Item label="5. Thuốc">
-          {
-            drugs?.map((d, index) => {
-              return <div key={index}>{d.drug} x {d.total} ({d.drugInstruction})</div>
-            })
-          }
-        </Item>
-        <Item label="Đã xử lý">
-          <div dangerouslySetInnerHTML={{ __html: processed }} className="whitespace-pre-line"></div>
-        </Item>
-        <Item label="6. Chẩn đoán khi ra viện" span={2}>{diagnose?.disease}</Item>
-        <Item label="7. Điều trị ngoại trú">Từ ngày {from_date} đến ngày {to_date}</Item>
-      </Descriptions>
+          <Descriptions title="IV. Khám bệnh" bordered column={2} layout="vertical" className="mb-5">
+            <Item label="1. Toàn thân" className="align-baseline">
+              <div dangerouslySetInnerHTML={{ __html: body }} className="whitespace-pre-line"></div>
+            </Item>
+            <Item label="Dấu hiệu sinh tồn">
+              <div>Mạch: {heartbeat} <i className="ml-auto">lần/ph</i></div>
+              <div>Nhiệt độ: {temperature} <i className="ml-auto">°C</i></div>
+              <div>Huyết áp: {blood_pressure} <i className="ml-auto">mmHg</i></div>
+              <div>Nhịp thở: {breathing} <i className="ml-auto">lần/ph</i></div>
+              <div>Cân nặng: {weight} <i className="ml-auto">kg</i></div>
+            </Item>
+            <Item label="2. Các bộ phận" span={2} className="align-baseline">
+              <div dangerouslySetInnerHTML={{ __html: partials }} className="whitespace-pre-line"></div>
+            </Item>
+            <Item label="3. Tóm tắt kết quả cận lâm sàng" span={2}>
+              <div dangerouslySetInnerHTML={{ __html: subclinical_summary }} className="whitespace-pre-line"></div>
+            </Item>
+            <Item label="4. Chẩn đoán ban đầu" span={2}>{initial_diagnose?.disease}</Item>
+            <Item label="5. Thuốc">
+              {
+                drugs?.map((d, index) => {
+                  return <div key={index}>{d.drug} x {d.total} ({d.drugInstruction})</div>
+                })
+              }
+            </Item>
+            <Item label="Đã xử lý">
+              <div dangerouslySetInnerHTML={{ __html: processed }} className="whitespace-pre-line"></div>
+            </Item>
+            <Item label="6. Chẩn đoán khi ra viện" span={2}>{diagnose?.disease}</Item>
+            <Item label="7. Điều trị ngoại trú">Từ ngày {from_date} đến ngày {to_date}</Item>
+          </Descriptions>
+        </>
+      }
 
       <Descriptions title="Tổng kết bệnh án" bordered layout="vertical" column={2}>
         <Item label="1. Quá trình bệnh lý và diễn biến lâm sàng" span={2}>
@@ -156,7 +161,7 @@ const EmrDesc = props => {
         <Item label="Tệp đính kèm">
           {
             attachments?.map((a, i) => (
-              <img src={a.url} key={i} style={{width: 200}} />
+              <img src={a.url} key={i} style={{ width: 200 }} />
             ))
           }
         </Item>

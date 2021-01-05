@@ -40,7 +40,7 @@ const PatientEmrDetailsPage = props => {
 
   return (
     <div className="bg-white p-3">
-      <PageHeader onBack={goBack} title="Chi tiết bệnh án" />
+      <PageHeader onBack={goBack} title="Tóm tắt bệnh án" />
       {
         emrLoading ? <Spin spinning={true} /> :
           emrHistory.length > 0 ?
@@ -48,7 +48,7 @@ const PatientEmrDetailsPage = props => {
               {
                 emrHistory.map(h => {
                   return <Tabs.TabPane key={h.completed_at || h.updated_at || h.created_at} tab={h.completed_at || h.updated_at || h.created_at}>
-                    <EmrDesc emr={h} />
+                    <EmrDesc role="patient" emr={h} />
                   </Tabs.TabPane>
                 })
               }

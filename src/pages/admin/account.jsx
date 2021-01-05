@@ -46,7 +46,7 @@ const AdminAccountPage = () => {
       render: (text, record) => (
         <Space>
           <Circle color={record.is_verified_email ? 'success' : ''} />
-          <span>{record.email}</span>
+          <span>{record.email || "Không"}</span>
         </Space>
       )
     },

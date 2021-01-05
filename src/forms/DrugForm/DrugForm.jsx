@@ -5,6 +5,7 @@ import { getDrugUnitsAPI } from 'services/admin/drug-unit.service';
 import { getDrugDetailsAPI } from 'services/admin/drug.service';
 import { getDrugRouteAPI } from 'services/admin/drug-route.service';
 import { getDrugDosageFormAPI } from 'services/admin/drug-dosage-form.service';
+import { requiredRule } from 'constant/formRules';
 
 const DrugForm = props => {
   const { form, onFinish, defaultDrug } = props;
@@ -165,11 +166,11 @@ const DrugForm = props => {
         layout="vertical"
         form={form}
         onFinish={onFinish}>
-        <Form.Item label="Mã thuốc" name="code" initialValue={drugDetail?.code}>
+        <Form.Item label="Mã thuốc" name="code" initialValue={drugDetail?.code} rules={[requiredRule()]}>
           <Input />
         </Form.Item>
 
-        <Form.Item label="Tên thuốc" name="name" initialValue={drugDetail?.name}>
+        <Form.Item label="Tên thuốc" name="name" initialValue={drugDetail?.name} rules={[requiredRule()]}>
           <Input />
         </Form.Item>
 
@@ -177,7 +178,7 @@ const DrugForm = props => {
           <Input type="number" suffix="VNĐ" value={0} />
         </Form.Item>
 
-        <Form.Item label="Nhóm thuốc" name="drug_category_id" initialValue={drugDetail?.drug_category.id}>
+        <Form.Item label="Nhóm thuốc" name="drug_category_id" initialValue={drugDetail?.drug_category.id} rules={[requiredRule()]}>
           <Select loading={catLoading}>
             {
               categories.map(cat => (
@@ -187,7 +188,7 @@ const DrugForm = props => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Đơn vị tính" name="drug_unit_id" initialValue={drugDetail?.drug_unit.id}>
+        <Form.Item label="Đơn vị tính" name="drug_unit_id" initialValue={drugDetail?.drug_unit.id} rules={[requiredRule()]}>
           <Select loading={unitLoading}>
             {
               units.map(cat => (
@@ -197,7 +198,7 @@ const DrugForm = props => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Đường dùng" name="drug_route_id" initialValue={drugDetail?.drug_route.id}>
+        <Form.Item label="Đường dùng" name="drug_route_id" initialValue={drugDetail?.drug_route.id} rules={[requiredRule()]}>
           <Select loading={routeLoading}>
             {
               routes.map(route => (
@@ -206,7 +207,7 @@ const DrugForm = props => {
             }
           </Select>
         </Form.Item>
-        <Form.Item label="Dạng bào chế" name="drug_dosage_form_id" initialValue={drugDetail?.drug_dosage_form.id}>
+        <Form.Item label="Dạng bào chế" name="drug_dosage_form_id" initialValue={drugDetail?.drug_dosage_form.id} rules={[requiredRule()]}>
           <Select loading={formLoading}>
             {
               forms.map(f => (
@@ -215,7 +216,7 @@ const DrugForm = props => {
             }
           </Select>
         </Form.Item>
-        <Form.Item label="Hàm lượng/nồng độ" name="strength" initialValue={drugDetail?.strength}>
+        <Form.Item label="Hàm lượng/nồng độ" name="strength" initialValue={drugDetail?.strength} rules={[requiredRule()]}>
           <Input />
         </Form.Item>
       </Form>

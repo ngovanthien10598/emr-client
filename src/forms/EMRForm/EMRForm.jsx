@@ -49,7 +49,7 @@ const EMRForm = props => {
         </Form.Item>
       </Col> */}
         <Col flex={1}>
-          <Form.Item label="Khoa" name="room" initialValue={emr.room.name}>
+          <Form.Item label="Phòng khám" name="room" initialValue={emr.room.name}>
             <Input readOnly />
           </Form.Item>
         </Col>
