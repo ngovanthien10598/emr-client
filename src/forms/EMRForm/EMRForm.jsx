@@ -25,9 +25,10 @@ const EMRForm = props => {
   } = props;
 
   function getDateString(dateStr) {
+    console.log(dateStr);
     let result = "";
     const momentObj = moment(dateStr);
-    result = `${momentObj.hour()} giờ ${momentObj.minute()} phút ngày ${momentObj.date()} tháng ${momentObj.month()} năm ${momentObj.year()}`;
+    result = `${momentObj.hour()} giờ ${momentObj.minute()} phút ngày ${momentObj.date()} tháng ${momentObj.month() + 1} năm ${momentObj.year()}`;
     return result;
   }
 
@@ -155,7 +156,7 @@ const EMRForm = props => {
               </Form.Item>
             </Col>
             <Col>
-              <Form.Item label="Nơi giới thiệu" name="come_from" initialValue={emr.medical_record.administrative.come_from}>
+              <Form.Item label="Nơi giới thiệu" name="come_from" initialValue={emr.medical_record.administrative.come_from || "Tự đến"}>
                 <Radio.Group>
                   <Radio value="Y tế">1. Y tế</Radio>
                   <Radio value="Tự đến">2. Tự đến</Radio>
@@ -171,7 +172,7 @@ const EMRForm = props => {
           </Form.Item>
         </Collapse.Panel>
         <Collapse.Panel header={<strong className="uppercase">iii. hỏi bệnh</strong>} key="ask">
-          <Form.Item label="1. Quá trình bệnh lý" name="pathological_process" initialValue={emr.medical_record.ask.pathological_process} getValueFromEvent={e => e.target.getContent()}>
+          <Form.Item label="1. Quá trình bệnh lý" name="pathological_process" initialValue={emr.medical_record.ask.pathological_process}>
             {/* <Input.TextArea autoSize={{ minRows: 3, maxRows: 7 }} /> */}
             <ReactQuill theme="snow" modules={{ toolbar: quillToolbar }} />
           </Form.Item>

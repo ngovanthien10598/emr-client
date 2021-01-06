@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutAction } from 'store/actions/auth.action';
 import jwtDecode from 'jwt-decode';
+import { notification } from 'antd';
 
 const withPrivateRoute = (Child, roles) => {
   const WrapperComponent = (props) => {
@@ -21,6 +22,7 @@ const withPrivateRoute = (Child, roles) => {
     useEffect(() => {
       if (user && user.role) {
         if (!isValidRole(user)) {
+          notification.error({ message: "Lỗi", description: "Trang bạn yêu cầu không hợp lệ", type: "error" });
           dispatch(logoutAction());
         }
       }

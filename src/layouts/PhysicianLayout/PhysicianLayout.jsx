@@ -38,7 +38,7 @@ const PhysicianLayout = () => {
             <Menu.Item key="/physician/visit" icon={<ContainerOutlined />}>
               <Link to="/physician/visit">Khám bệnh</Link>
             </Menu.Item>
-            <Menu.Item key="/physician/patient" icon={<IdcardOutlined />}>
+            <Menu.Item className={location.pathname.includes("/physician/patient") && "ant-menu-item-selected"} key="/physician/patient" icon={<IdcardOutlined />}>
               <Link to="/physician/patient">Bệnh nhân</Link>
             </Menu.Item>
             {/* <Menu.Item key="/physician/appointment" icon={<CalendarOutlined />}>

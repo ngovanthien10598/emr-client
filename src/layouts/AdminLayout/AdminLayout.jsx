@@ -92,9 +92,9 @@ const AdminLayout = () => {
             {/* <Menu.Item key="/admin/visit" icon={<ContainerOutlined />}>
               <Link to="/admin/visit">Khám bệnh</Link>
             </Menu.Item> */}
-            <Menu.Item key="/admin/patient" icon={<IdcardOutlined />}>
+            {/* <Menu.Item key="/admin/patient" icon={<IdcardOutlined />}>
               <Link to="/admin/patient">Bệnh nhân</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             {/* <Menu.Item key="/admin/appointment" icon={<CalendarOutlined />}>
               <Link to="/admin/appointment">Lịch hẹn</Link>
             </Menu.Item> */}
@@ -174,9 +174,9 @@ const AdminLayout = () => {
               </Route>
 
               {/* Patient */}
-              <Route path={`${path}/patient`}>
+              {/* <Route path={`${path}/patient`}>
                 <PatientPage />
-              </Route>
+              </Route> */}
 
               {/* Appointment */}
               {/* <Route path={`${path}/appointment`}>

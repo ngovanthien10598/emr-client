@@ -1,4 +1,5 @@
 import { Descriptions } from 'antd';
+import NullPlaceholder from 'components/NullPlaceholder/NullPlaceholder';
 import React from 'react';
 
 const { Item } = Descriptions;
@@ -62,24 +63,26 @@ const EmrDesc = props => {
     }
   } = emr;
 
+  
+
   return (
     <div>
       <div className="mb-2">Phòng khám: {emr.room.name}</div>
       <Descriptions title="I. Hành chính" size="middle" bordered column={2} className="mb-5">
-        <Item label="1. Họ và tên">{fullname}</Item>
-        <Item label="2. Ngày sinh">{dayOfBirth}</Item>
-        <Item label="3. Giới tính">{gender}</Item>
-        <Item label="4. Nghề nghiệp">{job}</Item>
-        <Item label="5. Dân tộc">{ethnicity}</Item>
-        <Item label="6. Ngoại kiều">{expatriate}</Item>
-        <Item label="7. Địa chỉ" span={2}>{address}</Item>
-        <Item label="8. Nơi làm việc">{workplace}</Item>
-        <Item label="9. Đối tượng">{object}</Item>
-        <Item label="10. BHYT giá trị đến ngày">{insurance_expirity}</Item>
-        <Item label="Số thẻ BHYT">{insurance_number}</Item>
-        <Item label="11. Họ tên, địa chỉ người nhà khi cần báo tin" span={2}>{family_member_name}, {family_member_address}</Item>
-        <Item label="Điện thoại số">{phone}</Item>
-        <Item label="12. Đến khám bệnh lúc">{checkin_at}</Item>
+        <Item label="1. Họ và tên">{fullname || NullPlaceholder}</Item>
+        <Item label="2. Ngày sinh">{dayOfBirth || NullPlaceholder}</Item>
+        <Item label="3. Giới tính">{gender || NullPlaceholder}</Item>
+        <Item label="4. Nghề nghiệp">{job || NullPlaceholder}</Item>
+        <Item label="5. Dân tộc">{ethnicity || NullPlaceholder}</Item>
+        <Item label="6. Ngoại kiều">{expatriate || NullPlaceholder}</Item>
+        <Item label="7. Địa chỉ" span={2}>{address || NullPlaceholder}</Item>
+        <Item label="8. Nơi làm việc">{workplace || NullPlaceholder}</Item>
+        <Item label="9. Đối tượng">{object || NullPlaceholder}</Item>
+        <Item label="10. BHYT giá trị đến ngày">{insurance_expirity || NullPlaceholder}</Item>
+        <Item label="Số thẻ BHYT">{insurance_number || NullPlaceholder}</Item>
+        <Item label="11. Họ tên, địa chỉ người nhà khi cần báo tin" span={2}>{family_member_name && family_member_address ? `${family_member_name}, ${family_member_address}` : NullPlaceholder}</Item>
+        <Item label="Số điện thoại">{phone || NullPlaceholder}</Item>
+        <Item label="12. Đến khám bệnh lúc">{checkin_at || NullPlaceholder}</Item>
         <Item label="13. Chẩn đoán của nơi giới thiệu">{previous_diagnose} ({come_from})</Item>
       </Descriptions>
       {

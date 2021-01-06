@@ -42,7 +42,10 @@ const EmrDetailsPage = props => {
     <div className="bg-white p-3">
       <PageHeader onBack={goBack} title="Chi tiết bệnh án" />
       {
-        emrLoading ? <Spin spinning={true} /> :
+        emrLoading ?
+          <div className="text-center p-5">
+            <Spin spinning={true} size="default" tip="Đang tải chi tiết bệnh án..." />
+          </div> :
           emrHistory.length > 0 ?
             <Tabs defaultActiveKey={selectedTab} onChange={(val) => setSelectedTab(val)}>
               {
