@@ -279,7 +279,6 @@ const ExaminationPage = props => {
   }
 
   async function handleUploadChange({ event, file, fileList }, emrId) {
-    console.log("change");
 
     if (file && file.status === "done") {
 
@@ -290,7 +289,7 @@ const ExaminationPage = props => {
         const fileListElement = { uid: response.url, id: response.url, url: response.url };
         const cloneEmr = { ...emr };
         cloneEmr.medical_record.summary.attachments = [...cloneEmr.medical_record.summary.attachments, ...[fileListElement]];
-        const updateRes = await updateEMRAPI(emrId, cloneEmr);
+        // const updateRes = await updateEMRAPI(emrId, cloneEmr);
         setEmr(cloneEmr);
         message.success({ content: "Lưu thành công" });
       } catch (error) {
@@ -302,7 +301,7 @@ const ExaminationPage = props => {
       try {
         const cloneEmr = { ...emr };
         cloneEmr.medical_record.summary.attachments = fileList;
-        const updateRes = await updateEMRAPI(emrId, cloneEmr);
+        // const updateRes = await updateEMRAPI(emrId, cloneEmr);
         setEmr(cloneEmr);
         message.success({ content: "Lưu thành công" });
       } catch (error) {

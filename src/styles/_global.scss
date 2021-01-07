@@ -5,3 +5,14 @@
 .ant-layout-sider {
   min-height: calc(100vh - 64px);
 }
+
+.ant-spin {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  > span {
+    margin-bottom: 15px;
+  }
+}

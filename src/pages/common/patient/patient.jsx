@@ -7,6 +7,7 @@ import moment from 'moment';
 
 // API
 import { listAllPatientsAPI } from 'services/user/patient.service';
+import NullPlaceholder from 'components/NullPlaceholder/NullPlaceholder';
 
 const PatientPage = props => {
   const { user } = props;
@@ -39,7 +40,7 @@ const PatientPage = props => {
     {
       title: 'Địa chỉ',
       key: 'address',
-      render: (text, record) => record.address || <i className="text-gray-500">Đang cập nhật...</i>
+      render: (text, record) => record.address || NullPlaceholder
     },
     {
       title: 'Hành động',

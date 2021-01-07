@@ -8,6 +8,7 @@ import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import { getPatientDetailsAPI } from 'services/user/patient.service';
 import { listEMRAPI } from 'services/user/emr.service';
 import Circle from 'components/Circle/Circle';
+import NullPlaceholder from 'components/NullPlaceholder/NullPlaceholder';
 
 const { Item } = Descriptions;
 
@@ -109,11 +110,11 @@ const PatientDetails = props => {
 
       <Spin spinning={patientLoading}>
         <Descriptions title="Thông tin cá nhân" colon>
-          <Item label="Họ và tên">{patient ? patient.first_name + " " + patient.last_name : "Đang tải..."}</Item>
+          <Item label="Họ và tên">{patient ? patient.first_name + " " + patient.last_name : NullPlaceholder}</Item>
           <Item label="Giới tính">{patient?.gender || "Đang tải"}</Item>
-          <Item label="Ngày sinh">{patient ? moment(patient.DOB).format("DD/MM/YYYY") : "Đang tải"}</Item>
-          <Item label="Điện thoại">{patient?.phone || "Đang tải"}</Item>
-          <Item label="Địa chỉ">{patient?.address || "Đang cập nhật"}</Item>
+          <Item label="Ngày sinh">{patient ? moment(patient.DOB).format("DD/MM/YYYY") : NullPlaceholder}</Item>
+          <Item label="Điện thoại">{patient?.phone || NullPlaceholder}</Item>
+          <Item label="Địa chỉ">{patient?.address || NullPlaceholder}</Item>
         </Descriptions>
       </Spin>
 

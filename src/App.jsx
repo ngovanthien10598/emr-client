@@ -25,11 +25,12 @@ import VerifyPage from 'pages/verify-email';
 import PatientLayout from 'layouts/PatientLayout/PatientLayout';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import Spinner from 'components/Spinner/Spinner';
 
 moment.locale('vi');
 
 const loadingIcon = <LoadingOutlined style={{fontSize: 24}} />
-Spin.setDefaultIndicator(loadingIcon);
+Spin.setDefaultIndicator(<Spinner />);
 
 
 function App() {
