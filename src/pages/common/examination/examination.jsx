@@ -350,7 +350,9 @@ const ExaminationPage = props => {
             <Alert message="Lỗi" description={`Bệnh án này đã đóng vào ${moment(emr.created_at).format("DD/MM/YYYY HH:mm:ss")}`} type="error" showIcon />
           :
           loading ?
-            <div className="py-10 text-center"><Spin spinning={loading} /></div>
+            <div className="py-10 text-center">
+              <Spin spinning={loading} tip="Đang tải bệnh án..." />
+              </div>
             :
             <Alert message="Lỗi" description="Không tìm thấy bệnh án" type="error" showIcon />
       }

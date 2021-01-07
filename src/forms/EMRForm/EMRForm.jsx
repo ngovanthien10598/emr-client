@@ -107,7 +107,7 @@ const EMRForm = props => {
               </Form.Item>
             </Col>
             <Col>
-              <Form.Item label="9. Đối tượng" name="object">
+              <Form.Item label="9. Đối tượng" name="object" initialValue="Khác">
                 <Radio.Group>
                   <Radio value="BHYT">1. BHYT</Radio>
                   <Radio value="Thu phí">2. Thu phí</Radio>
