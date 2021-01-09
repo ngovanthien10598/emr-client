@@ -25,7 +25,6 @@ const EMRForm = props => {
   } = props;
 
   function getDateString(dateStr) {
-    console.log(dateStr);
     let result = "";
     const momentObj = moment(dateStr);
     result = `${momentObj.hour()} giờ ${momentObj.minute()} phút ngày ${momentObj.date()} tháng ${momentObj.month() + 1} năm ${momentObj.year()}`;

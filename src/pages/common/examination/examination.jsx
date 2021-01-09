@@ -26,6 +26,7 @@ import VisitImagesForm from 'forms/Visit/VisitImagesForm';
 import { FileDoneOutlined, SaveOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import ReactQuill from 'react-quill';
 import { quillToolbar } from 'constant/quill';
+import axios from 'axios';
 
 // APIs
 import { getServicesAPI } from 'services/user/medical-service.service';
@@ -42,6 +43,8 @@ import { fetchDiseaseCategory } from 'store/actions/disease-category.action';
 import { fetchDisease } from 'store/actions/disease.action';
 import DiseaseSelect from 'components/DiseaseSelect/DiseaseSelect';
 import EMRForm from 'forms/EMRForm/EMRForm';
+import { requiredRule } from 'constant/formRules';
+import { LOGIN_URL } from 'constant/apiUrl';
 
 const { Option } = Select;
 const { useForm } = Form;
@@ -63,14 +66,17 @@ const ExaminationPage = props => {
   const [drugCategories, setDrugCategories] = useState([]);
   const [drugs, setDrugs] = useState([]);
   const [drugInstructions, setDrugInstructions] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [emr, setEmr] = useState(null);
 
   const [drugLoading, setDrugLoading] = useState(false);
   const [finishLoading, setFinishLoading] = useState(false);
   const [isSavingEmr, setIsSavingEmr] = useState(false);
+  const [confirmModalShow, setConfirmModalShow] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const [emrForm] = useForm();
+  const [confirmForm] = useForm();
 
   async function getServices() {
     try {
@@ -172,8 +178,26 @@ const ExaminationPage = props => {
     await getDrugs(category);
   }
 
-  async function confirmPassword() {
-    
+  async function confirmPassword(visitId) {
+    try {
+      const values = await confirmForm.validateFields();
+      const email = user.email;
+      const password = values.password;
+      setConfirmLoading(true);
+      const res = await axios.post(LOGIN_URL, { email, password });
+      const data = res.data;
+      if (data.access_token && data.refresh_token) {
+        setConfirmLoading(false);
+        setConfirmModalShow(false);
+        await handleFinishExamination(visitId);
+      }
+    } catch {
+      setConfirmLoading(false);
+    }
+  }
+
+  function handleFinishClick() {
+      setConfirmModalShow(true);
   }
 
   async function handleFinishExamination(visitId) {
@@ -314,13 +338,6 @@ const ExaminationPage = props => {
   //   console.log(emr);
   // }, [emr]);
 
-
-
-  function getTodayString() {
-    const now = new Date();
-    return `Ngày ${now.getDate()} tháng ${now.getMonth() + 1}, năm ${now.getFullYear()}`
-  }
-
   return (
     <>
       <PageHeader title="Bệnh án ngoại trú" onBack={() => history.goBack()} />
@@ -328,7 +345,7 @@ const ExaminationPage = props => {
         emr ?
           emr.completed_at === null ?
             <>
-              <Spin spinning={isSavingEmr}>
+              <Spin spinning={isSavingEmr || finishLoading}>
                 <EMRForm
                   emrForm={emrForm}
                   emr={emr}
@@ -342,9 +359,22 @@ const ExaminationPage = props => {
                   drugs={drugs}
                   handleUploadChange={handleUploadChange}
                   handleSaveEmr={handleSaveEmr}
-                  handleFinishExamination={handleFinishExamination}
+                  handleFinishExamination={handleFinishClick}
                   finishLoading={finishLoading} />
               </Spin>
+              <Modal
+                visible={confirmModalShow}
+                onCancel={() => setConfirmModalShow(false)}
+                onOk={() => confirmPassword(emr.id)}
+                destroyOnClose={true}
+                confirmLoading={confirmLoading}
+                title="Xác nhận mật khẩu">
+                <Form onFinish={() => confirmPassword(emr.id)} form={confirmForm}>
+                  <Form.Item name="password" label="Mật khẩu" rules={[requiredRule()]}>
+                    <Input.Password />
+                  </Form.Item>
+                </Form>
+              </Modal>
             </>
             :
             <Alert message="Lỗi" description={`Bệnh án này đã đóng vào ${moment(emr.created_at).format("DD/MM/YYYY HH:mm:ss")}`} type="error" showIcon />
@@ -352,18 +382,12 @@ const ExaminationPage = props => {
           loading ?
             <div className="py-10 text-center">
               <Spin spinning={loading} tip="Đang tải bệnh án..." />
-              </div>
+            </div>
             :
             <Alert message="Lỗi" description="Không tìm thấy bệnh án" type="error" showIcon />
       }
 
-      <Modal visible={false} title="Xác nhận mật khẩu">
-        <Form>
-          <Form.Item label="Mật khẩu">
-            <Input.Password />
-          </Form.Item>
-        </Form>
-      </Modal>
+
     </>
   )
 }

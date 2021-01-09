@@ -68,6 +68,7 @@ const EmrDesc = props => {
   return (
     <div>
       <div className="mb-2">Phòng khám: {emr.room.name}</div>
+      <div className="mb-2">Cập nhật bởi: bác sĩ <strong>{emr.physician.first_name} {emr.physician.last_name}</strong></div>
       <Descriptions title="I. Hành chính" size="middle" bordered column={2} className="mb-5">
         <Item label="1. Họ và tên">{fullname || NullPlaceholder}</Item>
         <Item label="2. Ngày sinh">{dayOfBirth || NullPlaceholder}</Item>
