@@ -141,7 +141,7 @@ const ProfilePage = props => {
                 </Col>
                 <Col flex="0 0 50%">
                   <Item label="Điện thoại" name="phone" initialValue={user.phone}>
-                    <Input />
+                    <Input readOnly={user.role.name === "patient"} />
                   </Item>
                 </Col>
               </Row>

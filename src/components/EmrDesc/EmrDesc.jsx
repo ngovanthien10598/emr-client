@@ -166,20 +166,26 @@ const EmrDesc = props => {
         <Item label="6. Hướng điều trị và các chế độ tiếp theo">
           <div dangerouslySetInnerHTML={{ __html: direction_of_treatment || "Chưa cập nhật" }} className="whitespace-pre-line"></div>
         </Item>
-        <Item label="Dịch vụ" className="align-baseline">
-          {
-            services?.map((s, i) => (
-              <div key={i}>{i + 1}. {s.name || s.id}</div>
-            )) || EmptyPlaceholder
-          }
-        </Item>
-        <Item label="Tệp đính kèm">
-          {
-            attachments && attachments.length > 0 && attachments.map((a, i) => (
-              <img src={a.url} key={i} style={{ width: 200 }} onClick={() => handleImageClick(a.url)} />
-            )) || EmptyPlaceholder
-          }
-        </Item>
+        {
+          role !== "patient" &&
+          <Item label="Dịch vụ" className="align-baseline">
+            {
+              services?.map((s, i) => (
+                <div key={i}>{i + 1}. {s.name || s.id}</div>
+              )) || EmptyPlaceholder
+            }
+          </Item>
+        }
+        {
+          role !== "patient" &&
+          <Item label="Tệp đính kèm">
+            {
+              attachments && attachments.length > 0 && attachments.map((a, i) => (
+                <img src={a.url} key={i} style={{ width: 200 }} onClick={() => handleImageClick(a.url)} />
+              )) || EmptyPlaceholder
+            }
+          </Item>
+        }
       </Descriptions>
 
       <Modal
