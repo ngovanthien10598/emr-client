@@ -240,7 +240,9 @@ const EMRForm = props => {
                           name={[field.name, 'drugCategory']}
                           fieldKey={[field.fieldKey, 'drugCategory']}
                           rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
-                          <Select onChange={props.handleChangeDrugCategory}>
+                          <Select onChange={props.handleChangeDrugCategory} showSearch filterOption={(input, option) => {
+                            return option.children.toLowerCase().includes(input.toLowerCase());
+                          }}>
                             {
                               drugCategories.map(cat => (
                                 <Option key={cat.id} value={cat.id}>{cat.name}</Option>
@@ -256,7 +258,9 @@ const EMRForm = props => {
                           name={[field.name, 'drug']}
                           fieldKey={[field.fieldKey, 'drug']}
                           rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
-                          <Select loading={drugLoading}>
+                          <Select loading={drugLoading} showSearch filterOption={(input, option) => {
+                            return option.value.toLowerCase().includes(input.toLowerCase());
+                          }}>
                             {
                               drugs.map(drug => (
                                 <Option key={drug.id} value={`${drug.name} ${drug.strength}`}>{drug.name} {drug.strength}</Option>
@@ -273,7 +277,9 @@ const EMRForm = props => {
                           rules={[{ required: true, message: "Trường này là bắt buộc" }]}
                           label="Cách dùng"
                           style={{ minWidth: 200 }}>
-                          <Select>
+                          <Select showSearch filterOption={(input, option) => {
+                            return option.children?.toLowerCase().includes(input.toLowerCase());
+                          }}>
                             {
                               drugInstructions.map(ins => (
                                 <Option key={ins.id} value={ins.instruction}>{ins.instruction}</Option>
@@ -405,7 +411,9 @@ const EMRForm = props => {
                             <Col>{index + 1}</Col>
                             <Col flex={1}>
                               <Form.Item {...field} name={[field.name, 'name']} fieldKey={[field.fieldKey, 'name']} style={{ margin: 0 }} rules={[{ required: true, message: "Trường này là bắt buộc" }]}>
-                                <Select placeholder="Chọn dịch vụ">
+                                <Select placeholder="Chọn dịch vụ" showSearch filterOption={(input, option) => {
+                                  return option.children.toLowerCase().includes(input.toLowerCase());
+                                }}>
                                   {
                                     services.map((service, index) => (
                                       <Option value={service.name} key={service.id}>

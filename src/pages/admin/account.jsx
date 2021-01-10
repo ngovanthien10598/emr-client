@@ -70,7 +70,7 @@ const AdminAccountPage = () => {
       title: 'Hành động', key: 'action', render: (text, record) => {
         return (
           <Space size={10}>
-            <Button icon={<EyeOutlined />} onClick={() => handleViewClick(record)}></Button>
+            {/* <Button icon={<EyeOutlined />} onClick={() => handleViewClick(record)}></Button> */}
             <Button icon={<EditOutlined />} onClick={() => handleEditClick(record)}></Button>
             <Popconfirm
               onConfirm={() => handleDelete(record)}
