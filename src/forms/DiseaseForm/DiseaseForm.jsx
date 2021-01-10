@@ -88,7 +88,7 @@ const DiseaseForm = props => {
           <Input />
         </Form.Item>
 
-        <Form.Item label="Loại bệnh" name="disease_category" initialValue={diseaseDetail?.disease_category.id}>
+        <Form.Item label="Nhóm bệnh" name="disease_category" initialValue={diseaseDetail?.disease_category.id}>
           <Select loading={catLoading}>
             {
               categories.map(cat => (

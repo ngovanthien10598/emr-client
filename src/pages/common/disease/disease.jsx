@@ -4,9 +4,17 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import DiseaseForm from 'forms/DiseaseForm/DiseaseForm';
 import { getDiseasesAPI, addDiseaseAPI, updateDiseaseAPI, deleteDiseaseAPI } from 'services/admin/disease.service';
 import { formActions } from 'constant/formActions';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const DiseasePage = () => {
 
+  const { search, pathname } = useLocation();
+  const { push } = useHistory();
+  const [page, setPage] = useState(() => {
+    const searchURL = new URLSearchParams(search);
+    return Number.parseInt(searchURL.get('page')) || 1
+  });
+  console.log(page);
   const [modalVisible, setModalVisible] = useState(false);
   const [diseases, setDiseases] = useState();
   const [fetchingDiseases, setFetchingDiseases] = useState(false);
@@ -58,11 +66,11 @@ const DiseasePage = () => {
     setModalVisible(false);
   }
 
-  async function getDiseases() {
+  async function getDiseases(query) {
     try {
       setFetchingDiseases(true);
-      const response = await getDiseasesAPI();
-      setDiseases(response.data.results);
+      const response = await getDiseasesAPI(query);
+      setDiseases(response.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -117,6 +125,15 @@ const DiseasePage = () => {
     setSelectedDisease(null);
   }
 
+  function handlePageChange(page) {
+    getDiseases({ page:  page});
+    setPage(page);
+    push({
+      pathname: pathname,
+      search: `page=${page}`
+    })
+  }
+
   useEffect(() => {
     getDiseases();
   }, []);
@@ -132,8 +149,15 @@ const DiseasePage = () => {
       <Table
         rowKey="id"
         columns={tableColumns}
-        dataSource={diseases}
-        loading={fetchingDiseases} />
+        dataSource={diseases?.results}
+        loading={fetchingDiseases}
+        pagination={{
+          defaultCurrent: page,
+          current: page,
+          pageSize: 10,
+          total: diseases?.count,
+          onChange: handlePageChange
+        }} />
       <Modal
         visible={modalVisible}
         title={action === formActions.CREATE ? 'Thêm bệnh' : 'Cập nhật bệnh'}
