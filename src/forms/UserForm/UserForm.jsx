@@ -54,7 +54,7 @@ const UserForm = props => {
       <Form
         layout="vertical"
         form={form}
-        autoComplete="off"
+        autoComplete="new-password"
         onFinish={onFinish}>
         <Form.Item label="Email" name="email" initialValue={userDetail?.email} rules={[
           {

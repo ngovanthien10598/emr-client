@@ -6,16 +6,19 @@ import { getBase64 } from 'utils/image';
 import { API_URL } from 'constant/apiUrl';
 import Cookie from 'js-cookie';
 import moment from 'moment';
+import { getProfileAction } from 'store/actions/user.action';
+import { logoutAction } from 'store/actions/auth.action';
 
 
 // APIs
 import { updateProfile } from 'services/user/user.service';
 import { changePasswordAPI } from 'services/auth/auth.service';
+import { requiredRule } from 'constant/formRules';
 
 const { Item, useForm } = Form;
 
 const ProfilePage = props => {
-  const { user } = props;
+  const { user, getProfileLoading, getProfile, logout } = props;
   const token = Cookie.get('EMR_token');
 
   const [loading, setLoading] = useState(false);
@@ -46,6 +49,7 @@ const ProfilePage = props => {
     if (info.file.status === 'done') {
       setImageUrl(info.file.response.avatar);
       setLoading(false);
+      getProfile();
     }
   };
 
@@ -57,6 +61,7 @@ const ProfilePage = props => {
     try {
       setUpdateLoading(true);
       await updateProfile(values);
+      await getProfile();
     } catch (error) {
       console.log(error);
     } finally {
@@ -68,8 +73,9 @@ const ProfilePage = props => {
     try {
       setChangePasswordLoading(true);
       await changePasswordAPI(values);
-      message.success("Đổi mật khẩu thành công");
+      message.success("Đổi mật khẩu thành công, vui lòng đăng nhập lại.");
       changePasswordForm.resetFields();
+      logout();
     } catch (error) {
       console.log(error);
     } finally {
@@ -79,39 +85,41 @@ const ProfilePage = props => {
 
   return !user ? <Spin spinning={true} /> : (
     <>
+
       <Row gutter={60}>
         <Col flex="0 0 50%">
-          <h3 className="text-xl mb-3">Hồ sơ cá nhân</h3>
-          <Upload
-            name="image"
-            action={`${API_URL}/user/profile/avatar/`}
-            headers={{ Authorization: `Bearer ${token}` }}
-            method="PATCH"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
+          <Spin spinning={updateLoading || getProfileLoading}>
+            <h3 className="text-xl mb-3">Hồ sơ cá nhân</h3>
+            <Upload
+              name="image"
+              action={`${API_URL}/user/profile/avatar/`}
+              headers={{ Authorization: `Bearer ${token}` }}
+              method="PATCH"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
 
-            onChange={handleChange} >
-            {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-          </Upload>
+              onChange={handleChange} >
+              {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+            </Upload>
 
-          <Spin spinning={updateLoading}>
+
             <Form layout="vertical" onFinish={handleSaveProfile}>
               <Row gutter={15}>
                 <Col flex="0 0 50%">
-                  <Item label="Họ" name="first_name" initialValue={user.first_name}>
+                  <Item label="Họ" name="first_name" initialValue={user.first_name} rules={[requiredRule()]}>
                     <Input />
                   </Item>
                 </Col>
                 <Col flex="0 0 50%">
-                  <Item label="Tên" name="last_name" initialValue={user.last_name}>
+                  <Item label="Tên" name="last_name" initialValue={user.last_name} rules={[requiredRule()]}>
                     <Input />
                   </Item>
                 </Col>
               </Row>
               <Row gutter={15}>
                 <Col flex="0 0 50%">
-                  <Item label="Giới tính" name="gender" initialValue={user.gender}>
+                  <Item label="Giới tính" name="gender" initialValue={user.gender} rules={[requiredRule()]}>
                     <Select>
                       <Select.Option value="Nam">Nam</Select.Option>
                       <Select.Option value="Nữ">Nữ</Select.Option>
@@ -120,7 +128,7 @@ const ProfilePage = props => {
                   </Item>
                 </Col>
                 <Col flex="0 0 50%">
-                  <Item label="Ngày sinh" name="DOB" initialValue={moment(user.DOB)}>
+                  <Item label="Ngày sinh" name="DOB" initialValue={moment(user.DOB)} rules={[requiredRule()]}>
                     <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
                   </Item>
                 </Col>
@@ -184,15 +192,15 @@ const ProfilePage = props => {
 
           <Spin spinning={changePasswordLoading}>
             <Form layout="vertical" onFinish={handleChangePassword} autoComplete="new-password" form={changePasswordForm}>
-              <Item label="Mật khẩu cũ" name="old_password">
+              <Item label="Mật khẩu cũ" name="old_password" rules={[requiredRule()]}>
                 <Input.Password />
               </Item>
 
-              <Item label="Mật khẩu mới" name="new_password">
+              <Item label="Mật khẩu mới" name="new_password" rules={[requiredRule()]}>
                 <Input.Password />
               </Item>
 
-              <Item label="Nhập lại mật khẩu mới" name="confirm_password">
+              <Item label="Nhập lại mật khẩu mới" name="confirm_password" rules={[requiredRule()]}>
                 <Input.Password />
               </Item>
 
@@ -208,7 +216,13 @@ const ProfilePage = props => {
 }
 
 const mapStateToProps = state => ({
-  user: state.userState.user
+  user: state.userState.user,
+  getProfileLoading: state.userState.getProfileLoading
 })
 
-export default connect(mapStateToProps)(ProfilePage);
+const mapDispatchToProps = dispatch => ({
+  getProfile: () => dispatch(getProfileAction()),
+  logout: () => dispatch(logoutAction())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);

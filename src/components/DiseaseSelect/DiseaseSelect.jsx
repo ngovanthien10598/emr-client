@@ -4,8 +4,11 @@ import { DeleteOutlined } from '@ant-design/icons';
 
 const DiseaseSelect = ({ value = { category: null, disease: null }, onChange, ...props }) => {
 
-  const { label, diseaseCategories, diseases, clearable } = props;
+  const { label, clearable } = props;
   const [selectedCat, setSelectedCat] = useState('');
+
+  const [diseaseCategories, setDiseaseCategories] = useState(props.diseaseCategories);
+  const [diseases, setDiseases] = useState(props.diseases);
 
   function handleCatChange(id) {
     setSelectedCat(id);
@@ -23,7 +26,7 @@ const DiseaseSelect = ({ value = { category: null, disease: null }, onChange, ..
         <Col flex="0 0 150px">{label}</Col>
       }
       <Col flex="0 0 300px" style={{ maxWidth: 300 }}>
-        <Select placeholder="Nhóm bệnh" onChange={handleCatChange} value={value?.category}>
+        <Select placeholder="Nhóm bệnh" onChange={handleCatChange} value={value?.category} showSearch>
           {
             diseaseCategories.map(cat => {
               return <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
