@@ -47,12 +47,12 @@ const AdminDashboard = props => {
 
 
       // Calc total EMRs
-      Object.keys(statistic.emr).map(key => {
+      Object.keys(statistic.emr).forEach(key => {
         total += statistic.emr[key];
 
         // Get year
         // const date = moment(key, "M/YYYY");
-        const [month, year] = key.split('/');
+        const [, year] = key.split('/');
 
         if (!years[year]) {
           years.push(year);
@@ -60,12 +60,12 @@ const AdminDashboard = props => {
       })
 
       // Calc completed EMRs
-      Object.keys(statistic.completed_emr).map(key => {
+      Object.keys(statistic.completed_emr).forEach(key => {
         completed += statistic.completed_emr[key];
       })
 
       // Calc uncompleted EMRs
-      Object.keys(statistic.uncompleted_emr).map(key => {
+      Object.keys(statistic.uncompleted_emr).forEach(key => {
         unCompleted += statistic.uncompleted_emr[key];
       })
 
@@ -91,7 +91,6 @@ const AdminDashboard = props => {
       { month: 11, "Đã đóng": 0, "Chưa đóng": 0 },
       { month: 12, "Đã đóng": 0, "Chưa đóng": 0 },
     ]
-    let total = 0;
     let completed = 0;
     let unCompleted = 0;
 
@@ -109,7 +108,7 @@ const AdminDashboard = props => {
     })
 
     // Calc uncompleted EMRs
-    Object.keys(statistic.uncompleted_emr).map(key => {
+    Object.keys(statistic.uncompleted_emr).forEach(key => {
 
       const [month, year] = key.split('/');
 

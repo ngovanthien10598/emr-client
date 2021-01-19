@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import DrugCategoryForm from 'forms/DrugCategoryForm/DrugCategoryForm';
-import { addDrugCategoryAPI, deleteDrugCategoryAPI, getDrugCategoryAPI, updateDrugCategoryAPI } from 'services/admin/drug-category.service';
 import { formActions } from 'constant/formActions';
 import { connect } from 'react-redux';
 

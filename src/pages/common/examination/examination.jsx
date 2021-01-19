@@ -1,31 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Collapse,
   PageHeader,
   message,
-  Divider,
-  Button,
-  Row,
-  Col,
-  Space,
   Spin,
   Form,
   Input,
-  DatePicker,
-  Select,
-  Radio,
-  Tabs,
   Alert,
-  Modal,
-  BackTop
-} from 'antd';
+  Modal} from 'antd';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import VisitImagesForm from 'forms/Visit/VisitImagesForm';
-import { FileDoneOutlined, SaveOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import ReactQuill from 'react-quill';
-import { quillToolbar } from 'constant/quill';
 import axios from 'axios';
 
 // APIs
@@ -35,18 +19,15 @@ import { getDrugInstructionsAPI } from 'services/user/drug-instruction.service';
 import { getServicesAPI as adminGetServicesAPI } from 'services/admin/medical-service.service';
 import { getDrugCategoryAPI as adminGetDrugCategoryAPI } from 'services/admin/drug-category.service';
 import { getDrugInstructionsAPI as adminGetDrugInstructionsAPI } from 'services/admin/drug-instruction.service';
-import { getEMRHistoryAPI, updateEMRAPI, completeEMRAPI } from 'services/user/emr.service';
-import { deleteVisitAPI } from 'services/user/visit.service';
+import { getEMRHistoryAPI, updateEMRAPI } from 'services/user/emr.service';
 import { getDrugsAPI as adminGetDrugsAPI } from 'services/admin/drug.service';
 import { getDrugsAPI } from 'services/user/drug.service';
 import { fetchDiseaseCategory } from 'store/actions/disease-category.action';
 import { fetchDisease } from 'store/actions/disease.action';
-import DiseaseSelect from 'components/DiseaseSelect/DiseaseSelect';
 import EMRForm from 'forms/EMRForm/EMRForm';
 import { requiredRule } from 'constant/formRules';
 import { LOGIN_URL } from 'constant/apiUrl';
 
-const { Option } = Select;
 const { useForm } = Form;
 
 const ExaminationPage = props => {
@@ -189,7 +170,7 @@ const ExaminationPage = props => {
       if (data.access_token && data.refresh_token) {
         setConfirmLoading(false);
         setConfirmModalShow(false);
-        await handleFinishExamination(visitId);
+        await handleFinishExamination();
       }
     } catch {
       setConfirmLoading(false);
@@ -200,11 +181,9 @@ const ExaminationPage = props => {
       setConfirmModalShow(true);
   }
 
-  async function handleFinishExamination(visitId) {
+  async function handleFinishExamination() {
     try {
       setFinishLoading(true);
-      const completeResponse = await completeEMRAPI(visitId);
-      const deleteResponse = await deleteVisitAPI(visitId);
       history.goBack();
     } catch (error) {
       console.log(error);
@@ -302,7 +281,7 @@ const ExaminationPage = props => {
 
   }
 
-  async function handleUploadChange({ event, file, fileList }, emrId) {
+  async function handleUploadChange({ file, fileList }) {
 
     if (file && file.status === "done") {
 

@@ -4,9 +4,7 @@ import { Layout, Menu } from 'antd';
 import {
   UserOutlined,
   DashboardOutlined,
-  CalendarOutlined,
 } from '@ant-design/icons';
-import AppointmentPage from 'pages/common/appointment/apointment';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 import ReceivePage from 'pages/receptionist/receive';

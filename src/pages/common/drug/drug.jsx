@@ -4,7 +4,6 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import DrugForm from 'forms/DrugForm/DrugForm';
 import { getDrugsAPI, addDrugAPI, updateDrugAPI, deleteDrugAPI } from 'services/admin/drug.service';
 import { formActions } from 'constant/formActions';
-import NumberFormat from 'react-number-format';
 
 const DrugPage = () => {
 
@@ -40,7 +39,7 @@ const DrugPage = () => {
     {
       title: 'Hành động',
       key: 'action',
-      render: (text, record, index) => (
+      render: (text, record) => (
         <Space size={10}>
           <Button icon={<EditOutlined />} onClick={() => handleEditClick(record)}></Button>
           <Popconfirm
@@ -81,16 +80,6 @@ const DrugPage = () => {
       setModalLoading(true);
       const values = await drugForm.validateFields();
       console.log(values);
-      const data = {
-        code: values.code,
-        name: values.name,
-        price: values.price,
-        drug_category: values.drug_category,
-        drug_unit: values.drug_unit,
-        drug_route: values.drug_route,
-        drug_dosage_form: values.drug_dosage_form,
-        strength: values.strength
-      }
       if (action === formActions.CREATE) {
         await addDrugAPI(values);
       }

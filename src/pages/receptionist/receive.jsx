@@ -9,13 +9,13 @@ import { createVisitAPI } from 'services/user/visit.service';
 import { listAllPatientsAPI, createPatientAPI } from 'services/user/patient.service';
 import { addBlockChainUserAPI } from 'services/user/user.service';
 
-const ReceivePage = props => {
+const ReceivePage = () => {
 
   const [patientData, setPatientData] = useState(null);
   const [patientLoading, setPatientLoading] = useState(false);
   const [rooms, setRooms] = useState(null);
-  const [roomLoading, setRoomLoading] = useState(false);
-  const [roomModalVisible, setRoomModalVisible] = useState(false);
+  const [, setRoomLoading] = useState(false);
+  const [] = useState(false);
   const [isCreatingPatient, setCreatingPatient] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isCreatingVisit, setCreatingVisit] = useState(false);

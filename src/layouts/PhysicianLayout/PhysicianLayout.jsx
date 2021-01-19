@@ -3,14 +3,10 @@ import { Link, Redirect, Switch, Route, useRouteMatch, useLocation } from 'react
 import { Layout, Menu } from 'antd';
 import {
   IdcardOutlined,
-  CalendarOutlined,
   ContainerOutlined,
-  ProfileOutlined,
-  NotificationOutlined} from '@ant-design/icons';
-import NotificationPage from 'pages/common/notification/notification';
+  ProfileOutlined} from '@ant-design/icons';
 import VisitPage from 'pages/common/visit/visit';
 import PatientPage from 'pages/common/patient/patient';
-import AppointmentPage from 'pages/common/appointment/apointment';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 import ExaminationPage from 'pages/common/examination/examination';

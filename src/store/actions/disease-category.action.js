@@ -6,23 +6,8 @@ import {
 } from 'constant/apiUrl';
 import { getQueryString } from 'utils/string';
 
-function createDiseaseCategoryPending() {
-  return {
-    
-  }
-}
 
-function createDiseaseCategorySuccess() {
-  return {
-    
-  }
-}
 
-function createDiseaseCategoryFailure() {
-  return {
-    
-  }
-}
 
 function fetchDiseaseCategoryPending() {
   return {
@@ -43,56 +28,11 @@ function fetchDiseaseCategoryFailure() {
   }
 }
 
-function fetchDiseaseCategoryDetailsPending() {
-  return {
-    
-  }
-}
 
-function fetchDiseaseCategoryDetailsSuccess(data) {
-  return {
-    
-  }
-}
 
-function fetchDiseaseCategoryDetailsFailure() {
-  return {
-    
-  }
-}
 
-function updateDiseaseCategoryPending() {
-  return {
-    
-  }
-}
-function updateDiseaseCategorySuccess() {
-  return {
-    
-  }
-}
-function updateDiseaseCategoryFailure() {
-  return {
-    
-  }
-}
-function deleteDiseaseCategoryPending() {
-  return {
-    
-  }
-}
 
-function deleteDiseaseCategorySuccess() {
-  return {
-    
- }
-}
 
-function deleteDiseaseCategoryFailure() {
-  return {
-   
-  }
-}
 
 
 

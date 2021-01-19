@@ -10,7 +10,6 @@ import { listAllPatientsAPI } from 'services/user/patient.service';
 import NullPlaceholder from 'components/NullPlaceholder/NullPlaceholder';
 
 const PatientPage = props => {
-  const { user } = props;
   const { path } = useRouteMatch();
 
   const [patientData, setPatientData] = useState(null);

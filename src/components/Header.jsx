@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Layout, Modal, Spin, Space, Avatar } from 'antd';
+import { Button, Layout, Modal, Space, Avatar } from 'antd';
 import {
   LogoutOutlined,
   ExclamationCircleOutlined

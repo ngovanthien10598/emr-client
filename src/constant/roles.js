@@ -9,7 +9,7 @@ export const ROLES = {
   },
   "3": {
     name: "receptionist",
-    display: "Lễ tân"
+    display: "Tiếp tân"
   },
   "4": {
     name: "patient",

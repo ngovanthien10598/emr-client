@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Modal, Table, Form, Popconfirm, Space } from 'antd';
-import { PlusOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import { PlusOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import UserForm from 'forms/UserForm/UserForm';
 import { formActions } from 'constant/formActions';
-import NumberFormat from 'react-number-format';
 import { ROLES } from 'constant/roles';
 import { useHistory, useLocation } from 'react-router-dom';
 import Circle from 'components/Circle/Circle';
@@ -166,9 +165,6 @@ const AdminAccountPage = () => {
     }
   }
 
-  function handleViewClick(user) {
-
-  }
 
   function handleEditClick(user) {
     setAction(formActions.UPDATE);

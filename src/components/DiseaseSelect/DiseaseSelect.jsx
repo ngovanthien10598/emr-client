@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Select, Row, Col, Button } from 'antd';
+import React, { useState } from 'react';
+import { Select, Row, Col, Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
 const DiseaseSelect = ({ value = { category: null, disease: null }, onChange, ...props }) => {

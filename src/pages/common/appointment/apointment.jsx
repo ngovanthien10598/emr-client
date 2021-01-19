@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, PageHeader, Row, Col } from 'antd';
+import { Calendar, Row, Col } from 'antd';
 
 const AppointmentPage = () => {
   return (

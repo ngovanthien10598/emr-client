@@ -60,7 +60,6 @@ const VisitLivingFunctionForm = props => {
   }
 
   function getBMIDesc() {
-    let result = "";
 
     if (bmi === 0) {
       return "Không có dữ liệu"

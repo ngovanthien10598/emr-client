@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Select, Empty, Table, Button } from 'antd';
+import { Row, Col, Select, Table, Button } from 'antd';
 import { connect } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import { removeDuplicates } from 'utils/array';
 import moment from 'moment';
 
 // APIs
@@ -11,7 +10,6 @@ import { getRoomAPI as adminGetRoomAPI } from 'services/admin/room.service';
 import { getVisitDataAPI } from 'services/user/visit.service';
 import { getVisitDataAPI as adminGetVisitDataAPI } from 'services/admin/visit.service';
 import { addEMRAPI, getEMRHistoryAPI } from 'services/user/emr.service';
-import Modal from 'antd/lib/modal/Modal';
 
 
 const VisitPage = props => {
@@ -159,7 +157,6 @@ const VisitPage = props => {
   }
 
   async function handlePatientClick(visit) {
-    const { patient } = visit;
     const existVisit = await checkExistEMR(visit.id);
 
     if (!existVisit) {

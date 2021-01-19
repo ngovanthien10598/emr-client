@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Form, Input, Select, Row, Col, Button } from 'antd';
 import { getDrugsAPI as adminGetDrugsAPI } from 'services/admin/drug.service';
 import { getDrugsAPI } from 'services/user/drug.service';

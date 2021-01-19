@@ -1,8 +1,7 @@
-import { Avatar, Row, Col, Spin, Upload, Form, Input, Select, DatePicker, Button, message } from 'antd';
+import { Row, Col, Spin, Upload, Form, Input, Select, DatePicker, Button, message } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { getBase64 } from 'utils/image';
 import { API_URL } from 'constant/apiUrl';
 import Cookie from 'js-cookie';
 import moment from 'moment';

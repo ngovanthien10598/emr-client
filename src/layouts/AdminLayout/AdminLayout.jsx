@@ -7,13 +7,8 @@ import {
   MedicineBoxOutlined,
   BugOutlined,
   DollarOutlined,
-  IdcardOutlined,
-  ClockCircleOutlined,
   AppstoreOutlined,
-  CalendarOutlined,
-  ProfileOutlined,
-  SettingOutlined,
-  NotificationOutlined} from '@ant-design/icons';
+  ProfileOutlined} from '@ant-design/icons';
 import AdminDashboard from 'pages/admin/dashboard';
 import DrugCategoryPage from 'pages/common/drug/drug-category';
 import DrugUnitPage from 'pages/common/drug/drug-unit';
@@ -24,13 +19,9 @@ import DiseaseCategory from 'pages/common/disease/disease-category';
 import DiseasePage from 'pages/common/disease/disease';
 import NotificationPage from 'pages/common/notification/notification';
 import VisitPage from 'pages/common/visit/visit';
-import PatientPage from 'pages/common/patient/patient';
-import AppointmentPage from 'pages/common/appointment/apointment';
 import ServicePage from 'pages/common/service/service';
-import WorkingHourPage from 'pages/admin/working-hour';
 import RoomPage from 'pages/common/room/room';
 import AdminAccountPage from 'pages/admin/account';
-import AdminSettingPage from 'pages/admin/setting';
 import withPrivateRoute from 'HOCs/withPrivateRoute';
 import CustomHeader from 'components/Header';
 import DrugDosageFormPage from 'pages/common/drug/drug-dosage-form';

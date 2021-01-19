@@ -10,7 +10,6 @@ import { getBase64 } from 'utils/image';
 
 const VisitImagesForm = props => {
 
-  const { emrId } = props;
 
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
@@ -26,7 +25,7 @@ const VisitImagesForm = props => {
   );
 
   async function handleChange(uploadEvent) {
-    const { event, file, fileList } = uploadEvent;
+    const { fileList } = uploadEvent;
     setFileList(fileList);
     props.onChange(uploadEvent);
   }
